@@ -1,0 +1,354 @@
+:root{
+    --primary:#17479D;
+    --primary-dark:#123C84;
+    --orange:#EE6823;
+    --orange-hover:#d85b15;
+    --bg:#f4f7fc;
+    --border:#e8edf6;
+    --text:#374151;
+}
+
+body{
+    background:var(--bg);
+}
+
+/* ================= PAGE ================= */
+
+.course-page{
+    padding:30px;
+}
+
+.course-page h2{
+    color:var(--primary);
+    font-weight:700;
+
+}
+
+
+.course-page p{
+    color:#777;
+}
+
+/* ================= CARD ================= */
+
+.card{
+    border:none !important;
+    border-radius:20px !important;
+    overflow:hidden;
+    box-shadow:0 10px 35px rgba(23,71,157,.08);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-2px);
+}
+
+.card-header{
+    background:linear-gradient(90deg,#17479D,#1d56bd) !important;
+    color:white;
+    padding:20px 25px !important;
+}
+
+.card-header h4{
+    margin:0;
+    font-weight:600;
+}
+
+
+/* ================= INPUT ================= */
+
+.form-control{
+    border-radius:12px;
+    padding:12px 15px;
+    border:1px solid var(--border);
+    transition:.25s;
+}
+
+.form-control:focus{
+    box-shadow:none;
+    border-color:var(--primary);
+}
+
+.form-label{
+    font-weight:600;
+    margin-bottom:8px;
+    color:#555;
+}
+
+/* ================= SEARCH ================= */
+
+.search-box{
+    width:350px;
+    margin-left:auto;
+    margin-bottom:20px;
+}
+
+.search-box .input-group{
+    border-radius:40px;
+    overflow:hidden;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+.search-box .input-group-text{
+    background:white;
+    border:none;
+    color:var(--primary);
+}
+
+.search-box .form-control{
+    border:none;
+}
+
+/* ================= BUTTON ================= */
+
+.btn-primary{
+    background:var(--orange);
+    border:none;
+}
+
+.btn-primary:hover{
+    background:var(--orange-hover);
+}
+
+.btn-outline-secondary{
+    border-radius:10px;
+}
+
+.btn{
+    border-radius:10px;
+}
+
+/* ================= IMAGE ================= */
+
+.upload-area{
+    border:2px dashed #d8e2f2;
+    border-radius:15px;
+    padding:35px;
+    text-align:center;
+    background:#fafcff;
+}
+
+.upload-area:hover{
+    border-color:var(--primary);
+}
+
+.preview-image{
+    width:230px;
+    height:140px;
+    object-fit:cover;
+    border-radius:15px;
+    border:4px solid white;
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
+
+/* ================= TABLE ================= */
+
+.table{
+    margin:0;
+}
+
+.table thead{
+    background:linear-gradient(90deg,#17479D,#1d56bd);
+}
+
+.table thead th{
+    color: black;
+    border:none;
+    padding:18px;
+    font-weight:600;
+}
+
+.table tbody td{
+    padding:16px;
+    vertical-align:middle;
+}
+
+.table tbody tr{
+    transition:.2s;
+}
+
+.table tbody tr:hover{
+    background:#eef5ff;
+}
+
+/* ================= ACTION ================= */
+
+.btn-info{
+    background:#0dcaf0;
+    border:none;
+}
+
+.btn-warning{
+    color:white;
+}
+
+.btn-danger{
+    border:none;
+}
+
+/* ================= BADGE ================= */
+
+.badge{
+    padding:8px 14px;
+    border-radius:30px;
+    font-size:12px;
+    font-weight:600;
+}
+
+/* ================= MODAL ================= */
+
+.modal-overlay{
+
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    backdrop-filter:blur(5px);
+
+    z-index:9999;
+
+}
+
+.course-modal{
+
+    width:760px;
+    max-width:95%;
+
+    background:white;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    animation:popup .25s ease;
+
+    box-shadow:0 25px 50px rgba(0,0,0,.25);
+
+}
+
+@keyframes popup{
+
+    from{
+        opacity:0;
+        transform:scale(.9);
+    }
+
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+
+}
+
+.modal-header{
+
+    background:linear-gradient(90deg,#17479D,#1d56bd);
+
+    color:white;
+
+    padding:20px 25px;
+}
+
+.modal-body{
+
+    padding:30px;
+
+}
+
+.course-image{
+
+    width:100%;
+    height:280px;
+
+    object-fit:cover;
+
+    /* border-radius:18px; */
+
+    margin-bottom:25px;
+
+}
+
+/* ================= CHECKBOX ================= */
+
+.form-check-input:checked{
+
+    background:var(--orange);
+    border-color:var(--orange);
+
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:992px){
+
+.search-box{
+
+    width:100%;
+    margin-top:20px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.course-page{
+
+    padding:15px;
+
+}
+
+.card-header{
+
+    text-align:center;
+
+}
+
+.upload-area{
+
+    padding:20px;
+
+}
+
+.preview-image{
+
+    width:100%;
+    height:200px;
+
+}
+
+.table{
+
+    min-width:900px;
+
+}
+
+.course-modal{
+
+    width:95%;
+
+}
+
+}
+
+@media(max-width:576px){
+
+.btn{
+
+    width:100%;
+    margin-bottom:10px;
+
+}
+
+.d-flex.gap-3{
+
+    flex-direction:column;
+
+}
+
+}

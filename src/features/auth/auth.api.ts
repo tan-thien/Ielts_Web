@@ -1,0 +1,13 @@
+import api from "../../shared/services/api";
+import type { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from "./auth.type";
+
+export const loginApi = async ( data: LoginRequest): Promise<LoginResponse> => {
+    const response = await api.post<LoginResponse>( "/auth/login", data );
+    return response.data;
+};
+
+export const registerApi = async ( data: RegisterRequest): Promise<RegisterResponse> => {
+    const response = await api.post<RegisterResponse>( "/auth/register", data );
+    return response.data;
+};
+

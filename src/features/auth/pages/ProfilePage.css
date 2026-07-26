@@ -1,0 +1,526 @@
+/* ==========================
+   PROFILE PAGE
+========================== */
+
+.profile-page{
+    position: relative;
+    padding:30px;
+    background:#f5f7fb;
+    min-height:100vh;
+}
+
+/* ==========================
+   COVER
+========================== */
+
+.profile-cover{
+    position:relative;
+    z-index:1;
+
+    height:220px;
+    border-radius:24px;
+    overflow:hidden;
+
+    margin-bottom:-90px;
+
+    background:linear-gradient(
+        135deg,
+        #17479D,
+        #2F67BF,
+        #EE6823
+    );
+}
+.profile-content{
+
+    position:relative;
+
+    z-index:10;
+
+}
+
+.profile-cover::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:300px;
+    height:300px;
+
+    background:rgba(255,255,255,.08);
+
+    border-radius:50%;
+
+    top:-120px;
+    right:-70px;
+
+}
+
+.profile-cover::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:220px;
+    height:220px;
+
+    background:rgba(255,255,255,.06);
+
+    border-radius:50%;
+
+    bottom:-80px;
+    left:120px;
+
+}
+
+.page-header{
+
+    position:relative;
+
+    z-index:2;
+
+    padding:45px;
+
+    color:white;
+
+}
+
+.page-header h2{
+
+    font-size:34px;
+
+    font-weight:700;
+
+    margin-bottom:8px;
+
+}
+
+.page-header p{
+
+    margin:0;
+
+    opacity:.9;
+
+    font-size:17px;
+
+}
+
+/* ==========================
+   LEFT CARD
+========================== */
+
+.profile-card{
+
+    position:relative;
+
+    margin-top:55px;
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:35px;
+
+    text-align:center;
+
+    box-shadow:0 12px 35px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.profile-card:hover{
+
+    transform:translateY(-4px);
+
+}
+
+.profile-avatar{
+
+    width:170px;
+
+    height:170px;
+
+    margin-top:-120px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:7px solid white;
+
+    box-shadow:0 12px 30px rgba(0,0,0,.18);
+
+}
+
+.profile-name .profile-name{
+
+    margin-top:20px;
+
+    margin-bottom:8px;
+
+    color:#17479D;
+
+    font-size:26px;
+
+    font-weight:700;
+
+}
+
+.profile-name .profile-role{
+
+    color:#777;
+
+    margin-bottom:15px;
+
+    font-size:15px;
+
+}
+
+.profile-name .role-badge{
+
+    display:inline-flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:8px 24px;
+
+    border-radius:30px;
+
+    background:#EE6823;
+
+    color:white;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    letter-spacing:1px;
+
+}
+
+.change-avatar-btn{
+
+    width:100%;
+
+    margin-top:25px;
+
+    height:50px;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+}
+
+/* ==========================
+   RIGHT CARD
+========================== */
+
+.profile-info{
+
+    margin-top:55px;
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:35px;
+
+    box-shadow:0 12px 35px rgba(0,0,0,.08);
+
+}
+
+.profile-title{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+
+    border-bottom:1px solid #ececec;
+
+    padding-bottom:20px;
+
+}
+
+.profile-title h4{
+
+    margin:0;
+
+    color:#17479D;
+
+    font-size:28px;
+
+    font-weight:700;
+
+}
+
+/* ==========================
+   FORM
+========================== */
+
+.profile-info label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    margin-top:18px;
+
+    font-weight:600;
+
+    color:#17479D;
+
+}
+
+.form-control{
+
+    height:52px;
+
+    border-radius:12px;
+
+    border:1px solid #e2e6ec;
+
+    background:#f8fafc;
+
+    transition:.25s;
+
+}
+
+.form-control:disabled{
+
+    background:#f8fafc;
+
+    color:#555;
+
+    opacity:1;
+
+}
+
+.form-control:focus{
+
+    border-color:#17479D;
+
+    box-shadow:0 0 0 .15rem rgba(23,71,157,.15);
+
+}
+
+textarea.form-control{
+
+    height:120px;
+
+    resize:none;
+
+    padding-top:12px;
+
+}
+
+/* ==========================
+   BUTTON
+========================== */
+
+.btn-primary{
+
+    background:#EE6823;
+
+    border:none;
+
+    border-radius:12px;
+
+    padding:11px 28px;
+
+    font-weight:600;
+
+    transition:.25s;
+
+}
+
+.btn-primary:hover{
+
+    background:#d95c17;
+
+    transform:translateY(-2px);
+
+}
+
+.btn-outline-primary{
+
+    border:2px solid #17479D;
+
+    color:#17479D;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+    transition:.25s;
+
+}
+
+.btn-outline-primary:hover{
+
+    background:#17479D;
+
+    color:white;
+
+}
+
+/* ==========================
+   INPUT GRID
+========================== */
+
+.profile-info .row>div{
+
+    margin-bottom:8px;
+
+}
+
+/* ==========================
+   CARD ANIMATION
+========================== */
+
+.profile-card,
+.profile-info{
+
+    animation:fadeIn .45s ease;
+
+}
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media(max-width:992px){
+
+.profile-cover{
+
+    height:170px;
+
+    margin-bottom:-60px;
+
+}
+
+.profile-card{
+
+    margin-top:35px;
+
+}
+
+.profile-info{
+
+    margin-top:0;
+
+}
+
+.profile-title{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:15px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.profile-page{
+
+    padding:15px;
+
+}
+
+.page-header{
+
+    padding:30px 20px;
+
+}
+
+.page-header h2{
+
+    font-size:28px;
+
+}
+
+.profile-avatar{
+
+    width:130px;
+
+    height:130px;
+
+    margin-top:-80px;
+
+}
+
+.profile-name{
+
+    font-size:22px;
+
+}
+
+.profile-card,
+
+.profile-info{
+
+    padding:22px;
+
+}
+
+.change-avatar-btn{
+
+    height:46px;
+
+}
+
+}
+
+@media(max-width:576px){
+
+.profile-cover{
+
+    border-radius:18px;
+
+}
+
+.profile-title h4{
+
+    font-size:22px;
+
+}
+
+.form-control{
+
+    height:48px;
+
+}
+
+}
