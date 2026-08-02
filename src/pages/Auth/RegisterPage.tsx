@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { register } from "../auth.service";
-import type { RegisterRequest } from "../auth.type";
+import { register } from "../../services/auth.service";
+import type { RegisterRequest } from "../../types/auth";
 import { useNavigate } from "react-router-dom";
 
 function RegisterPage() {

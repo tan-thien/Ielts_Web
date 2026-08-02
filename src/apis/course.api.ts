@@ -1,4 +1,4 @@
-import api from "../../../../src/shared/services/api";
+import api from "./api";
 
 export const getCoursesApi = () => {
     return api.get("/courses/get-all");
@@ -15,3 +15,8 @@ export const updateCourseApi = (id: string, data: any) => {
 export const deleteCourseApi = (id: string) => {
     return api.delete(`/courses/delete/${id}`);
 };
+
+export const getCourseByIdApi = async (id:string)=>{
+    const res = await api.get(`/course/get/${id}`);
+    return res.data;
+}

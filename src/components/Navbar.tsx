@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {FaBars,FaBell,FaUser,FaArrowAltCircleLeft,FaKey} from "react-icons/fa";
 
-import { getProfile } from "../../features/auth/auth.service";
+import { getProfile } from "../services/auth.service";
 import { useNavigate } from "react-router-dom";
 
 type NavbarProps = {

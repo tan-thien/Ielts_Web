@@ -1,0 +1,172 @@
+.course-management{
+    padding:30px;
+}
+
+.back-btn{
+    border:none;
+    background:#17479D;
+    color:white;
+    padding:10px 20px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+.course-banner{
+
+    background:linear-gradient(135deg,#17479D,#2F67BF,#EE6823);
+
+    border-radius:22px;
+
+    padding:35px;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.course-banner h2{
+
+    font-weight:700;
+
+}
+
+.course-tags{
+
+    margin-top:15px;
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+.tag{
+
+    padding:6px 16px;
+
+    border-radius:30px;
+
+    background:white;
+
+    color:#17479D;
+
+    font-weight:600;
+
+}
+
+.edit-course{
+
+    background:white;
+
+    color:#17479D;
+
+    border:none;
+
+    padding:12px 24px;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+}
+
+.stat-grid{
+
+    margin-top:30px;
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:20px;
+
+}
+
+.stat-card{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    text-align:center;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+}
+
+.stat-card svg{
+
+    font-size:32px;
+
+    color:#EE6823;
+
+}
+
+.stat-card h3{
+
+    margin:15px 0 5px;
+
+    color:#17479D;
+
+}
+
+.course-tabs{
+
+    margin-top:30px;
+
+    display:flex;
+
+    gap:15px;
+
+    border-bottom:1px solid #ddd;
+
+    padding-bottom:15px;
+
+}
+
+.course-tabs button{
+
+    border:none;
+
+    background:white;
+
+    padding:12px 24px;
+
+    border-radius:10px;
+
+    font-weight:600;
+
+    color:#17479D;
+
+}
+
+.course-tabs button:hover{
+
+    background:#17479D;
+
+    color:white;
+
+}
+
+.course-content{
+
+    margin-top:25px;
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    min-height:500px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+}

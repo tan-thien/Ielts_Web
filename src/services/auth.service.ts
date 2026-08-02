@@ -1,6 +1,6 @@
-import api from "../../shared/services/api.ts";
-import { loginApi, registerApi } from "./auth.api.ts";
-import type { LoginRequest, RegisterRequest } from "./auth.type.ts";
+import api from "../apis/api";
+import { loginApi, registerApi } from "../apis/auth.api";
+import type { LoginRequest, RegisterRequest } from "../types/auth";
 
 export const login = async (data: LoginRequest) => {
 

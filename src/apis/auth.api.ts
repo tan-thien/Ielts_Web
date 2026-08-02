@@ -1,5 +1,5 @@
-import api from "../../shared/services/api";
-import type { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from "./auth.type";
+import api from "./api";
+import type { LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from "../types/auth";
 
 export const loginApi = async ( data: LoginRequest): Promise<LoginResponse> => {
     const response = await api.post<LoginResponse>( "/auth/login", data );

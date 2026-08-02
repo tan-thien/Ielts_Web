@@ -1,4 +1,4 @@
-import { createCourseApi, deleteCourseApi, getCoursesApi, updateCourseApi,} from "./course.api";
+import { createCourseApi, deleteCourseApi, getCoursesApi, updateCourseApi, getCourseByIdApi,} from "../apis/course.api";
 
 export const getCourses = async () => {
     const res = await getCoursesApi();
@@ -16,3 +16,8 @@ export const updateCourse = async (id: string, data: any) => {
 export const deleteCourse = async (id: string) => {
     return await deleteCourseApi(id);
 };
+
+export const getCourseById = async (id:string)=>{
+    const res = await getCourseByIdApi(id);
+    return res.data;
+}
