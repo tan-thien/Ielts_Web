@@ -1,19 +1,20 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import LoginPage from "../features/auth/pages/LoginPage";
-import RegisterPage from "../features/auth/pages/RegisterPage";
-import HomePage from "../features/User/HomePage";
+import LoginPage from "../pages/Auth/LoginPage";
+import RegisterPage from "../pages/Auth/RegisterPage";
+import HomePage from "../pages/User/HomePage";
 
-import DashboardPage from "../features/Admin/pages/DashboardPage";
+import DashboardPage from "../pages/Dashboard/DashboardPage";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminLayout from "../layouts/AdminLayout";
 import UserLayout from "../layouts/UserLayout";
-import CoursePage from "../features/Admin/course/CoursePage";
-import ProfilePage from "../features/auth/pages/ProfilePage";
+import CoursePage from "../pages/Course/CoursePage";
+import ProfilePage from "../pages/User/ProfilePage";
+import ManagementCoursePage from "../pages/Course/ManagementCoursePage";
 
 function AppRoutes() {
     return (
         <Routes>
-            
+
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
 
@@ -36,11 +37,15 @@ function AppRoutes() {
                 <Route path="dashboard" element={<DashboardPage />} />
                 <Route path="courses" element={<CoursePage />} />
                 <Route path="profile" element={<ProfilePage />} />
+                <Route path="/admin/courses/:courseId" element={<ManagementCoursePage />}>
+    
+                </Route>
+
             </Route>
 
         </Routes>
 
-        
+
     );
 }
 

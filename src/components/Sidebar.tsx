@@ -11,7 +11,6 @@ import {
     FaHeadphones,
     FaSignOutAlt,
     FaGraduationCap,
-    FaCogs,
     FaCog
 } from "react-icons/fa";
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaUserEdit, FaCamera } from "react-icons/fa";
-import { getProfile } from "../../auth/auth.service";
+import { getProfile } from "../../services/auth.service";
 import "./ProfilePage.css";
 
 function ProfilePage() {

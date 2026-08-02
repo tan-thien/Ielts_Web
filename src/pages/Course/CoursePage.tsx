@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { getCourses, createCourse, updateCourse, deleteCourse } from "./course.service";
+import { getCourses, createCourse, updateCourse, deleteCourse } from "../../services/course.service";
 import "./CoursePage.css";
 import axios from "axios";
-import { FaPlus, FaSearch, FaEye, FaEdit, FaTrash, FaImage } from "react-icons/fa";
+import { FaPlus, FaSearch, FaEye, FaEdit, FaTrash, FaImage, FaBook } from "react-icons/fa";
+import { useNavigate } from "react-router";
 
 function CoursePage() {
 
@@ -10,6 +11,7 @@ function CoursePage() {
     const [search, setSearch] = useState("");
     const [editingId, setEditingId] = useState("");
     const [selectedCourse, setSelectedCourse] = useState<any>(null);
+    const navigate = useNavigate();
 
     const [form, setForm] = useState({
         Name: "",
@@ -354,24 +356,24 @@ function CoursePage() {
             </div>
             <div className="search-box mt-3 mt-lg-0">
 
-                        <div className="input-group">
+                <div className="input-group">
 
-                            <span className="input-group-text">
+                    <span className="input-group-text">
 
-                                <FaSearch />
+                        <FaSearch />
 
-                            </span>
+                    </span>
 
-                            <input
-                                className="form-control"
-                                placeholder="Search..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
+                    <input
+                        className="form-control"
+                        placeholder="Search..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                    />
 
-                        </div>
+                </div>
 
-                    </div>
+            </div>
 
             {/* Table */}
 
@@ -385,7 +387,7 @@ function CoursePage() {
 
                     </h4>
 
-                    
+
 
                 </div>
 
@@ -452,36 +454,34 @@ function CoursePage() {
                                     </td>
 
                                     <td>
+                                        <div className="d-flex justify-content-center gap-2 flex-nowrap">
+                                            <button
+                                                className="btn btn-primary btn-sm me-2"
+                                                onClick={() => navigate(`/admin/courses/${course._id}`)}
+                                            >
+                                                <FaBook className="me-1" />
 
-                                        <button
-                                            className="btn btn-info btn-sm me-2"
-                                            onClick={() => handleView(course)}
-                                        >
-
-                                            <FaEye />
-
-                                        </button>
-
-                                        <button
-                                            className="btn btn-warning btn-sm me-2"
-                                            onClick={() => handleEdit(course)}
-                                        >
-
-                                            <FaEdit />
-
-                                        </button>
-
-                                        <button
-                                            className="btn btn-danger btn-sm"
-                                            onClick={() => handleDelete(course._id)}
-                                        >
-
-                                            <FaTrash />
-
-                                        </button>
-
+                                            </button>
+                                            <button
+                                                className="btn btn-info btn-sm me-2"
+                                                onClick={() => handleView(course)}
+                                            >
+                                                <FaEye />
+                                            </button>
+                                            <button
+                                                className="btn btn-warning btn-sm me-2"
+                                                onClick={() => handleEdit(course)}
+                                            >
+                                                <FaEdit />
+                                            </button>
+                                            <button
+                                                className="btn btn-danger btn-sm"
+                                                onClick={() => handleDelete(course._id)}
+                                            >
+                                                <FaTrash />
+                                            </button>
+                                        </div>
                                     </td>
-
                                 </tr>
 
                             ))}

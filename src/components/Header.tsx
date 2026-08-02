@@ -1,7 +1,7 @@
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getProfile } from "../../features/auth/auth.service";
+import { getProfile } from "../services/auth.service";
 import { FaUserCircle, FaBook, FaCog, FaSignOutAlt } from "react-icons/fa";
 import { Dropdown } from "react-bootstrap";
 
