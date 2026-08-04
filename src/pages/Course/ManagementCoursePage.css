@@ -46,17 +46,29 @@
 }
 
 .tag{
-
-    padding:6px 16px;
-
-    border-radius:30px;
-
-    background:white;
-
-    color:#17479D;
-
+    padding:6px 14px;
+    border-radius:20px;
+    font-size:13px;
     font-weight:600;
+    color:#fff;
+}
 
+/* Status */
+.tag.active{
+    background:#28a745;
+}
+
+.tag.inactive{
+    background:#dc3545;
+}
+
+/* IsOpen */
+.tag.open{
+    background:#17479D;
+}
+
+.tag.closed{
+    background:#6c757d;
 }
 
 .edit-course{

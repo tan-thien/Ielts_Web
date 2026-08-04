@@ -2,12 +2,13 @@ import { Navbar, Nav, Container, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProfile } from "../services/auth.service";
-import { FaUserCircle, FaBook, FaCog, FaSignOutAlt } from "react-icons/fa";
+import { FaUserCircle, FaBook, FaCog, FaSignOutAlt, FaTachometerAlt } from "react-icons/fa";
 import { Dropdown } from "react-bootstrap";
 
 function Header() {
 
     const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
     const [profile, setProfile] = useState<any>(null);
 
     useEffect(() => {
@@ -131,6 +132,13 @@ function Header() {
                                             <FaCog className="me-2" />
                                             Settings
                                         </Dropdown.Item>
+
+                                        {role?.toLowerCase() === "admin" && (
+                                            <Dropdown.Item as={Link} to="/admin" className="fw-semibold">
+                                                <FaTachometerAlt className="me-2" />
+                                                Admin Dashboard
+                                            </Dropdown.Item>
+                                        )}
 
                                         <Dropdown.Divider />
 

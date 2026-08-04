@@ -1,0 +1,23 @@
+.detail-row{
+    transition:.2s;
+}
+
+.detail-row:hover{
+    background:#f8f9fc;
+}
+
+.detail-row:last-child{
+    border-bottom:none!important;
+}
+
+.badge{
+    font-size:.8rem;
+}
+
+.card{
+    border-radius:18px;
+}
+
+.card-body{
+    padding:32px;
+}
