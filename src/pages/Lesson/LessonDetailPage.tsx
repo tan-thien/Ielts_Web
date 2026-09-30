@@ -1,11 +1,27 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
 import {
-    FaArrowLeft, FaPlus, FaEdit, FaTrash, FaFileAlt, FaVideo,
-    FaFilePdf, FaImage, FaHeadphones, FaQuestionCircle
+    FaArrowLeft,
+    FaPlus,
+    FaEdit,
+    FaTrash,
+    FaFileAlt,
+    FaVideo,
+    FaFilePdf,
+    FaImage,
+    FaHeadphones,
+    FaQuestionCircle
 } from "react-icons/fa";
-import "./LessonDetailForm.css"
-import { getLessonById, deleteLessonDetail } from "../../services/lesson.service";
+
+import {
+    getLessonById,
+    deleteLessonDetail
+} from "../../services/lesson.service";
+
+import type { Lesson, LessonDetail } from "../../types/lesson";
+
+import "./LessonDetailForm.css";
 
 function LessonDetailPage() {
 
@@ -13,57 +29,123 @@ function LessonDetailPage() {
 
     const navigate = useNavigate();
 
-    const [lesson, setLesson] = useState<any>();
+    const [lesson, setLesson] = useState<Lesson | null>(null);
 
-    const [details, setDetails] = useState<any[]>([]);
+    const [details, setDetails] = useState<LessonDetail[]>([]);
 
     useEffect(() => {
+
         loadLesson();
+
     }, [lessonId]);
 
     async function loadLesson() {
 
-        const res = await getLessonById(lessonId!);
+        try {
 
-        setLesson(res.Lesson);
+            const res = await getLessonById(lessonId!);
 
-        setDetails(res.Details);
+            setLesson(res.Lesson);
+
+            setDetails(res.Details || []);
+
+        }
+        catch (error) {
+
+            console.log(error);
+
+        }
 
     }
 
     async function handleDelete(id: string) {
 
-        if (!window.confirm("Delete this content?")) return;
+        if (!window.confirm("Delete this content?")) {
+            return;
+        }
 
-        await deleteLessonDetail(id);
+        try {
 
-        loadLesson();
+            await deleteLessonDetail(id);
+
+            loadLesson();
+
+        }
+        catch (error) {
+
+            console.log(error);
+
+        }
 
     }
 
-    function getIcon(type: string) {
+    function getIcon(type: LessonDetail["Type"]) {
 
         switch (type) {
 
             case "Video":
-                return <FaVideo color="#dc3545" />;
-
-            case "PDF":
-                return <FaFilePdf color="#d9534f" />;
-
-            case "Image":
-                return <FaImage color="#198754" />;
+                return <FaVideo />;
 
             case "Audio":
-                return <FaHeadphones color="#0d6efd" />;
+                return <FaHeadphones />;
+
+            case "PDF":
+                return <FaFilePdf />;
+
+            case "Image":
+                return <FaImage />;
 
             case "Quiz":
-                return <FaQuestionCircle color="#ffc107" />;
+                return <FaQuestionCircle />;
 
             default:
-                return <FaFileAlt color="#6c757d" />;
+                return <FaFileAlt />;
 
         }
+
+    }
+
+    function getPreview(detail: LessonDetail) {
+
+        if (detail.Type === "Text" || detail.Type === "Quiz") {
+
+            if (!detail.Content) {
+                return "No content";
+            }
+
+            if (detail.Content.length > 180) {
+
+                return detail.Content.substring(0, 180) + "...";
+
+            }
+
+            return detail.Content;
+
+        }
+
+        if (detail.FileUrl) {
+
+            return "File uploaded";
+
+        }
+
+        return "No file";
+
+    }
+
+    function handleAddContent() {
+
+        navigate(
+            `/admin/courses/${courseId}/lessons/${lessonId}/details/create`
+        );
+
+    }
+
+    function handleEditContent(id: string) {
+
+        navigate(
+            `/admin/courses/${courseId}/lessons/${lessonId}/details/${id}/edit`
+        );
 
     }
 
@@ -71,212 +153,270 @@ function LessonDetailPage() {
 
         <div className="container py-4">
 
+            {/* Back */}
+
             <button
                 className="btn btn-outline-secondary mb-4"
                 onClick={() =>
                     navigate(`/admin/courses/${courseId}?tab=lessons`)
                 }
             >
+
                 <FaArrowLeft className="me-2" />
-                Back
+
+                Back to Lessons
+
             </button>
 
-            <div className="card shadow border-0">
 
-                <div className="card-body p-4">
+            {/* Main Card */}
 
-                    <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="lesson-content-card">
 
-                        <div>
+                {/* Header */}
 
-                            <h2 className="fw-bold mb-1">
+                <div className="lesson-content-header">
 
-                                {lesson?.Name}
+                    <div>
 
-                            </h2>
+                        <div className="lesson-label">
 
-                            <p className="text-muted mb-2">
-
-                                {lesson?.Description}
-
-                            </p>
-
-                            <div className="d-flex gap-2">
-
-                                <span className="badge bg-primary">
-
-                                    {details.length} Contents
-
-                                </span>
-
-                                <span className="badge bg-success">
-
-                                    {lesson?.Status}
-
-                                </span>
-
-                            </div>
+                            LESSON CONTENT
 
                         </div>
 
-                        <button
-                            className="btn btn-primary"
-                            onClick={() =>
-                                navigate(`/admin/courses/${courseId}/lessons/${lessonId}/details/create`)
-                            }
-                        >
-                            <FaPlus className="me-2" />
+                        <h2>
 
-                            Add Content
+                            {lesson?.Name || "Lesson"}
 
-                        </button>
+                        </h2>
+
+                        <p>
+
+                            {lesson?.Description || "Manage lesson content"}
+
+                        </p>
 
                     </div>
 
-                    <hr />
 
-                    {
+                    <button
+                        className="btn btn-primary add-content-btn"
+                        onClick={handleAddContent}
+                    >
 
-                        details.length === 0 ?
+                        <FaPlus className="me-2" />
 
-                            <div className="text-center py-5">
+                        Add Content
 
-                                <FaFileAlt
-                                    size={60}
-                                    className="text-secondary mb-3"
-                                />
+                    </button>
 
-                                <h5>
+                </div>
 
-                                    No lesson content
 
-                                </h5>
+                {/* Stats */}
 
-                                <p className="text-muted">
+                <div className="content-summary">
 
-                                    Click Add Content to create your first lesson item.
+                    <div className="summary-item">
 
-                                </p>
+                        <span className="summary-number">
+
+                            {details.length}
+
+                        </span>
+
+                        <span className="summary-label">
+
+                            Content Items
+
+                        </span>
+
+                    </div>
+
+
+                    <div className="summary-divider" />
+
+
+                    <div className="summary-item">
+
+                        <span className="summary-number">
+
+                            {details.filter(item => item.Status).length}
+
+                        </span>
+
+                        <span className="summary-label">
+
+                            Active
+
+                        </span>
+
+                    </div>
+
+
+                    <div className="summary-divider" />
+
+
+                    <div className="summary-item">
+
+                        <span className="summary-number">
+
+                            {details.filter(item => item.Type === "Text").length}
+
+                        </span>
+
+                        <span className="summary-label">
+
+                            Text
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                {/* Content List */}
+
+                <div className="content-list">
+
+                    {details.length === 0 ? (
+
+                        <div className="empty-content">
+
+                            <div className="empty-icon">
+
+                                <FaFileAlt />
 
                             </div>
 
-                            :
+                            <h5>
 
-                            details.map((detail, index) => (
+                                No content yet
 
-                                <div
-                                    key={detail._id}
-                                    className="py-3 border-bottom detail-row"
-                                >
+                            </h5>
 
-                                    <div className="d-flex justify-content-between">
+                            <p>
 
-                                        <div className="d-flex">
+                                Add your first content to this lesson.
 
-                                            <div
-                                                className="me-4 fs-4 fw-bold text-primary"
-                                                style={{ width: 40 }}
-                                            >
+                            </p>
 
-                                                {index + 1}
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleAddContent}
+                            >
 
-                                            </div>
+                                <FaPlus className="me-2" />
 
-                                            <div>
+                                Add Content
 
-                                                <h5 className="mb-1">
+                            </button>
 
-                                                    {detail.Title}
+                        </div>
 
-                                                </h5>
+                    ) : (
 
-                                                <div className="mb-2">
+                        details.map((detail) => (
 
-                                                    <span className="badge bg-light text-dark border me-2">
+                            <div
+                                className="content-item"
+                                key={detail._id}
+                            >
 
-                                                        {detail.Type}
+                                {/* Icon */}
 
-                                                    </span>
+                                <div className={`content-icon ${detail.Type.toLowerCase()}`}>
 
-                                                    {
-
-                                                        detail.Duration > 0 &&
-
-                                                        <span className="text-muted">
-
-                                                            ⏱ {detail.Duration}s
-
-                                                        </span>
-
-                                                    }
-
-                                                </div>
-
-                                                <div className="text-secondary">
-
-                                                    {
-
-                                                        detail.Content?.length > 120
-                                                            ?
-
-                                                            detail.Content.substring(0, 120) + "..."
-
-                                                            :
-
-                                                            detail.Content
-
-                                                    }
-
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-
-                                        <div className="d-flex align-items-center">
-
-                                            <button
-                                                className="btn btn-light me-2"
-                                                onClick={() =>
-                                                    navigate(`/admin/courses/${courseId}/lessons/${lessonId}/details/${detail._id}`)
-                                                }
-                                            >
-
-                                                View
-
-                                            </button>
-
-                                            <button
-                                                className="btn btn-outline-warning me-2"
-                                                onClick={() =>
-                                                    navigate(`/admin/courses/${courseId}/lessons/${lessonId}/details/${detail._id}/edit`)
-                                                }
-                                            >
-
-                                                <FaEdit />
-
-                                            </button>
-
-                                            <button
-                                                className="btn btn-outline-danger"
-                                                onClick={() =>
-                                                    handleDelete(detail._id)
-                                                }
-                                            >
-
-                                                <FaTrash />
-
-                                            </button>
-
-                                        </div>
-
-                                    </div>
+                                    {getIcon(detail.Type)}
 
                                 </div>
 
-                            ))
 
-                    }
+                                {/* Information */}
+
+                                <div className="content-info">
+
+                                    <div className="content-top">
+
+                                        <span className="content-type">
+
+                                            {detail.Type}
+
+                                        </span>
+
+                                        <span
+                                            className={
+                                                detail.Status
+                                                    ? "content-status active"
+                                                    : "content-status inactive"
+                                            }
+                                        >
+
+                                            {detail.Status
+                                                ? "Active"
+                                                : "Inactive"}
+
+                                        </span>
+
+                                    </div>
+
+
+                                    <div className="content-preview">
+
+                                        {getPreview(detail)}
+
+                                    </div>
+
+
+                                    {detail.FileUrl && (
+
+                                        <a
+                                            href={detail.FileUrl}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="file-link"
+                                        >
+
+                                            View uploaded file
+
+                                        </a>
+
+                                    )}
+
+                                </div>
+
+                                <div className="content-actions">
+
+                                    <button
+                                        className="btn btn-outline-warning"
+                                        onClick={() =>
+                                            handleEditContent(detail._id!)
+                                        }
+                                    >
+                                        <FaEdit />
+
+                                    </button>
+
+                                    <button
+                                        className="btn btn-outline-danger"
+                                        onClick={() =>
+                                            handleDelete(detail._id!)
+                                        }
+                                    >
+
+                                        <FaTrash />
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        ))
+
+                    )}
 
                 </div>
 

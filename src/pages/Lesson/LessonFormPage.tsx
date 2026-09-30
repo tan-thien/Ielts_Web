@@ -31,7 +31,7 @@ function LessonFormPage() {
         FileUrl: "",
         Thumbnail: "",
         Duration: 0,
-        Oder: 1,
+        Order: 1,
         Status: true
     };
     const [showModal, setShowModal] = useState(false);
@@ -72,6 +72,8 @@ function LessonFormPage() {
             [name]: value
         }));
 
+
+
     }
 
     function handleDetailChange(
@@ -88,7 +90,7 @@ function LessonFormPage() {
             [name]:
                 type === "checkbox"
                     ? (e.target as HTMLInputElement).checked
-                    : name === "Duration" || name === "Oder"
+                    : name === "Duration" || name === "Order"
                         ? Number(value)
                         : value
         }));
@@ -109,7 +111,7 @@ function LessonFormPage() {
 
         setDetail({
             ...emptyDetail,
-            Oder: lesson.Details.length + 1
+            Order: lesson.Details.length + 1
         });
 
         setShowModal(true);
@@ -166,21 +168,68 @@ function LessonFormPage() {
     async function handleSubmit(e: React.FormEvent) {
 
         e.preventDefault();
+
         try {
+
+            if (!lesson.Name.trim()) {
+                alert("Lesson name is required.");
+                return;
+            }
+
+            if (!lesson.Description.trim()) {
+                alert("Description is required.");
+                return;
+            }
+
+            if (!lesson.Unit.trim()) {
+                alert("Unit is required.");
+                return;
+            }
+
+            if (!lesson.CourseID) {
+                alert("Course is required.");
+                return;
+            }
+
             if (isEdit) {
 
-                await updateLesson(lessonId!, lesson);
-            }
-            else {
-                await createLesson(lesson);
-            }
-            navigate(`/admin/courses/${courseId}?tab=lessons`);
+                const response = await updateLesson(
+                    lessonId!,
+                    lesson
+                );
 
-        }
-        catch (err) {
-            console.log(err);
-        }
+                console.log("Update lesson:", response);
 
+            } else {
+
+                const response = await createLesson(
+                    lesson
+                );
+
+                console.log("Create lesson:", response);
+            }
+
+            alert(
+                isEdit
+                    ? "Lesson updated successfully!"
+                    : "Lesson created successfully!"
+            );
+
+            navigate(
+                `/admin/courses/${courseId}?tab=lessons`
+            );
+
+        } catch (err: any) {
+
+            console.error("Save lesson error:", err);
+
+            const message =
+                err?.response?.data?.message ||
+                err?.message ||
+                "Failed to save lesson.";
+
+            alert(message);
+        }
     }
 
     async function handleUpload(
@@ -231,12 +280,10 @@ function LessonFormPage() {
 
             <div className="card">
 
-                <div className="card-header">
+                <div className="card-header text-white">
 
                     <h3>
-
                         {isEdit ? "Update Lesson" : "Create Lesson"}
-
                     </h3>
 
                 </div>
@@ -406,7 +453,7 @@ function LessonFormPage() {
 
                                                 <td>{item.Duration}s</td>
 
-                                                <td>{item.Oder}</td>
+                                                <td>{item.Order}</td>
 
                                                 <td>
 
@@ -491,24 +538,7 @@ function LessonFormPage() {
 
                                 <div className="modal-body">
 
-                                    <div className="mb-3">
 
-                                        <label className="form-label">
-                                            Title
-                                        </label>
-
-                                        <input
-                                            className="form-control"
-                                            value={detail.Title}
-                                            onChange={(e) =>
-                                                setDetail({
-                                                    ...detail,
-                                                    Title: e.target.value
-                                                })
-                                            }
-                                        />
-
-                                    </div>
 
                                     <div className="mb-3">
 
@@ -617,80 +647,13 @@ function LessonFormPage() {
 
                                             )}
 
-                                            {(detail.Type === "Video" || detail.Type === "Audio") && (
 
-                                                <div className="mb-3">
-
-                                                    <label className="form-label">
-
-                                                        Duration (seconds)
-
-                                                    </label>
-
-                                                    <input
-                                                        type="number"
-                                                        className="form-control"
-                                                        name="Duration"
-                                                        value={detail.Duration}
-                                                        onChange={(e) =>
-                                                            setDetail({
-                                                                ...detail,
-                                                                Duration: Number(e.target.value)
-                                                            })
-                                                        }
-                                                    />
-
-                                                </div>
-
-                                            )}
 
                                         </div>
-
-
 
                                     </div>
 
                                     <div className="row">
-
-                                        <div className="col-md-4 mb-3">
-
-                                            <label className="form-label">
-                                                Duration (seconds)
-                                            </label>
-
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                value={detail.Duration}
-                                                onChange={(e) =>
-                                                    setDetail({
-                                                        ...detail,
-                                                        Duration: Number(e.target.value)
-                                                    })
-                                                }
-                                            />
-
-                                        </div>
-
-                                        <div className="col-md-4 mb-3">
-
-                                            <label className="form-label">
-                                                Oder
-                                            </label>
-
-                                            <input
-                                                type="number"
-                                                className="form-control"
-                                                value={detail.Oder}
-                                                onChange={(e) =>
-                                                    setDetail({
-                                                        ...detail,
-                                                        Oder: Number(e.target.value)
-                                                    })
-                                                }
-                                            />
-
-                                        </div>
 
                                         <div className="col-md-4 d-flex align-items-end">
 

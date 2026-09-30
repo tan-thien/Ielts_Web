@@ -6,7 +6,7 @@ export interface LessonDetail {
     Type: "Text" | "Video" | "Audio" | "PDF" | "Image" | "Quiz";
     FileUrl: string;
     Thumbnail: string;
-    Oder: number;
+    Order: number;
     Duration: number;
     Status: boolean;
 }

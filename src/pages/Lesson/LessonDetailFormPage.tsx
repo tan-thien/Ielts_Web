@@ -25,7 +25,7 @@ function LessonDetailFormPage() {
         FileUrl: "",
         Thumbnail: "",
         Duration: 0,
-        Oder: 1,
+        Order: 1,
         Status: true
     });
 
@@ -58,7 +58,7 @@ function LessonDetailFormPage() {
             [name]:
                 type === "checkbox"
                     ? (e.target as HTMLInputElement).checked
-                    : name === "Duration" || name === "Oder"
+                    : name === "Duration" || name === "Order"
                         ? Number(value)
                         : value
         }));
@@ -174,23 +174,6 @@ function LessonDetailFormPage() {
 
                     <form onSubmit={handleSubmit}>
 
-                        <div className="mb-3">
-
-                            <label className="form-label">
-
-                                Title
-
-                            </label>
-
-                            <input
-                                className="form-control"
-                                name="Title"
-                                value={form.Title}
-                                onChange={handleChange}
-                                required
-                            />
-
-                        </div>
 
                         <div className="mb-3">
 
@@ -255,18 +238,14 @@ function LessonDetailFormPage() {
 
                             <div className="col-md-6 mb-3">
 
-                                <label className="form-label">
 
-                                    File URL
-
-                                </label>
 
                                 {
                                     form.Type !== "Text" &&
                                     form.Type !== "Quiz" && (
 
                                         <div className="mb-3">
-
+                                            
                                             <label className="form-label">
 
                                                 Upload File
@@ -317,12 +296,6 @@ function LessonDetailFormPage() {
 
                             <div className="col-md-6 mb-3">
 
-                                <label className="form-label">
-
-                                    Thumbnail
-
-                                </label>
-
                                 {
                                     form.Type === "Image" &&
                                     form.FileUrl && (
@@ -349,41 +322,7 @@ function LessonDetailFormPage() {
 
                         <div className="row">
 
-                            <div className="col-md-4 mb-3">
 
-                                <label className="form-label">
-
-                                    Duration
-
-                                </label>
-
-                                <input
-                                    type="number"
-                                    className="form-control"
-                                    name="Duration"
-                                    value={form.Duration}
-                                    onChange={handleChange}
-                                />
-
-                            </div>
-
-                            <div className="col-md-4 mb-3">
-
-                                <label className="form-label">
-
-                                    Order
-
-                                </label>
-
-                                <input
-                                    type="number"
-                                    className="form-control"
-                                    name="Oder"
-                                    value={form.Oder}
-                                    onChange={handleChange}
-                                />
-
-                            </div>
 
                             <div className="col-md-4 d-flex align-items-center">
 

@@ -1,10 +1,20 @@
-import { FaBookOpen, FaEdit, FaPlus, FaTrash } from "react-icons/fa";
+import {
+    FaBookOpen,
+    FaEdit,
+    FaPlus,
+    FaTrash
+} from "react-icons/fa";
+
 import { useNavigate, useParams } from "react-router-dom";
+
+import { deleteLesson } from "../../../services/lesson.service";
+
 
 interface Props {
     lessons: any[];
-    onDelete: (id: string) => void;
+    onDelete: () => void;
 }
+
 
 function LessonTab({
     lessons,
@@ -14,9 +24,43 @@ function LessonTab({
     const navigate = useNavigate();
     const { courseId } = useParams();
 
+
+    const handleDelete = async (id: string) => {
+
+        const confirmDelete = window.confirm(
+            "Are you sure you want to delete this lesson?"
+        );
+
+        if (!confirmDelete) {
+            return;
+        }
+
+        try {
+
+            await deleteLesson(id);
+
+            alert("Lesson deleted successfully.");
+
+            onDelete();
+
+        } catch (error: any) {
+
+            console.error("Delete lesson error:", error);
+
+            const message =
+                error?.response?.data?.message ||
+                error?.message ||
+                "Failed to delete lesson.";
+
+            alert(message);
+        }
+    };
+
+
     return (
         <>
             <div className="d-flex justify-content-between align-items-center mb-4">
+
                 <h4 className="mb-0">
                     Lesson List
                 </h4>
@@ -24,25 +68,32 @@ function LessonTab({
                 <button
                     className="btn btn-primary"
                     onClick={() =>
-                        navigate(`/admin/courses/${courseId}/lessons/create`)
+                        navigate(
+                            `/admin/courses/${courseId}/lessons/create`
+                        )
                     }
                 >
                     <FaPlus className="me-2" />
                     New Lesson
                 </button>
+
             </div>
+
 
             <table className="table table-hover align-middle">
 
                 <thead className="table-light">
+
                     <tr>
                         <th>Name</th>
                         <th>Unit</th>
                         <th>Status</th>
                         <th>Open</th>
-                        <th >Action</th>
+                        <th>Action</th>
                     </tr>
+
                 </thead>
+
 
                 <tbody>
 
@@ -53,37 +104,53 @@ function LessonTab({
 
                                 <tr key={lesson._id}>
 
-                                    <td>{lesson.Name}</td>
-
-                                    <td>{lesson.Unit}</td>
+                                    <td>
+                                        {lesson.Name}
+                                    </td>
 
                                     <td>
+                                        {lesson.Unit}
+                                    </td>
+
+                                    <td>
+
                                         <span
-                                            className={`badge ${lesson.Status === "Active"
+                                            className={`badge ${
+                                                lesson.Status === "Active"
                                                     ? "bg-success"
                                                     : lesson.Status === "Pending"
                                                         ? "bg-warning text-dark"
                                                         : lesson.Status === "Finished"
                                                             ? "bg-secondary"
                                                             : "bg-dark"
-                                                }`}
+                                            }`}
                                         >
                                             {lesson.Status}
                                         </span>
+
                                     </td>
 
                                     <td>
+
                                         <span
-                                            className={`badge ${lesson.IsOpen
+                                            className={`badge ${
+                                                lesson.IsOpen
                                                     ? "bg-primary"
                                                     : "bg-danger"
-                                                }`}
+                                            }`}
                                         >
-                                            {lesson.IsOpen ? "Open" : "Closed"}
+                                            {
+                                                lesson.IsOpen
+                                                    ? "Open"
+                                                    : "Closed"
+                                            }
                                         </span>
+
                                     </td>
 
                                     <td>
+
+                                        {/* Lesson Detail */}
                                         <button
                                             className="btn btn-primary btn-sm me-2"
                                             onClick={() =>
@@ -94,6 +161,9 @@ function LessonTab({
                                         >
                                             <FaBookOpen />
                                         </button>
+
+
+                                        {/* Edit */}
                                         <button
                                             className="btn btn-warning btn-sm me-2"
                                             onClick={() =>
@@ -105,10 +175,12 @@ function LessonTab({
                                             <FaEdit />
                                         </button>
 
+
+                                        {/* Delete */}
                                         <button
                                             className="btn btn-danger btn-sm"
                                             onClick={() =>
-                                                onDelete(lesson._id)
+                                                handleDelete(lesson._id)
                                             }
                                         >
                                             <FaTrash />
@@ -139,10 +211,9 @@ function LessonTab({
                 </tbody>
 
             </table>
-
         </>
     );
-
 }
+
 
 export default LessonTab;
