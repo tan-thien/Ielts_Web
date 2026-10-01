@@ -1,4 +1,4 @@
-import type { Lesson, LessonDetail } from "../types/lesson";
+import type { Lesson, LessonDetailPayload } from "../types/lesson";
 import api from "./api";
 
 export const getLessonByCourseId = async (courseId: string) => {
@@ -11,12 +11,12 @@ export const getLessonById = async (id: string) => {
     return res.data.data;
 };
 
-export const createLesson = async (data: Lesson) => {
+export const createLesson = async (data: Omit<Lesson, "Details">) => {
     const res = await api.post("/lessons/create", data);
     return res.data;
 };
 
-export const updateLesson = async (id: string, data: Lesson) => {
+export const updateLesson = async (id: string, data: Omit<Lesson, "Details">) => {
     const res = await api.put(`/lessons/update/${id}`, data);
     return res.data;
 };
@@ -33,14 +33,24 @@ export const getLessonDetailById = async (id: string) => {
     return res.data.data;
 };
 
-export const createLessonDetail = async (data: LessonDetail) => {
+export const getLessonDetailsByLessonId = async (lessonId: string) => {
+    const res = await api.get(`/lesson-details/lesson/${lessonId}`);
+    return res.data.data;
+};
+
+export const reorderLessonDetails = async (lessonId: string, detailIds: string[]) => {
+    const res = await api.put(`/lesson-details/lesson/${lessonId}/reorder`, { detailIds });
+    return res.data.data;
+};
+
+export const createLessonDetail = async (data: LessonDetailPayload) => {
     const res = await api.post("/lesson-details/create", data);
     return res.data.data;
 };
 
 export const updateLessonDetail = async (
     id: string,
-    data: LessonDetail
+    data: LessonDetailPayload
 ) => {
     const res = await api.put(`/lesson-details/update/${id}`, data);
     return res.data.data;

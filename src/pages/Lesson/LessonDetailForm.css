@@ -188,6 +188,17 @@
     color: #555;
     font-size: 14px;
     line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.content-image-preview {
+    display: block;
+    max-width: min(100%, 320px);
+    max-height: 180px;
+    margin-top: 8px;
+    border-radius: 6px;
+    object-fit: contain;
+    background: #f8faff;
 }
 
 .file-link {

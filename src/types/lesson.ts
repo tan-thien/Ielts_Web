@@ -1,15 +1,20 @@
 export interface LessonDetail {
     _id?: string;
     LessonID?: string;
-    Title: string;
     Content: string;
     Type: "Text" | "Video" | "Audio" | "PDF" | "Image" | "Quiz";
     FileUrl: string;
-    Thumbnail: string;
     Order: number;
-    Duration: number;
     Status: boolean;
 }
+
+export type LessonDetailPayload = Pick<
+    LessonDetail,
+    "Content" | "Type" | "FileUrl" | "Status"
+> & {
+    LessonID: string;
+};
+
 
 export interface Lesson {
     _id?: string;

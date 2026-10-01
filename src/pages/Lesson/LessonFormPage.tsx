@@ -5,63 +5,49 @@ import {
     getLessonById,
     updateLesson
 } from "../../services/lesson.service";
-import type { Lesson, LessonDetail } from "../../types/lesson";
-import axios from "axios";
+import type { Lesson } from "../../types/lesson";
 
 function LessonFormPage() {
 
     const navigate = useNavigate();
     const { courseId, lessonId } = useParams();
     const isEdit = !!lessonId;
-    const [uploading, setUploading] = useState(false);
-    const [lesson, setLesson] = useState<Lesson>({
+    const [lesson, setLesson] = useState<Omit<Lesson, "Details">>({
         Name: "",
         Description: "",
         Time: "",
         Unit: "",
         CourseID: courseId || "",
         Status: "Draft",
-        IsOpen: false,
-        Details: []
+        IsOpen: false
     });
-    const emptyDetail: LessonDetail = {
-        Title: "",
-        Content: "",
-        Type: "Text",
-        FileUrl: "",
-        Thumbnail: "",
-        Duration: 0,
-        Order: 1,
-        Status: true
-    };
-    const [showModal, setShowModal] = useState(false);
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
-    const [detail, setDetail] = useState<LessonDetail>(emptyDetail);
 
     useEffect(() => {
+        if (!lessonId) return;
 
-        if (isEdit) {
-            loadLesson();
-        }
-    }, []);
+        let cancelled = false;
 
-    async function loadLesson() {
-
-        try {
-
-            const res = await getLessonById(lessonId!);
+        getLessonById(lessonId).then(res => {
+            if (cancelled) return;
 
             setLesson({
-                ...res.Lesson,
-                Details: res.Details
+                Name: res.Lesson.Name,
+                Description: res.Lesson.Description,
+                Time: res.Lesson.Time,
+                Unit: res.Lesson.Unit,
+                CourseID: res.Lesson.CourseID?._id || res.Lesson.CourseID || courseId || "",
+                Status: res.Lesson.Status,
+                IsOpen: res.Lesson.IsOpen,
+                IsDeleted: res.Lesson.IsDeleted
             });
+        }).catch(error => {
+            console.error("Load lesson error:", error);
+        });
 
-        }
-        catch (err) {
-            console.log(err);
-        }
-
-    }
+        return () => {
+            cancelled = true;
+        };
+    }, [courseId, lessonId]);
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
 
@@ -76,92 +62,12 @@ function LessonFormPage() {
 
     }
 
-    function handleDetailChange(
-        e: React.ChangeEvent<
-            HTMLInputElement |
-            HTMLTextAreaElement |
-            HTMLSelectElement
-        >
-    ) {
-        const { name, value, type } = e.target;
-
-        setDetail(prev => ({
-            ...prev,
-            [name]:
-                type === "checkbox"
-                    ? (e.target as HTMLInputElement).checked
-                    : name === "Duration" || name === "Order"
-                        ? Number(value)
-                        : value
-        }));
-    }
-
     function handleCheckbox(e: React.ChangeEvent<HTMLInputElement>) {
 
         setLesson(prev => ({
             ...prev,
             IsOpen: e.target.checked
         }));
-
-    }
-
-    function handleAddContent() {
-
-        setEditingIndex(null);
-
-        setDetail({
-            ...emptyDetail,
-            Order: lesson.Details.length + 1
-        });
-
-        setShowModal(true);
-
-    }
-
-    function handleEditContent(index: number) {
-
-        setEditingIndex(index);
-
-        setDetail(lesson.Details[index]);
-
-        setShowModal(true);
-
-    }
-
-    function handleDeleteContent(index: number) {
-
-        if (!window.confirm("Delete content?")) return;
-
-        setLesson(prev => ({
-            ...prev,
-            Details: prev.Details.filter((_, i) => i !== index)
-        }));
-
-    }
-
-    function handleSaveContent() {
-
-        if (editingIndex === null) {
-
-            setLesson(prev => ({
-                ...prev,
-                Details: [...prev.Details, detail]
-            }));
-
-        } else {
-
-            const arr = [...lesson.Details];
-
-            arr[editingIndex] = detail;
-
-            setLesson(prev => ({
-                ...prev,
-                Details: arr
-            }));
-
-        }
-
-        setShowModal(false);
 
     }
 
@@ -191,11 +97,23 @@ function LessonFormPage() {
                 return;
             }
 
+            const lessonPayload: Omit<Lesson, "Details"> = {
+                Name: lesson.Name,
+                Description: lesson.Description,
+                Time: lesson.Time,
+                Unit: lesson.Unit,
+                CourseID: lesson.CourseID,
+                Status: lesson.Status,
+                IsOpen: lesson.IsOpen,
+                ...(lesson.IsDeleted === undefined ? {} : { IsDeleted: lesson.IsDeleted })
+            };
+            let savedLessonId = lessonId;
+
             if (isEdit) {
 
                 const response = await updateLesson(
                     lessonId!,
-                    lesson
+                    lessonPayload
                 );
 
                 console.log("Update lesson:", response);
@@ -203,10 +121,11 @@ function LessonFormPage() {
             } else {
 
                 const response = await createLesson(
-                    lesson
+                    lessonPayload
                 );
 
                 console.log("Create lesson:", response);
+                savedLessonId = response?.lesson?._id || response?.data?.lesson?._id;
             }
 
             alert(
@@ -215,63 +134,25 @@ function LessonFormPage() {
                     : "Lesson created successfully!"
             );
 
-            navigate(
-                `/admin/courses/${courseId}?tab=lessons`
-            );
+            navigate(savedLessonId
+                ? `/admin/courses/${courseId}/lessons/${savedLessonId}/details`
+                : `/admin/courses/${courseId}?tab=lessons`);
 
-        } catch (err: any) {
+        } catch (err: unknown) {
 
             console.error("Save lesson error:", err);
 
+            const errorDetails = err as {
+                response?: { data?: { message?: string } };
+                message?: string;
+            };
             const message =
-                err?.response?.data?.message ||
-                err?.message ||
+                errorDetails?.response?.data?.message ||
+                errorDetails?.message ||
                 "Failed to save lesson.";
 
             alert(message);
         }
-    }
-
-    async function handleUpload(
-        e: React.ChangeEvent<HTMLInputElement>,
-        field: "FileUrl" | "Thumbnail"
-    ) {
-
-        if (!e.target.files?.length) return;
-
-        const file = e.target.files[0];
-
-        const formData = new FormData();
-
-        formData.append("file", file);
-        formData.append("upload_preset", "ielts-web");
-
-        try {
-
-            setUploading(true);
-
-            const res = await axios.post(
-                "https://api.cloudinary.com/v1_1/hgjoncad/auto/upload",
-                formData
-            );
-
-            setDetail(prev => ({
-                ...prev,
-                [field]: res.data.secure_url
-            }));
-
-        }
-        catch {
-
-            alert("Upload failed");
-
-        }
-        finally {
-
-            setUploading(false);
-
-        }
-
     }
 
     return (
@@ -386,109 +267,6 @@ function LessonFormPage() {
 
                         </div>
 
-                        <hr className="my-4" />
-
-                        <div className="d-flex justify-content-between align-items-center mb-3">
-
-                            <h4>Lesson Contents</h4>
-
-                            <button
-                                type="button"
-                                className="btn btn-success"
-                                onClick={handleAddContent}
-                            >
-                                + Add Content
-                            </button>
-
-                        </div>
-
-                        <table className="table table-hover align-middle">
-
-                            <thead>
-
-                                <tr>
-
-                                    <th>Title</th>
-
-                                    <th>Type</th>
-
-                                    <th>Duration</th>
-
-                                    <th>Order</th>
-
-                                    <th ></th>
-
-                                </tr>
-
-                            </thead>
-
-                            <tbody>
-
-                                {
-
-                                    lesson.Details.length === 0 ?
-
-                                        <tr>
-
-                                            <td
-                                                colSpan={5}
-                                                className="text-center text-muted"
-                                            >
-
-                                                No content
-
-                                            </td>
-
-                                        </tr>
-
-                                        :
-
-                                        lesson.Details.map((item, index) => (
-
-                                            <tr key={index}>
-
-                                                <td>{item.Title}</td>
-
-                                                <td>{item.Type}</td>
-
-                                                <td>{item.Duration}s</td>
-
-                                                <td>{item.Order}</td>
-
-                                                <td>
-
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-warning btn-sm me-2"
-                                                        onClick={() => handleEditContent(index)}
-                                                    >
-
-                                                        Edit
-
-                                                    </button>
-
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-danger btn-sm"
-                                                        onClick={() => handleDeleteContent(index)}
-                                                    >
-
-                                                        Delete
-
-                                                    </button>
-
-                                                </td>
-
-                                            </tr>
-
-                                        ))
-
-                                }
-
-                            </tbody>
-
-                        </table>
-
                         <div className="mt-4">
 
                             <button
@@ -517,203 +295,6 @@ function LessonFormPage() {
                 </div>
 
             </div>
-            {
-                showModal && (
-
-                    <div className="modal d-block">
-
-                        <div className="modal-dialog modal-lg">
-
-                            <div className="modal-content">
-
-                                <div className="modal-header">
-
-                                    <h5>
-
-                                        {editingIndex === null ? "Add Content" : "Edit Content"}
-
-                                    </h5>
-
-                                </div>
-
-                                <div className="modal-body">
-
-
-
-                                    <div className="mb-3">
-
-                                        <label className="form-label">
-
-                                            Type
-
-                                        </label>
-
-                                        <select
-                                            className="form-select"
-                                            name="Type"
-                                            value={detail.Type}
-                                            onChange={handleDetailChange}
-                                        >
-
-                                            <option value="Text">Text</option>
-                                            <option value="Video">Video</option>
-                                            <option value="Audio">Audio</option>
-                                            <option value="PDF">PDF</option>
-                                            <option value="Image">Image</option>
-                                            <option value="Quiz">Quiz</option>
-
-                                        </select>
-
-                                    </div>
-
-                                    <div className="mb-3">
-
-                                        {(detail.Type === "Text" || detail.Type === "Quiz") && (
-
-                                            <div className="mb-3">
-
-                                                <label className="form-label">
-
-                                                    Content
-
-                                                </label>
-
-                                                <textarea
-                                                    rows={8}
-                                                    className="form-control"
-                                                    name="Content"
-                                                    value={detail.Content}
-                                                    onChange={(e) =>
-                                                        setDetail({
-                                                            ...detail,
-                                                            Content: e.target.value
-                                                        })
-                                                    }
-                                                />
-
-                                            </div>
-
-                                        )}
-
-                                    </div>
-
-                                    <div className="row">
-
-                                        <div className="col-md-6 mb-3">
-
-                                            {detail.Type !== "Text" && detail.Type !== "Quiz" && (
-
-                                                <div className="mb-3">
-
-                                                    <label className="form-label">
-
-                                                        Upload File
-
-                                                    </label>
-
-                                                    <input
-                                                        type="file"
-                                                        className="form-control"
-                                                        onChange={(e) => handleUpload(e, "FileUrl")}
-                                                    />
-
-                                                    {uploading && (
-
-                                                        <small className="text-primary">
-
-                                                            Uploading...
-
-                                                        </small>
-
-                                                    )}
-
-                                                    {detail.FileUrl && (
-
-                                                        <div className="mt-2">
-
-                                                            <a
-                                                                href={detail.FileUrl}
-                                                                target="_blank"
-                                                                rel="noreferrer"
-                                                            >
-                                                                View uploaded file
-                                                            </a>
-
-                                                        </div>
-
-                                                    )}
-
-                                                </div>
-
-                                            )}
-
-
-
-                                        </div>
-
-                                    </div>
-
-                                    <div className="row">
-
-                                        <div className="col-md-4 d-flex align-items-end">
-
-                                            <div className="form-check mb-2">
-
-                                                <input
-                                                    className="form-check-input"
-                                                    type="checkbox"
-                                                    checked={detail.Status}
-                                                    onChange={(e) =>
-                                                        setDetail({
-                                                            ...detail,
-                                                            Status: e.target.checked
-                                                        })
-                                                    }
-                                                />
-
-                                                <label className="form-check-label">
-                                                    Active
-                                                </label>
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                                <div className="modal-footer">
-
-                                    <button
-                                        className="btn btn-secondary"
-                                        onClick={() => setShowModal(false)}
-                                    >
-
-                                        Cancel
-
-                                    </button>
-
-                                    <button
-                                        className="btn btn-primary"
-                                        onClick={handleSaveContent}
-                                    >
-
-                                        Save
-
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                )
-            }
-
         </div>
 
 

@@ -9,7 +9,7 @@ import {
     getLessonDetailById
 } from "../../services/lesson.service";
 
-import type { LessonDetail } from "../../types/lesson";
+import type { LessonDetailPayload } from "../../types/lesson";
 
 function LessonDetailFormPage() {
 
@@ -17,35 +17,38 @@ function LessonDetailFormPage() {
     const navigate = useNavigate();
     const isEdit = !!detailId;
     const [uploading, setUploading] = useState(false);
-    const [form, setForm] = useState<LessonDetail>({
-        LessonID: lessonId!,
-        Title: "",
+    const [form, setForm] = useState<LessonDetailPayload>({
+        LessonID: lessonId || "",
         Content: "",
         Type: "Text",
         FileUrl: "",
-        Thumbnail: "",
-        Duration: 0,
-        Order: 1,
         Status: true
     });
 
     useEffect(() => {
+        if (!detailId) return;
 
-        if (isEdit) {
+        let cancelled = false;
 
-            loadDetail();
+        getLessonDetailById(detailId).then(data => {
+            if (!cancelled) {
+                setForm({
+                    LessonID: data.LessonID || lessonId || "",
+                    Content: data.Content || "",
+                    Type: data.Type || "Text",
+                    FileUrl: data.FileUrl || "",
+                    Status: data.Status ?? true
+                });
+            }
+        }).catch(error => {
+            console.error("Load lesson detail error:", error);
+            alert("Failed to load lesson content.");
+        });
 
-        }
-
-    }, []);
-
-    async function loadDetail() {
-
-        const data = await getLessonDetailById(detailId!);
-
-        setForm(data);
-
-    }
+        return () => {
+            cancelled = true;
+        };
+    }, [detailId, lessonId]);
 
     function handleChange(
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -58,9 +61,7 @@ function LessonDetailFormPage() {
             [name]:
                 type === "checkbox"
                     ? (e.target as HTMLInputElement).checked
-                    : name === "Duration" || name === "Order"
-                        ? Number(value)
-                        : value
+                    : value
         }));
 
     }
@@ -124,11 +125,7 @@ function LessonDetailFormPage() {
 
             }
 
-            setForm(prev => ({
-                ...prev,
-                FileUrl: url,
-                Thumbnail: url
-            }));
+            setForm(prev => ({ ...prev, FileUrl: url }));
 
         } catch (err) {
 
@@ -251,6 +248,15 @@ function LessonDetailFormPage() {
                                                 Upload File
 
                                             </label>
+
+                                            <input
+                                                type="url"
+                                                className="form-control mb-2"
+                                                name="FileUrl"
+                                                value={form.FileUrl}
+                                                onChange={handleChange}
+                                                placeholder="https://example.com/file"
+                                            />
 
                                             <input
                                                 type="file"
