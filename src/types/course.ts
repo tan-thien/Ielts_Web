@@ -25,3 +25,14 @@ export interface CourseRequest {
     Status: boolean;
     IsOpen: boolean;
 }
+
+export interface CourseOrder {
+    _id: string;
+    CourseID: string;
+    Amount: number;
+    Currency: string;
+    Status: "Pending" | "Paid" | "Failed";
+    PaymentMethod: "MoMo" | "Free";
+    PaidAt?: string;
+    createdAt: string;
+}

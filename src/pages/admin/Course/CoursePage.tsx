@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCourses, createCourse, updateCourse, deleteCourse } from "../../services/course.service";
+import { getCourses, createCourse, updateCourse, deleteCourse } from "../../../services/course.service";
 import "./CoursePage.css";
 import axios from "axios";
 import { FaPlus, FaSearch, FaEye, FaEdit, FaTrash, FaImage, FaBook } from "react-icons/fa";

@@ -4,8 +4,8 @@ import {
     createLesson,
     getLessonById,
     updateLesson
-} from "../../services/lesson.service";
-import type { Lesson } from "../../types/lesson";
+} from "../../../services/lesson.service";
+import type { Lesson } from "../../../types/lesson";
 
 function LessonFormPage() {
 

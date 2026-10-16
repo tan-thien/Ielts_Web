@@ -1,9 +1,13 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams  } from "react-router-dom";
 import { FaArrowLeft, FaBook, FaClipboardList, FaUsers, FaDollarSign, FaEdit } from "react-icons/fa";
 import "./ManagementCoursePage.css";
-import { getLessonByCourseId } from "../../services/lesson.service";
-import { getCourseById } from "../../services/course.service";
+import { getLessonByCourseId } from "../../../services/lesson.service";
+import { getCourseById } from "../../../services/course.service";
+import { getAssignments } from "../../../services/assignment.service";
+import type { Assignment } from "../../../types/assignment";
+import type { Course } from "../../../types/course";
+import type { Lesson } from "../../../types/lesson";
 import OverviewTab from "./components/OverviewTab";
 import LessonTab from "./components/LessonTab";
 import AssignmentTab from "./components/AssignmentTab";
@@ -18,44 +22,54 @@ function ManagementCoursePage() {
     const { courseId } = useParams();
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
-    const [course, setCourse] = useState<any>();
-    const [lessons, setLessons] = useState<any[]>([]);
+    const [course, setCourse] = useState<Course | null>(null);
+    const [lessons, setLessons] = useState<Lesson[]>([]);
+    const [assignments, setAssignments] = useState<Assignment[]>([]);
+    const [assignmentError, setAssignmentError] = useState("");
 
     const activeTab = searchParams.get("tab") || "overview";
-    useEffect(() => {
-        if (courseId) {
-            loadCourse();
-            loadLessons();
-        }
-    }, [courseId]);
-
-    async function loadCourse() {
+    const loadLessons = useCallback(async () => {
+        if (!courseId) return;
         try {
-            const data = await getCourseById(courseId!);
-            setCourse(data);
-        }
-        catch (error) {
-            console.error(error);
-        }
-    }
-
-    async function loadLessons() {
-        try {
-            const data = await getLessonByCourseId(courseId!);
+            const data = await getLessonByCourseId(courseId);
             setLessons(data);
         }
         catch (error) {
             console.error(error);
         }
-    }
+    }, [courseId]);
 
-    async function handleDeleteLesson(id: string) {
-        if (!window.confirm("Delete this lesson?")) return;
+    const loadAssignments = useCallback(async () => {
+        try {
+            const data = await getAssignments();
+            setAssignments(data);
+            setAssignmentError("");
+        }
+        catch (error) {
+            console.error(error);
+            setAssignmentError("Failed to load assignments. Please try again.");
+        }
+    }, []);
 
-        // await deleteLesson(id);
-
-        loadLessons();
-    }
+    useEffect(() => {
+        if (courseId) {
+            getCourseById(courseId)
+                .then(setCourse)
+                .catch((error) => console.error(error));
+            getLessonByCourseId(courseId)
+                .then(setLessons)
+                .catch((error) => console.error(error));
+            getAssignments()
+                .then((data) => {
+                    setAssignments(data);
+                    setAssignmentError("");
+                })
+                .catch((error) => {
+                    console.error(error);
+                    setAssignmentError("Failed to load assignments. Please try again.");
+                });
+        }
+    }, [courseId]);
 
     return (
 
@@ -100,7 +114,17 @@ function ManagementCoursePage() {
 
                 <div className="stat-card">
                     <FaClipboardList />
-                    <h3>6</h3>
+                    <h3>{assignments.filter((assignment) => {
+                        const courseRef = typeof assignment.CourseID === "string"
+                            ? assignment.CourseID
+                            : assignment.CourseID?._id;
+                        const lessonRef = typeof assignment.LessonID === "string"
+                            ? assignment.LessonID
+                            : assignment.LessonID?._id;
+
+                        return courseRef === courseId ||
+                            lessons.some((lesson) => lesson._id === lessonRef);
+                    }).length}</h3>
                     <p>Assignments</p>
                 </div>
 
@@ -167,12 +191,18 @@ function ManagementCoursePage() {
                 {activeTab === "lessons" && (
                     <LessonTab
                         lessons={lessons}
-                        onDelete={handleDeleteLesson}
+                        onDelete={loadLessons}
                     />
                 )}
 
                 {activeTab === "assignments" && (
-                    <AssignmentTab />
+                    <AssignmentTab
+                        assignments={assignments}
+                        lessons={lessons}
+                        courseId={courseId ?? ""}
+                        loadError={assignmentError}
+                        onChange={loadAssignments}
+                    />
                 )}
 
                 {activeTab === "students" && (

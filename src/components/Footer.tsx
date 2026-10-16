@@ -1,63 +1,83 @@
-import { Container, Row, Col } from "react-bootstrap";
+
+import { Container } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import {
+    FaGraduationCap,
+    FaArrowRight,
+    FaEnvelope,
+    FaPhoneAlt,
+} from "react-icons/fa";
+
+import "./Footer.css";
 
 function Footer() {
-
     return (
-
-        <footer className="main-footer">
-
+        <footer className="site-footer">
             <Container>
-
-                <Row>
-
-                    <Col md={5}>
-
-                        <h3>IELTS Master</h3>
-
+                <div className="site-footer-main">
+                    <div className="site-footer-about">
+                        <Link to="/home" className="site-footer-brand" aria-label="IELTS AI home">
+                            <span className="site-footer-brand-icon">
+                                <FaGraduationCap />
+                            </span>
+                            <span className="site-footer-brand-name">
+                                IELTS<span> SMARTER</span>
+                            </span>
+                        </Link>
                         <p>
-                            Learn IELTS smarter with AI.
+                            A focused place to study, practice all four IELTS
+                            skills and keep moving toward your English goals.
                         </p>
+                        <Link to="/register" className="site-footer-cta">
+                            Start learning <FaArrowRight aria-hidden="true" />
+                        </Link>
+                    </div>
 
-                    </Col>
+                    <nav className="site-footer-links" aria-label="Explore IELTS AI">
+                        <h2>Explore</h2>
+                        <Link to="/home#courses">Courses</Link>
+                        <Link to="/home#features">All features</Link>
+                        <Link to="/home#why-choose-us">Why choose us</Link>
+                        <Link to="/home#faq">FAQs</Link>
+                    </nav>
 
-                    <Col md={3}>
+                    <nav className="site-footer-links" aria-label="Practice IELTS skills">
+                        <h2>Practice</h2>
+                        <Link to="/home#writing-feedback">Writing</Link>
+                        <Link to="/home#speaking-practice">Speaking</Link>
+                        <Link to="/home#listening-practice">Listening</Link>
+                        <Link to="/home#reading-practice">Reading</Link>
+                    </nav>
 
-                        <h5>Quick Links</h5>
+                    <div className="site-footer-contact">
+                        <h2>Get in touch</h2>
+                        <p>Questions about getting started? Contact our team.</p>
+                        <a href="mailto:admin@gmail.com">
+                            <span className="site-footer-contact-icon">
+                                <FaEnvelope aria-hidden="true" />
+                            </span>
+                            admin@gmail.com
+                        </a>
+                        <a href="tel:0123456789">
+                            <span className="site-footer-contact-icon">
+                                <FaPhoneAlt aria-hidden="true" />
+                            </span>
+                            0123456789
+                        </a>
+                    </div>
+                </div>
 
-                        <p>Home</p>
-
-                        <p>Courses</p>
-
-                        <p>Writing</p>
-
-                    </Col>
-
-                    <Col md={4}>
-
-                        <h5>Contact</h5>
-
-                        <p>admin@gmail.com</p>
-
-                        <p>0123456789</p>
-
-                    </Col>
-
-                </Row>
-
-                <hr />
-
-                <p className="text-center">
-
-                    © 2026 IELTS Master
-
-                </p>
-
+                <div className="site-footer-bottom">
+                    <span>
+                        © {new Date().getFullYear()} IELTS AI. All rights reserved.
+                    </span>
+                    <span>
+                        Learn smarter. <strong>Grow confidently.</strong>
+                    </span>
+                </div>
             </Container>
-
         </footer>
-
     );
-
 }
 
 export default Footer;
