@@ -35,9 +35,9 @@ import {
     getLessonDetailsByLessonId,
     deleteLessonDetail,
     reorderLessonDetails
-} from "../../services/lesson.service";
+} from "../../../services/lesson.service";
 
-import type { Lesson, LessonDetail } from "../../types/lesson";
+import type { Lesson, LessonDetail } from "../../../types/lesson";
 
 import "./LessonDetailForm.css";
 

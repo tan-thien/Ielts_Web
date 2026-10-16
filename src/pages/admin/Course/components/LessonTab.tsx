@@ -7,19 +7,16 @@ import {
 
 import { useNavigate, useParams } from "react-router-dom";
 
-import { deleteLesson } from "../../../services/lesson.service";
+import { deleteLesson } from "../../../../services/lesson.service";
 
 
 interface Props {
     lessons: any[];
-    onDelete: () => void;
+    onDelete: () => Promise<void>;
 }
 
 
-function LessonTab({
-    lessons,
-    onDelete
-}: Props) {
+function LessonTab({ lessons, onDelete}: Props) {
 
     const navigate = useNavigate();
     const { courseId } = useParams();
@@ -41,7 +38,7 @@ function LessonTab({
 
             alert("Lesson deleted successfully.");
 
-            onDelete();
+            await onDelete();
 
         } catch (error: any) {
 

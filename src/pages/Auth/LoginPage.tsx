@@ -1,11 +1,13 @@
 import { useState } from "react";
+import axios from "axios";
 import { login } from "../../services/auth.service";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "./LoginPage.css";
 
 function LoginPage() {
 
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     const [email, setEmail] = useState("");
 
@@ -25,12 +27,18 @@ function LoginPage() {
             if (result.role === "admin") {
                 navigate("/admin");
             } else {
-                navigate("/home");
+                const redirect = searchParams.get("redirect");
+                navigate(redirect?.startsWith("/") ? redirect : "/home");
             }
 
-        } catch (error: any) {
-
-            alert(error.response?.data?.message);
+        } catch (error: unknown) {
+            if (axios.isAxiosError<{ message?: string }>(error)) {
+                alert(error.response?.data?.message || "Login failed");
+            } else if (error instanceof Error) {
+                alert(error.message);
+            } else {
+                alert("Login failed");
+            }
 
         }
 

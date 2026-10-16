@@ -1,21 +1,39 @@
-import { Navbar, Nav, Container, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+
 import { useEffect, useState } from "react";
+import {
+    Navbar,
+    Nav,
+    Container,
+    Dropdown,
+    Offcanvas,
+} from "react-bootstrap";
+import { Link, NavLink } from "react-router-dom";
+import {
+    FaGraduationCap,
+    FaUserCircle,
+    FaBook,
+    FaCog,
+    FaSignOutAlt,
+    FaTachometerAlt,
+    FaArrowRight,
+} from "react-icons/fa";
+
 import { getProfile } from "../services/auth.service";
-import { FaUserCircle, FaBook, FaCog, FaSignOutAlt, FaTachometerAlt } from "react-icons/fa";
-import { Dropdown } from "react-bootstrap";
+import "./Header.css";
 
 function Header() {
-
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
+
     const [profile, setProfile] = useState<any>(null);
 
     useEffect(() => {
         if (token) {
             loadProfile();
+        } else {
+            setProfile(null);
         }
-    }, []);
+    }, [token]);
 
     async function loadProfile() {
         try {
@@ -26,154 +44,129 @@ function Header() {
         }
     }
 
+    function handleLogout() {
+        localStorage.clear();
+        window.location.href = "/login";
+    }
+
     return (
         <Navbar
             expand="lg"
-            fixed="top"
             className="main-navbar"
+            collapseOnSelect
         >
             <Container>
+                {/* BRAND */}
+                <Link to="/home" className="navbar-brand header-brand">
+                    <span className="brand-icon"><FaGraduationCap /></span>
+                    <span className="brand-name">IELTS<span> SMARTER</span></span>
+                </Link>
 
-                <Navbar.Brand
-                    as={Link}
-                    to="/home"
-                    className="logo"
+                {/* MOBILE MENU */}
+                <Navbar.Toggle
+                    aria-controls="main-navbar-menu"
+                    className="header-toggler"
+                />
+
+                <Navbar.Offcanvas
+                    id="main-navbar-menu"
+                    placement="end"
+                    className="header-offcanvas"
+                    aria-labelledby="main-navbar-title"
                 >
-                    🎓 IELTS Master
-                </Navbar.Brand>
+                    <Offcanvas.Header closeButton>
+                        <Offcanvas.Title id="main-navbar-title">
+                            <span className="brand-name">
+                                IELTS<span>AI</span>
+                            </span>
+                        </Offcanvas.Title>
+                    </Offcanvas.Header>
 
-                <Navbar.Toggle />
-                <Navbar.Offcanvas placement="end">
-                    <Navbar.Collapse>
+                    <Offcanvas.Body>
+                        {/* NAVIGATION */}
+                        <Nav className="header-nav mx-lg-auto">
+                            <NavLink to="/home" end className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Home</NavLink>
 
-                        <Nav className="mx-auto">
+                            <NavLink to="/courses" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Courses</NavLink>
 
-                            <Nav.Link as={Link} to="/home">
-                                Home
-                            </Nav.Link>
+                            <NavLink to="/writingAI" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Writing</NavLink>
 
-                            <Nav.Link as={Link} to="/courses">
-                                Courses
-                            </Nav.Link>
+                            <NavLink to="/reading" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Reading</NavLink>
 
-                            <Nav.Link as={Link} to="/writing">
-                                Writing
-                            </Nav.Link>
+                            <NavLink to="/listening" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Listening</NavLink>
 
-                            <Nav.Link as={Link} to="/reading">
-                                Reading
-                            </Nav.Link>
-
-                            <Nav.Link as={Link} to="/listening">
-                                Listening
-                            </Nav.Link>
-
-                            <Nav.Link as={Link} to="/speaking">
-                                Speaking
-                            </Nav.Link>
-
+                            <NavLink to="/speaking" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Speaking</NavLink>
                         </Nav>
 
-                        {
-                            token ? (
-
-                                <Dropdown align="end" className="user-menu">
-
+                        {/* ACCOUNT */}
+                        <div className="header-actions">
+                            {token ? (
+                                <Dropdown
+                                    align="end"
+                                    className="user-menu"
+                                >
                                     <Dropdown.Toggle
-                                        as="div"
+                                        id="user-menu-toggle"
                                         className="user-trigger"
                                     >
-
                                         <img
                                             src={
                                                 profile?.detail?.Avatar ||
                                                 "https://i.pravatar.cc/100"
                                             }
                                             className="user-avatar"
-                                            alt=""
+                                            alt="User avatar"
                                         />
 
-                                        <div className="user-info">
-
-                                            <span>
+                                        <span className="user-info">
+                                            <strong>
                                                 {profile?.detail?.Name || "User"}
-                                            </span>
+                                            </strong>
 
                                             <small>
-                                                {profile?.user?.Role}
+                                                {profile?.user?.Role || role || "Member"}
                                             </small>
-
-                                        </div>
-
+                                        </span>
                                     </Dropdown.Toggle>
 
-                                    <Dropdown.Menu>
+                                    <Dropdown.Menu className="user-dropdown">
+                                        <Link to="/profile" className="dropdown-item"><FaUserCircle /> My Profile</Link>
 
-                                        <Dropdown.Item
-                                            as={Link}
-                                            to="/profile"
-                                        >
-                                            <FaUserCircle className="me-2" />
-                                            My Profile
-                                        </Dropdown.Item>
+                                        <Link to="/my-courses" className="dropdown-item"><FaBook /> My Courses</Link>
 
-                                        <Dropdown.Item
-                                            as={Link}
-                                            to="/my-courses"
-                                        >
-                                            <FaBook className="me-2" />
-                                            My Courses
-                                        </Dropdown.Item>
-
-                                        <Dropdown.Item
-                                            as={Link}
-                                            to="/settings"
-                                        >
-                                            <FaCog className="me-2" />
-                                            Settings
-                                        </Dropdown.Item>
+                                        <Link to="/settings" className="dropdown-item"><FaCog /> Settings</Link>
 
                                         {role?.toLowerCase() === "admin" && (
-                                            <Dropdown.Item as={Link} to="/admin" className="fw-semibold">
-                                                <FaTachometerAlt className="me-2" />
-                                                Admin Dashboard
-                                            </Dropdown.Item>
+                                            <Link to="/admin" className="dropdown-item admin-dropdown-item"><FaTachometerAlt /> Admin Dashboard</Link>
                                         )}
 
                                         <Dropdown.Divider />
 
                                         <Dropdown.Item
-                                            className="text-danger"
-                                            onClick={() => {
-                                                localStorage.clear();
-                                                window.location.href = "/login";
-                                            }}
+                                            onClick={handleLogout}
+                                            className="logout-item"
                                         >
-                                            <FaSignOutAlt className="me-2" />
+                                            <FaSignOutAlt />
                                             Logout
                                         </Dropdown.Item>
-
                                     </Dropdown.Menu>
-
                                 </Dropdown>
-
                             ) : (
+                                <div className="guest-actions">
+                                    <Link to="/login" className="header-login-btn">
+                                        Login
+                                    </Link>
 
-                                <Button
-                                    as={Link as any}
-                                    to="/login"
-                                    className="login-btn"
-                                >
-                                    Login
-                                </Button>
-
-                            )
-                        }
-
-                    </Navbar.Collapse>
+                                    <Link to="/register" className="header-start-btn">
+                                        Get Started
+                                        <FaArrowRight />
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    </Offcanvas.Body>
                 </Navbar.Offcanvas>
             </Container>
-
         </Navbar>
     );
 }

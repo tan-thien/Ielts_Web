@@ -7,9 +7,9 @@ import {
     createLessonDetail,
     updateLessonDetail,
     getLessonDetailById
-} from "../../services/lesson.service";
+} from "../../../services/lesson.service";
 
-import type { LessonDetailPayload } from "../../types/lesson";
+import type { LessonDetailPayload } from "../../../types/lesson";
 
 function LessonDetailFormPage() {
 

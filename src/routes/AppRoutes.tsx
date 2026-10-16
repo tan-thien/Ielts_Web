@@ -3,16 +3,22 @@ import LoginPage from "../pages/Auth/LoginPage";
 import RegisterPage from "../pages/Auth/RegisterPage";
 import HomePage from "../pages/User/HomePage";
 
-import DashboardPage from "../pages/Dashboard/DashboardPage";
+import DashboardPage from "../pages/admin/Dashboard/DashboardPage";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminLayout from "../layouts/AdminLayout";
 import UserLayout from "../layouts/UserLayout";
-import CoursePage from "../pages/Course/CoursePage";
+import CoursePage from "../pages/admin/Course/CoursePage";
 import ProfilePage from "../pages/User/ProfilePage";
-import ManagementCoursePage from "../pages/Course/ManagementCoursePage";
-import LessonFormPage from "../pages/Lesson/LessonFormPage";
-import LessonDetailPage from "../pages/Lesson/LessonDetailPage";
-import LessonDetailFormPage from "../pages/Lesson/LessonDetailFormPage";
+import ManagementCoursePage from "../pages/admin/Course/ManagementCoursePage";
+import LessonFormPage from "../pages/admin/Lesson/LessonFormPage";
+import LessonDetailPage from "../pages/admin/Lesson/LessonDetailPage";
+import LessonDetailFormPage from "../pages/admin/Lesson/LessonDetailFormPage";
+
+import CoursePageUser from "../pages/User/CoursePage";
+import CourseDetailPage from "../pages/User/Course/CourseDetailPage";
+import CourseLearningPage from "../pages/User/Course/CourseLearningPage";
+import PaymentResultPage from "../pages/User/Course/PaymentResultPage";
+import WritingPage from "../pages/User/WritingPage";
 
 function AppRoutes() {
     return (
@@ -25,8 +31,12 @@ function AppRoutes() {
             <Route path="/" element={<UserLayout />} >
                 <Route index element={<Navigate to="/home" replace />} />
                 <Route path="/home" element={<HomePage />} />
+                <Route path="/courses" element={<CoursePageUser />} />
+                <Route path="/courses/:courseId" element={<CourseDetailPage />} />
+                <Route path="/courses/:courseId/learn" element={<CourseLearningPage />} />
+                <Route path="/payment/result" element={<PaymentResultPage />} />
                 <Route path="profile" element={<ProfilePage />} />
-
+                <Route path="/writingAI" element={<WritingPage />} />
             </Route>
 
             /*Admin  route */
