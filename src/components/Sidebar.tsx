@@ -8,7 +8,7 @@ import {
     FaChalkboardTeacher,
     FaMicrophone,
     FaPenNib,
-    FaHeadphones,
+    // FaHeadphones,
     FaSignOutAlt,
     FaGraduationCap,
     FaCog
