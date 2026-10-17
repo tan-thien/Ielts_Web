@@ -1,8 +1,23 @@
-import type { Lesson, LessonDetailPayload } from "../types/lesson";
+import type { Lesson, LessonDetailPayload, LessonWithCourse } from "../types/lesson";
 import api from "./api";
 
 export const getLessonByCourseId = async (courseId: string) => {
     const res = await api.get(`/lessons/course/${courseId}`);
+    return res.data.data;
+};
+
+export const getAllLessons = async (): Promise<LessonWithCourse[]> => {
+    const res = await api.get("/lessons/get-all");
+    return res.data.data;
+};
+
+export const getCourseLessonProgress = async (courseId: string): Promise<string[]> => {
+    const res = await api.get(`/lessons/progress/course/${courseId}`);
+    return res.data.data.map((item: { LessonID: string }) => item.LessonID);
+};
+
+export const completeLesson = async (lessonId: string) => {
+    const res = await api.post(`/lessons/progress/${lessonId}/complete`);
     return res.data.data;
 };
 

@@ -32,7 +32,7 @@ export interface CourseOrder {
     Amount: number;
     Currency: string;
     Status: "Pending" | "Paid" | "Failed";
-    PaymentMethod: "MoMo" | "Free";
+    PaymentMethod: "MoMo" | "VNPAY" | "Free";
     PaidAt?: string;
     createdAt: string;
 }

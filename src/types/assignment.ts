@@ -25,8 +25,8 @@ export interface AssignmentQuestion {
         Content: string;
     }[];
     Choices: { Key: string; Content: string }[];
-    CorrectAnswer: unknown;
-    Explanation: string;
+    CorrectAnswer?: unknown;
+    Explanation?: string;
     Score: number;
 }
 
@@ -46,6 +46,29 @@ export interface Assignment {
     IsOpen: boolean;
     IsDeleted: boolean;
     Questions: AssignmentQuestion[];
+}
+
+export interface SubmissionAnswer {
+    QuestionOrder: number;
+    Answer: unknown;
+    FileUrl?: string;
+    Score?: number;
+    Feedback?: string;
+}
+
+export interface AssignmentSubmission {
+    _id: string;
+    AssignmentID: string | { _id: string; Title?: string; Skill?: string; TotalScore?: number };
+    UserID?: string;
+    Status: "Doing" | "Submitted" | "Graded";
+    Answers: SubmissionAnswer[];
+    TotalScore: number;
+    BandScore: number;
+    IsPassed: boolean;
+    StartTime: string;
+    SubmitTime?: string;
+    Duration: number;
+    createdAt: string;
 }
 
 export interface AssignmentPayload {

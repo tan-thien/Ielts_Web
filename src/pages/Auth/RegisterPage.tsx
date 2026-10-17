@@ -11,6 +11,7 @@ import {
     FaMapMarkerAlt,
     FaCalendarAlt,
     FaCamera,
+    FaArrowLeft,
     FaArrowRight,
     FaCheckCircle,
     FaSpinner,
@@ -222,6 +223,10 @@ function RegisterPage() {
 
                 <div className="register-form-panel">
                     <div className="register-form-heading">
+                        <Link to="/login" className="register-back-link">
+                            <FaArrowLeft aria-hidden="true" />
+                            Quay lại đăng nhập
+                        </Link>
                         <span className="register-form-label">
                             GET STARTED FOR FREE
                         </span>

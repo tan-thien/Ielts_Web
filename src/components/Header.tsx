@@ -19,30 +19,38 @@ import {
 } from "react-icons/fa";
 
 import { getProfile } from "../services/auth.service";
+import type { ProfileData } from "../types/auth";
 import "./Header.css";
 
 function Header() {
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
-    const [profile, setProfile] = useState<any>(null);
+    const [profile, setProfile] = useState<ProfileData | null>(null);
 
     useEffect(() => {
-        if (token) {
-            loadProfile();
-        } else {
-            setProfile(null);
-        }
+        if (!token) return;
+        let cancelled = false;
+        getProfile()
+            .then((data) => {
+                if (!cancelled) setProfile(data);
+            })
+            .catch(() => console.log("Cannot load profile"));
+        return () => {
+            cancelled = true;
+        };
     }, [token]);
 
-    async function loadProfile() {
-        try {
-            const data = await getProfile();
-            setProfile(data);
-        } catch {
-            console.log("Cannot load profile");
-        }
-    }
+    useEffect(() => {
+        const refreshProfile = () => {
+            if (!token) return;
+            getProfile()
+                .then(setProfile)
+                .catch(() => console.log("Cannot load profile"));
+        };
+        window.addEventListener("profile-updated", refreshProfile);
+        return () => window.removeEventListener("profile-updated", refreshProfile);
+    }, [token]);
 
     function handleLogout() {
         localStorage.clear();
@@ -89,13 +97,15 @@ function Header() {
 
                             <NavLink to="/courses" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Courses</NavLink>
 
-                            <NavLink to="/writingAI" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Writing</NavLink>
+                            <NavLink to="/writingAI" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Writing AI</NavLink>
 
-                            <NavLink to="/reading" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Reading</NavLink>
+                            {/* <NavLink to="/reading" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Reading</NavLink>
 
-                            <NavLink to="/listening" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Listening</NavLink>
+                            <NavLink to="/listening" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Listening</NavLink> */}
 
-                            <NavLink to="/speaking" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Speaking</NavLink>
+                            <NavLink to="/speakingAI" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Speaking AI</NavLink>
+
+                            <NavLink to="/vocabulary" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Vocabulary</NavLink>
                         </Nav>
 
                         {/* ACCOUNT */}

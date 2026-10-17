@@ -154,7 +154,7 @@
 
 }
 
-.profile-name .profile-name{
+.profile-name{
 
     margin-top:20px;
 
@@ -168,7 +168,7 @@
 
 }
 
-.profile-name .profile-role{
+.profile-role{
 
     color:#777;
 
@@ -178,7 +178,7 @@
 
 }
 
-.profile-name .role-badge{
+.role-badge{
 
     display:inline-flex;
 
@@ -216,6 +216,88 @@
 
 }
 
+.profile-avatar-wrap{
+    position:relative;
+    display:inline-block;
+}
+
+.profile-avatar-placeholder{
+    display:grid;
+    place-items:center;
+    background:#E7EEFC;
+    color:#17479D;
+    font-size:58px;
+}
+
+.profile-avatar-camera{
+    position:absolute;
+    right:7px;
+    bottom:5px;
+    display:grid;
+    width:42px;
+    height:42px;
+    place-items:center;
+    border:3px solid #fff;
+    border-radius:50%;
+    background:#EE6823;
+    color:#fff;
+    cursor:pointer;
+}
+
+.profile-avatar-camera:disabled{
+    cursor:wait;
+    opacity:.7;
+}
+
+.profile-file-input{
+    display:none;
+}
+
+.profile-avatar-hint{
+    display:block;
+    margin-top:10px;
+    color:#71809A;
+    font-size:12px;
+}
+
+.profile-spinner{
+    animation:profile-spin .8s linear infinite;
+}
+
+@keyframes profile-spin{
+    to{transform:rotate(360deg);}
+}
+
+.profile-notice{
+    position:relative;
+    z-index:2;
+    margin:12px 0;
+    padding:12px 16px;
+    border-radius:10px;
+}
+
+.profile-notice.error{
+    background:#fff0f0;
+    color:#b42318;
+}
+
+.profile-notice.success{
+    background:#eaf8f0;
+    color:#187548;
+}
+
+.profile-state{
+    position:relative;
+    z-index:2;
+    margin-top:110px;
+    padding:26px;
+    border-radius:16px;
+    background:#fff;
+    color:#71809A;
+    text-align:center;
+    box-shadow:0 12px 35px rgba(0,0,0,.06);
+}
+
 /* ==========================
    RIGHT CARD
 ========================== */
@@ -248,6 +330,25 @@
 
     padding-bottom:20px;
 
+}
+
+.profile-title > div > p{
+    margin:8px 0 0;
+    color:#71809A;
+    font-size:13px;
+}
+
+.profile-form-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:22px;
+}
+
+.profile-form-actions .btn-outline-secondary{
+    border-radius:12px;
+    padding:11px 22px;
+    font-weight:600;
 }
 
 .profile-title h4{
@@ -320,6 +421,12 @@ textarea.form-control{
 
     padding-top:12px;
 
+}
+
+.profile-address-input{
+    height:auto;
+    min-height:100px;
+    resize:vertical;
 }
 
 /* ==========================

@@ -56,9 +56,9 @@ function Sidebar({ collapsed }: SidebarProps) {
             text: "Assignments"
         },
         {
-            path: "/admin/users",
+            path: "/admin/students",
             icon: <FaUsers />,
-            text: "Users"
+            text: "Students"
         },
         {
             path: "/admin/teachers",
@@ -66,25 +66,25 @@ function Sidebar({ collapsed }: SidebarProps) {
             text: "Teachers"
         },
         {
-            path: "/admin/speaking",
+            path: "/admin/speakingAI",
             icon: <FaMicrophone />,
-            text: "Speaking"
+            text: "Speaking AI"
         },
         {
-            path: "/admin/writing",
+            path: "/admin/writingAI",
             icon: <FaPenNib />,
-            text: "Writing"
+            text: "Writing AI"
         },
-        {
-            path: "/admin/reading",
-            icon: <FaBookOpen />,
-            text: "Reading"
-        },
-        {
-            path: "/admin/listening",
-            icon: <FaHeadphones />,
-            text: "Listening"
-        },
+        // {
+        //     path: "/admin/reading",
+        //     icon: <FaBookOpen />,
+        //     text: "Reading"
+        // },
+        // {
+        //     path: "/admin/listening",
+        //     icon: <FaHeadphones />,
+        //     text: "Listening"
+        // },
         {
             path: "/admin/vocabulary",
             icon: <FaBook />,

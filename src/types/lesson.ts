@@ -29,3 +29,7 @@ export interface Lesson {
     IsDeleted?: boolean;
     Details: LessonDetail[];
 }
+
+export type LessonWithCourse = Omit<Lesson, "CourseID"> & {
+    CourseID: string | { _id: string; Name: string } | null;
+};

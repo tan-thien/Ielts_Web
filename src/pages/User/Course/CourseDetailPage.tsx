@@ -26,6 +26,8 @@ function CourseDetailPage() {
     const [order, setOrder] = useState<CourseOrder | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isPaying, setIsPaying] = useState(false);
+    const [showPaymentMethods, setShowPaymentMethods] = useState(false);
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<"MoMo" | "VNPAY">("MoMo");
     const [error, setError] = useState("");
     const [paymentError, setPaymentError] = useState("");
 
@@ -63,7 +65,7 @@ function CourseDetailPage() {
         };
     }, [courseId]);
 
-    const handlePayment = async () => {
+    const handlePayment = async (paymentMethod: "MoMo" | "VNPAY" | "Free" = selectedPaymentMethod) => {
         if (!courseId) return;
         if (!localStorage.getItem("token")) {
             navigate(`/login?redirect=${encodeURIComponent(`/courses/${courseId}`)}`);
@@ -77,13 +79,13 @@ function CourseDetailPage() {
         setIsPaying(true);
         setPaymentError("");
         try {
-            const result = await createCoursePayment(courseId);
+            const result = await createCoursePayment(courseId, paymentMethod);
             if (result.alreadyPaid || result.order.Status === "Paid") {
                 navigate(`/courses/${courseId}/learn`);
             } else if (result.paymentUrl) {
                 window.location.assign(result.paymentUrl);
             } else {
-                setPaymentError("Không nhận được đường dẫn thanh toán MoMo. Vui lòng thử lại.");
+                setPaymentError("Không nhận được đường dẫn thanh toán. Vui lòng thử lại.");
             }
         } catch (paymentRequestError) {
             console.error(paymentRequestError);
@@ -140,20 +142,75 @@ function CourseDetailPage() {
                                 Bạn đã mua khóa học này
                             </div>
                         ) : (
-                            <button
-                                className="course-detail-enroll-button"
-                                type="button"
-                                onClick={handlePayment}
-                                disabled={isPaying || !course.Status || !course.IsOpen}
-                            >
-                                {isPaying
-                                    ? "Đang chuyển đến MoMo..."
-                                    : order?.Status === "Pending"
-                                      ? "Thanh toán lại qua MoMo"
-                                      : course.Fee === 0
-                                        ? "Học miễn phí"
-                                        : "Mua khóa học qua MoMo"}
-                            </button>
+                            course.Fee === 0 ? (
+                                <button
+                                    className="course-detail-enroll-button"
+                                    type="button"
+                                    onClick={() => void handlePayment("Free")}
+                                    disabled={isPaying || !course.Status || !course.IsOpen}
+                                >
+                                    {isPaying ? "Đang xử lý..." : "Học miễn phí"}
+                                </button>
+                            ) : (
+                                <>
+                                    {!showPaymentMethods ? (
+                                        <button
+                                            className="course-detail-enroll-button"
+                                            type="button"
+                                            onClick={() => setShowPaymentMethods(true)}
+                                            disabled={isPaying || !course.Status || !course.IsOpen}
+                                        >
+                                            Chọn phương thức thanh toán
+                                        </button>
+                                    ) : (
+                                        <div className="course-payment-methods">
+                                            <fieldset disabled={isPaying}>
+                                                <legend>Chọn phương thức</legend>
+                                                <label className={selectedPaymentMethod === "MoMo" ? "selected" : ""}>
+                                                    <input
+                                                        type="radio"
+                                                        name="payment-method"
+                                                        value="MoMo"
+                                                        checked={selectedPaymentMethod === "MoMo"}
+                                                        onChange={() => setSelectedPaymentMethod("MoMo")}
+                                                    />
+                                                    <span className="course-payment-logo momo-logo">M</span>
+                                                    <span><strong>MoMo</strong><small>Ví điện tử MoMo</small></span>
+                                                </label>
+                                                <label className={selectedPaymentMethod === "VNPAY" ? "selected" : ""}>
+                                                    <input
+                                                        type="radio"
+                                                        name="payment-method"
+                                                        value="VNPAY"
+                                                        checked={selectedPaymentMethod === "VNPAY"}
+                                                        onChange={() => setSelectedPaymentMethod("VNPAY")}
+                                                    />
+                                                    <span className="course-payment-logo vnpay-logo">V</span>
+                                                    <span><strong>VNPay</strong><small>Thẻ nội địa, QR và ngân hàng</small></span>
+                                                </label>
+                                            </fieldset>
+                                            <button
+                                                className="course-detail-enroll-button"
+                                                type="button"
+                                                onClick={() => void handlePayment()}
+                                                disabled={isPaying}
+                                            >
+                                                {isPaying
+                                                    ? `Đang chuyển đến ${selectedPaymentMethod}...`
+                                                    : `Thanh toán bằng ${selectedPaymentMethod}`}
+                                            </button>
+                                            <button
+                                                className="course-payment-cancel"
+                                                type="button"
+                                                onClick={() => setShowPaymentMethods(false)}
+                                                disabled={isPaying}
+                                            >
+                                                Quay lại
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
+                            )
                         )}
                         {order?.Status === "Paid" && (
                             <Link className="course-detail-learn-button" to={`/courses/${courseId}/learn`}>
@@ -167,7 +224,7 @@ function CourseDetailPage() {
                             <p className="course-detail-error-text" role="alert">{paymentError}</p>
                         )}
                         <p className="course-detail-notice">
-                            Thanh toán được xử lý an toàn qua MoMo. Quyền học được mở sau khi MoMo xác nhận giao dịch thành công.
+                            Quyền học được mở sau khi cổng thanh toán xác nhận giao dịch thành công.
                         </p>
                     </aside>
                 </section>

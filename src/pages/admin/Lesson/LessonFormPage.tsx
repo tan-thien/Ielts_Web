@@ -5,6 +5,8 @@ import {
     getLessonById,
     updateLesson
 } from "../../../services/lesson.service";
+import { getCourses } from "../../../services/course.service";
+import type { Course } from "../../../types/course";
 import type { Lesson } from "../../../types/lesson";
 
 function LessonFormPage() {
@@ -12,6 +14,9 @@ function LessonFormPage() {
     const navigate = useNavigate();
     const { courseId, lessonId } = useParams();
     const isEdit = !!lessonId;
+    const isStandalone = !courseId;
+    const [courses, setCourses] = useState<Course[]>([]);
+    const [loadError, setLoadError] = useState("");
     const [lesson, setLesson] = useState<Omit<Lesson, "Details">>({
         Name: "",
         Description: "",
@@ -21,6 +26,15 @@ function LessonFormPage() {
         Status: "Draft",
         IsOpen: false
     });
+
+    useEffect(() => {
+        getCourses()
+            .then(setCourses)
+            .catch((error) => {
+                console.error("Load lesson courses error:", error);
+                setLoadError("Failed to load courses. Please try again.");
+            });
+    }, []);
 
     useEffect(() => {
         if (!lessonId) return;
@@ -134,9 +148,13 @@ function LessonFormPage() {
                     : "Lesson created successfully!"
             );
 
-            navigate(savedLessonId
-                ? `/admin/courses/${courseId}/lessons/${savedLessonId}/details`
-                : `/admin/courses/${courseId}?tab=lessons`);
+            if (isStandalone) {
+                navigate("/admin/lessons");
+            } else {
+                navigate(savedLessonId
+                    ? `/admin/courses/${lesson.CourseID}/lessons/${savedLessonId}/details`
+                    : `/admin/courses/${lesson.CourseID}?tab=lessons`);
+            }
 
         } catch (err: unknown) {
 
@@ -171,7 +189,27 @@ function LessonFormPage() {
 
                 <div className="card-body">
 
+                    {loadError && <div className="alert alert-danger">{loadError}</div>}
+
                     <form onSubmit={handleSubmit}>
+
+                        <div className="mb-3">
+
+                            <label htmlFor="CourseID">Course</label>
+                            <select
+                                id="CourseID"
+                                className="form-select"
+                                name="CourseID"
+                                value={lesson.CourseID}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Select a course</option>
+                                {courses.map(course => (
+                                    <option key={course._id} value={course._id}>{course.Name}</option>
+                                ))}
+                            </select>
+                        </div>
 
                         <div className="mb-3">
 

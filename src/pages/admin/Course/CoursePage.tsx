@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getCourses, createCourse, updateCourse, deleteCourse } from "../../../services/course.service";
+import { uploadCloudinaryResource } from "../../../services/cloudinary.service";
 import "./CoursePage.css";
-import axios from "axios";
 import { FaPlus, FaSearch, FaEye, FaEdit, FaTrash, FaImage, FaBook } from "react-icons/fa";
 import { useNavigate } from "react-router";
 
@@ -61,23 +61,19 @@ function CoursePage() {
     };
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files) return;
-        const file = e.target.files[0];
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "ielts-web");
+        const file = e.target.files?.[0];
+        if (!file) return;
+        e.target.value = "";
+
         try {
-            const response = await axios.post(
-                "https://api.cloudinary.com/v1_1/hgjoncad/image/upload",
-                formData
-            );
+            const imageUrl = await uploadCloudinaryResource(file, "Image");
             setForm({
                 ...form,
-                Thumbnail: response.data.secure_url
+                Thumbnail: imageUrl
             });
         } catch (error) {
             console.log(error);
-            alert("Upload image failed");
+            alert(error instanceof Error ? error.message : "Upload image failed");
         }
 
     };
