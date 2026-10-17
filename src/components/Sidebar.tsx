@@ -114,7 +114,7 @@ function Sidebar({ collapsed }: SidebarProps) {
 
                     <div>
 
-                        <h2>IELTS Master</h2>
+                        <h2>IELTS NGTANTH_</h2>
 
                         <p>Admin Panel</p>
 
