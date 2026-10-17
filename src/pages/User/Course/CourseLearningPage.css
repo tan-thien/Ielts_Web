@@ -56,6 +56,24 @@
     font-size: 1.05rem;
 }
 
+.course-learning-sidebar-subheading {
+    margin: 24px 0 10px;
+    color: #203856;
+    font-size: 0.95rem;
+}
+
+.course-learning-global-assignments {
+    display: grid;
+    gap: 7px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.course-learning-global-assignments button {
+    overflow-wrap: anywhere;
+}
+
 .course-learning-sidebar ol {
     display: grid;
     gap: 7px;
@@ -76,6 +94,43 @@
     color: #50647d;
     text-align: left;
     cursor: pointer;
+}
+
+.course-learning-completed {
+    margin-left: auto;
+    color: #188257;
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+.course-learning-progress-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin: 18px 0;
+    padding: 13px 15px;
+    border: 1px solid #dce8f2;
+    border-radius: 10px;
+    background: #f8fbff;
+    color: #526984;
+    font-size: 0.88rem;
+}
+
+.course-learning-progress-action button {
+    padding: 9px 13px;
+    border: 0;
+    border-radius: 8px;
+    background: #17479d;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.course-learning-progress-action button:disabled {
+    background: #d9e7df;
+    color: #27704b;
+    cursor: default;
 }
 
 .course-learning-sidebar button:hover,
@@ -155,6 +210,258 @@
 }
 
 .course-learning-error {
+    color: #a32c35;
+}
+
+.course-learning-lesson-assignments {
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 1px solid #e5ebf4;
+}
+
+.course-learning-lesson-assignments > h3 {
+    margin-bottom: 16px;
+    color: #142b50;
+}
+
+.course-assignment-card {
+    margin-top: 16px;
+    padding: 20px;
+    border: 1px solid #e0e8f2;
+    border-radius: 12px;
+    background: #fbfcfe;
+}
+
+.course-assignment-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: #1c5fae;
+}
+
+.course-assignment-heading > svg {
+    margin-top: 5px;
+    flex: none;
+}
+
+.course-assignment-heading h3 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.course-assignment-heading p,
+.course-assignment-description {
+    margin: 5px 0 0;
+    color: #687a90;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    white-space: pre-line;
+}
+
+.course-assignment-result {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #edf7f1;
+    color: #17633c;
+    font-size: 0.88rem;
+}
+
+.course-assignment-result.pending {
+    background: #fff6e6;
+    color: #8c5700;
+}
+
+.course-assignment-timer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    margin-top: 16px;
+    padding: 12px 14px;
+    border: 1px solid #cdddf2;
+    border-radius: 8px;
+    background: #f1f6ff;
+    color: #31577f;
+}
+
+.course-assignment-timer strong {
+    color: #17479d;
+    font-size: 1.15rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.course-assignment-timer.low {
+    border-color: #f1b8a5;
+    background: #fff3ed;
+    color: #a23c20;
+}
+
+.course-assignment-timer.low strong {
+    color: #ba3b1d;
+}
+
+.course-assignment-attempt-limit {
+    margin-top: 14px;
+    color: #687a90;
+    font-size: 0.9rem;
+}
+
+.course-assignment-start,
+.course-assignment-actions button {
+    padding: 10px 15px;
+    border: 0;
+    border-radius: 8px;
+    background: #17479d;
+    color: #fff;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.course-assignment-start {
+    margin-top: 15px;
+}
+
+.course-assignment-start:disabled,
+.course-assignment-actions button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.course-assignment-form {
+    display: grid;
+    gap: 15px;
+    margin-top: 18px;
+}
+
+.course-assignment-question {
+    min-width: 0;
+    margin: 0;
+    padding: 14px;
+    border: 1px solid #e0e8f2;
+    border-radius: 9px;
+    background: #fff;
+}
+
+.course-assignment-question legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: auto;
+    margin: 0;
+    padding: 0 5px;
+    color: #203856;
+    font-size: 0.94rem;
+}
+
+.course-assignment-question legend span {
+    color: #2674d9;
+    font-weight: 750;
+}
+
+.course-assignment-question > p {
+    margin: 10px 0;
+    line-height: 1.6;
+    white-space: pre-line;
+}
+
+.course-assignment-question-text {
+    color: #1b2b43;
+    font-weight: 600;
+}
+
+.course-assignment-choice {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin: 9px 0;
+    color: #43566f;
+    cursor: pointer;
+}
+
+.course-assignment-choice input {
+    margin-top: 5px;
+}
+
+.course-assignment-order {
+    align-items: center;
+    justify-content: space-between;
+}
+
+.course-assignment-order select {
+    min-width: min(420px, 72%);
+    padding: 8px 10px;
+    border: 1px solid #ccd6e3;
+    border-radius: 7px;
+    background: #fff;
+    color: #1b2b43;
+}
+
+.course-assignment-gap-answers {
+    display: grid;
+    gap: 12px;
+}
+
+.course-assignment-gap-answers label {
+    display: grid;
+    gap: 5px;
+    color: #50647d;
+    font-size: 0.9rem;
+}
+
+.course-assignment-question input[type="text"],
+.course-assignment-question textarea {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccd6e3;
+    border-radius: 7px;
+    background: #fff;
+    color: #1b2b43;
+}
+
+.course-assignment-question textarea {
+    resize: vertical;
+}
+
+.course-assignment-question small {
+    display: block;
+    margin-top: 7px;
+    color: #687a90;
+}
+
+.course-assignment-resource {
+    margin: 10px 0;
+}
+
+.course-assignment-resource img,
+.course-assignment-resource video {
+    display: block;
+    max-width: 100%;
+    max-height: 400px;
+}
+
+.course-assignment-resource audio {
+    width: 100%;
+}
+
+.course-assignment-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.course-assignment-actions button:first-child {
+    border: 1px solid #cdd8e6;
+    background: #fff;
+    color: #344a66;
+}
+
+.course-assignment-error {
+    margin: 12px 0 0;
     color: #a32c35;
 }
 

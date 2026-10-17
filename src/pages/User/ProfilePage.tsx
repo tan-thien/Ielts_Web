@@ -1,201 +1,338 @@
-import { useEffect, useState } from "react";
-import { FaUserEdit, FaCamera } from "react-icons/fa";
-import { getProfile } from "../../services/auth.service";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { FaCamera, FaSpinner, FaUser, FaUserEdit } from "react-icons/fa";
+import { getProfile, updateProfile } from "../../services/auth.service";
+import { uploadCloudinaryResource } from "../../services/cloudinary.service";
+import type { ProfileData, ProfileUpdateRequest } from "../../types/auth";
 import "./ProfilePage.css";
 
-function ProfilePage() {
+const emptyForm: ProfileUpdateRequest = {
+    Name: "",
+    Gender: "male",
+    Phone: "",
+    Address: "",
+    Birthday: "",
+    Avatar: "",
+};
 
-    const [profile, setProfile] = useState<any>();
+function dateInputValue(value?: string): string {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toISOString().slice(0, 10);
+}
+
+function getErrorMessage(error: unknown): string {
+    if (typeof error === "object" && error !== null && "response" in error) {
+        const response = error.response;
+        if (typeof response === "object" && response !== null && "data" in response) {
+            const data = response.data;
+            if (typeof data === "object" && data !== null && "message" in data &&
+                typeof data.message === "string") {
+                return data.message;
+            }
+        }
+    }
+    return error instanceof Error ? error.message : "Đã xảy ra lỗi. Vui lòng thử lại.";
+}
+
+function toProfileForm(profile: ProfileData): ProfileUpdateRequest {
+    return {
+        Name: profile.detail?.Name ?? "",
+        Gender: profile.detail?.Gender ?? "male",
+        Phone: profile.detail?.Phone ?? "",
+        Address: profile.detail?.Address ?? "",
+        Birthday: dateInputValue(profile.detail?.Birthday),
+        Avatar: profile.detail?.Avatar ?? "",
+    };
+}
+
+function ProfilePage() {
+    const avatarInputRef = useRef<HTMLInputElement>(null);
+    const [profile, setProfile] = useState<ProfileData | null>(null);
+    const [form, setForm] = useState<ProfileUpdateRequest>(emptyForm);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+    const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
 
     useEffect(() => {
-        loadProfile();
+        let cancelled = false;
+        getProfile()
+            .then((data) => {
+                if (cancelled) return;
+                setProfile(data);
+                setForm(toProfileForm(data));
+            })
+            .catch((error: unknown) => {
+                if (!cancelled) setErrorMessage(getErrorMessage(error));
+            })
+            .finally(() => {
+                if (!cancelled) setIsLoading(false);
+            });
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
-    async function loadProfile() {
-        const data = await getProfile();
-        setProfile(data);
+    const handleAvatarChange = async (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        event.target.value = "";
+        setErrorMessage("");
+        setSuccessMessage("");
+
+        if (!file.type.startsWith("image/")) {
+            setErrorMessage("Vui lòng chọn file ảnh.");
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            setErrorMessage("Ảnh đại diện không được vượt quá 5 MB.");
+            return;
+        }
+
+        setIsUploadingAvatar(true);
+        try {
+            const avatarUrl = await uploadCloudinaryResource(file, "Image");
+            const updated = await updateProfile({
+                ...(profile ? toProfileForm(profile) : form),
+                Avatar: avatarUrl,
+            });
+            setProfile(updated);
+            setForm((current) => ({ ...current, Avatar: avatarUrl }));
+            window.dispatchEvent(new Event("profile-updated"));
+            setSuccessMessage("Đã cập nhật ảnh đại diện.");
+        } catch (error) {
+            setErrorMessage(getErrorMessage(error));
+        } finally {
+            setIsUploadingAvatar(false);
+        }
+    };
+
+    const handleSave = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setErrorMessage("");
+        setSuccessMessage("");
+        setIsSaving(true);
+        try {
+            const updated = await updateProfile(form);
+            setProfile(updated);
+            setForm(toProfileForm(updated));
+            window.dispatchEvent(new Event("profile-updated"));
+            setIsEditing(false);
+            setSuccessMessage("Đã cập nhật thông tin tài khoản.");
+        } catch (error) {
+            setErrorMessage(getErrorMessage(error));
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const cancelEditing = () => {
+        if (profile) setForm(toProfileForm(profile));
+        setIsEditing(false);
+        setErrorMessage("");
+    };
+
+    if (isLoading) {
+        return (
+            <main className="profile-page container-fluid">
+                <div className="profile-state">Đang tải thông tin tài khoản...</div>
+            </main>
+        );
     }
 
     return (
-
-        <div className="profile-page container-fluid">
-
-
+        <main className="profile-page container-fluid">
             <div className="profile-cover">
                 <div className="page-header">
-
                     <h2>My Profile</h2>
-
-                    <p>
-                        Manage your personal information
-                    </p>
-
+                    <p>Manage your personal information</p>
                 </div>
-
             </div>
 
-            <div className="row g-4 profile-content">
-
-                <div className="col-lg-4 col-xl-3">
-
-                    <div className="profile-card">
-
-                        <img
-                            src={
-                                profile?.detail?.Avatar ||
-                                "https://i.pravatar.cc/300"
-                            }
-                            className="profile-avatar"
-                            alt=""
-                        />
-
-                        <h3 className="profile-name">
-                            {profile?.detail?.Name}
-                        </h3>
-
-                        <p className="profile-role">
-                            {profile?.user?.Role === "admin"
-                                ? "Administrator"
-                                : "Student"}
-                        </p>
-
-                        <div className="role-badge">
-                            {profile?.user?.Role?.toUpperCase()}
-                        </div>
-
-                        <button className="btn btn-outline-primary change-avatar-btn mt-4">
-
-                            <FaCamera className="me-2" />
-
-                            Change Avatar
-
-                        </button>
-
+            {errorMessage && <div className="profile-notice error" role="alert">{errorMessage}</div>}
+            {successMessage && <div className="profile-notice success" role="status">{successMessage}</div>}
+            {!profile ? (
+                <div className="profile-state">Không thể tải thông tin tài khoản.</div>
+            ) : (
+                <div className="row g-4 profile-content">
+                    <div className="col-lg-4 col-xl-3">
+                        <section className="profile-card">
+                            <div className="profile-avatar-wrap">
+                                {profile.detail?.Avatar ? (
+                                    <img
+                                        src={profile.detail.Avatar}
+                                        className="profile-avatar"
+                                        alt={`Ảnh đại diện ${profile.detail.Name || profile.user.Email}`}
+                                    />
+                                ) : (
+                                    <div className="profile-avatar profile-avatar-placeholder" aria-label="Chưa có ảnh đại diện">
+                                        <FaUser />
+                                    </div>
+                                )}
+                                <button
+                                    className="profile-avatar-camera"
+                                    type="button"
+                                    aria-label="Thay đổi ảnh đại diện"
+                                    onClick={() => avatarInputRef.current?.click()}
+                                    disabled={isUploadingAvatar || isSaving}
+                                >
+                                    {isUploadingAvatar ? <FaSpinner className="profile-spinner" /> : <FaCamera />}
+                                </button>
+                            </div>
+                            <input
+                                ref={avatarInputRef}
+                                className="profile-file-input"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleAvatarChange}
+                            />
+                            <h3 className="profile-name">{profile.detail?.Name || profile.user.Email}</h3>
+                            <p className="profile-role">
+                                {profile.user.Role === "admin"
+                                    ? "Administrator"
+                                    : profile.user.Role === "teacher"
+                                        ? "Teacher"
+                                        : "Student"}
+                            </p>
+                            <div className="role-badge">{profile.user.Role.toUpperCase()}</div>
+                            <button
+                                className="btn btn-outline-primary change-avatar-btn mt-4"
+                                type="button"
+                                onClick={() => avatarInputRef.current?.click()}
+                                disabled={isUploadingAvatar || isSaving}
+                            >
+                                {isUploadingAvatar
+                                    ? <><FaSpinner className="profile-spinner me-2" />Đang tải ảnh...</>
+                                    : <><FaCamera className="me-2" />Đổi ảnh đại diện</>}
+                            </button>
+                            <small className="profile-avatar-hint">JPG, PNG hoặc WebP · Tối đa 5 MB</small>
+                        </section>
                     </div>
 
-                </div>
+                    <div className="col-lg-8">
+                        <section className="profile-info">
+                            <header className="profile-title">
+                                <div>
+                                    <h4>Thông tin cá nhân</h4>
+                                    <p>Email và vai trò chỉ xem, không thể thay đổi tại đây.</p>
+                                </div>
+                                {!isEditing && (
+                                    <button
+                                        className="btn btn-primary"
+                                        type="button"
+                                        onClick={() => {
+                                            setForm(toProfileForm(profile));
+                                            setIsEditing(true);
+                                            setSuccessMessage("");
+                                        }}
+                                    >
+                                        <FaUserEdit className="me-2" />
+                                        Chỉnh sửa hồ sơ
+                                    </button>
+                                )}
+                            </header>
 
-                <div className="col-lg-8">
-
-                    <div className="profile-info">
-
-                        <h4>
-
-                            Personal Information
-
-                        </h4>
-
-                        <div className="row">
-
-                            <div className="col-md-6">
-
-                                <label>Full Name</label>
-
-                                <input
-                                    className="form-control"
-                                    value={profile?.detail?.Name || ""}
-                                    disabled
-                                />
-
-                            </div>
-
-                            <div className="col-md-6">
-
-                                <label>Email</label>
-
-                                <input
-                                    className="form-control"
-                                    value={profile?.user?.Email || ""}
-                                    disabled
-                                />
-
-                            </div>
-
-                            <div className="col-md-6">
-
-                                <label>Phone</label>
-
-                                <input
-                                    className="form-control"
-                                    value={profile?.detail?.Phone || ""}
-                                    disabled
-                                />
-
-                            </div>
-
-                            <div className="col-md-6">
-
-                                <label>Gender</label>
-
-                                <input
-                                    className="form-control"
-                                    value={profile?.detail?.Gender || ""}
-                                    disabled
-                                />
-
-                            </div>
-
-                            <div className="col-md-6">
-
-                                <label>Birthday</label>
-
-                                <input
-                                    className="form-control"
-                                    value={
-                                        profile?.detail?.Birthday
-                                            ? new Date(
-                                                profile.detail.Birthday
-                                            ).toLocaleDateString()
-                                            : ""
-                                    }
-                                    disabled
-                                />
-
-                            </div>
-
-                            <div className="col-md-6">
-
-                                <label>Role</label>
-
-                                <input
-                                    className="form-control"
-                                    value={profile?.user?.Role || ""}
-                                    disabled
-                                />
-
-                            </div>
-
-                            <div className="col-12">
-
-                                <label>Address</label>
-
-                                <textarea
-                                    className="form-control"
-                                    rows={3}
-                                    value={profile?.detail?.Address || ""}
-                                    disabled
-                                />
-
-                            </div>
-
-                        </div>
-
-                        <button className="btn btn-primary mt-4">
-
-                            <FaUserEdit />
-
-                            Edit Profile
-
-                        </button>
-
+                            <form onSubmit={handleSave}>
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <label htmlFor="profile-name">Họ và tên</label>
+                                        <input
+                                            id="profile-name"
+                                            className="form-control"
+                                            value={form.Name}
+                                            onChange={(event) => setForm({ ...form, Name: event.target.value })}
+                                            disabled={!isEditing || isSaving}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label htmlFor="profile-email">Email</label>
+                                        <input id="profile-email" className="form-control" value={profile.user.Email} disabled />
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label htmlFor="profile-phone">Số điện thoại</label>
+                                        <input
+                                            id="profile-phone"
+                                            className="form-control"
+                                            type="tel"
+                                            value={form.Phone}
+                                            onChange={(event) => setForm({ ...form, Phone: event.target.value })}
+                                            disabled={!isEditing || isSaving}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label htmlFor="profile-gender">Giới tính</label>
+                                        <select
+                                            id="profile-gender"
+                                            className="form-control"
+                                            value={form.Gender}
+                                            onChange={(event) => setForm({
+                                                ...form,
+                                                Gender: event.target.value as ProfileUpdateRequest["Gender"],
+                                            })}
+                                            disabled={!isEditing || isSaving}
+                                        >
+                                            <option value="male">Nam</option>
+                                            <option value="female">Nữ</option>
+                                            <option value="other">Khác</option>
+                                        </select>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label htmlFor="profile-birthday">Ngày sinh</label>
+                                        <input
+                                            id="profile-birthday"
+                                            className="form-control"
+                                            type="date"
+                                            value={form.Birthday}
+                                            onChange={(event) => setForm({ ...form, Birthday: event.target.value })}
+                                            disabled={!isEditing || isSaving}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label htmlFor="profile-role">Vai trò</label>
+                                        <input id="profile-role" className="form-control" value={profile.user.Role} disabled />
+                                    </div>
+                                    <div className="col-12">
+                                        <label htmlFor="profile-address">Địa chỉ</label>
+                                        <textarea
+                                            id="profile-address"
+                                            className="form-control profile-address-input"
+                                            rows={3}
+                                            value={form.Address}
+                                            onChange={(event) => setForm({ ...form, Address: event.target.value })}
+                                            disabled={!isEditing || isSaving}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                {isEditing && (
+                                    <div className="profile-form-actions">
+                                        <button
+                                            className="btn btn-outline-secondary"
+                                            type="button"
+                                            onClick={cancelEditing}
+                                            disabled={isSaving}
+                                        >
+                                            Hủy
+                                        </button>
+                                        <button className="btn btn-primary" type="submit" disabled={isSaving || isUploadingAvatar}>
+                                            {isSaving
+                                                ? <><FaSpinner className="profile-spinner me-2" />Đang lưu...</>
+                                                : "Lưu thay đổi"}
+                                        </button>
+                                    </div>
+                                )}
+                            </form>
+                        </section>
                     </div>
-
                 </div>
-
-            </div>
-
-        </div>
-
+            )}
+        </main>
     );
 }
 

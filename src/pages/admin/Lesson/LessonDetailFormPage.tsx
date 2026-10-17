@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaArrowLeft, FaSave } from "react-icons/fa";
-import axios from "axios";
+import { uploadCloudinaryResource } from "../../../services/cloudinary.service";
 
 import {
     createLessonDetail,
@@ -89,49 +89,25 @@ function LessonDetailFormPage() {
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
 
-        if (!e.target.files?.length) return;
-
-        const file = e.target.files[0];
-
-        const formData = new FormData();
-
-        formData.append("file", file);
-
-        formData.append("upload_preset", "ielts-web");
+        const file = e.target.files?.[0];
+        if (!file) return;
+        e.target.value = "";
 
         try {
 
             setUploading(true);
 
-            let url = "";
-
-            if (form.Type === "Image") {
-
-                const res = await axios.post(
-                    "https://api.cloudinary.com/v1_1/hgjoncad/image/upload",
-                    formData
-                );
-
-                url = res.data.secure_url;
-
-            } else {
-
-                const res = await axios.post(
-                    "https://api.cloudinary.com/v1_1/hgjoncad/auto/upload",
-                    formData
-                );
-
-                url = res.data.secure_url;
-
+            if (form.Type === "Text" || form.Type === "Quiz") {
+                throw new Error("This lesson content type does not support file uploads.");
             }
-
+            const url = await uploadCloudinaryResource(file, form.Type);
             setForm(prev => ({ ...prev, FileUrl: url }));
 
         } catch (err) {
 
             console.log(err);
 
-            alert("Upload failed");
+            alert(err instanceof Error ? err.message : "Upload failed");
 
         } finally {
 

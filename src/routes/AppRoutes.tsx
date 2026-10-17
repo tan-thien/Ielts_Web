@@ -19,7 +19,14 @@ import CourseDetailPage from "../pages/User/Course/CourseDetailPage";
 import CourseLearningPage from "../pages/User/Course/CourseLearningPage";
 import PaymentResultPage from "../pages/User/Course/PaymentResultPage";
 import WritingPage from "../pages/User/WritingPage";
-
+import TeacherManagementPage from "../pages/admin/Management/TeacherManagementPage";
+import StudentManagementPage from "../pages/admin/Management/StudentManagementPage";
+import LessonManagementPage from "../pages/admin/Lesson/LessonManagementPage";
+import AssignmentManagementPage from "../pages/admin/Course/AssignmentManagementPage";
+import ReportsPage from "../pages/admin/Reports/ReportsPage";
+import WritingAIPage from "../pages/admin/Dashboard/WritingAIPage";
+import SpeakingAIPage from "../pages/admin/Dashboard/SpeakingAIPage";
+    
 function AppRoutes() {
     return (
         <Routes>
@@ -50,7 +57,17 @@ function AppRoutes() {
             >
                 <Route index element={<Navigate to="/admin/dashboard" replace />} />
                 <Route path="dashboard" element={<DashboardPage />} />
+                <Route path="writingAI" element={<WritingAIPage />} />
+                <Route path="speakingAI" element={<SpeakingAIPage />} />
+                {/* <Route path="vocabulary" element={<VocabularyPage />} /> */}
+                <Route path="teachers" element={<TeacherManagementPage />} />
+                <Route path="students" element={<StudentManagementPage />} />
                 <Route path="courses" element={<CoursePage />} />
+                <Route path="lessons" element={<LessonManagementPage />} />
+                <Route path="lessons/create" element={<LessonFormPage />} />
+                <Route path="lessons/:lessonId/edit" element={<LessonFormPage />} />
+                <Route path="assignments" element={<AssignmentManagementPage />} />
+                <Route path="reports" element={<ReportsPage />} />
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="/admin/courses/:courseId" element={<ManagementCoursePage />} />
                 <Route path="/admin/courses/:courseId/lessons/create" element={<LessonFormPage />} />

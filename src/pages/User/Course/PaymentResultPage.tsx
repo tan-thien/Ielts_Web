@@ -9,12 +9,13 @@ function PaymentResultPage() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const orderId = searchParams.get("orderId");
+    const hasInvalidPayment = searchParams.get("payment") === "invalid";
     const [order, setOrder] = useState<CourseOrder | null>(null);
     const [error, setError] = useState("");
     const [isChecking, setIsChecking] = useState(true);
 
     useEffect(() => {
-        if (!orderId) return;
+        if (!orderId || hasInvalidPayment) return;
 
         if (!localStorage.getItem("token")) {
             navigate(`/login?redirect=${encodeURIComponent(`/payment/result?orderId=${orderId}`)}`);
@@ -47,16 +48,18 @@ function PaymentResultPage() {
             isMounted = false;
             clearTimeout(timeout);
         };
-    }, [orderId, navigate]);
+    }, [hasInvalidPayment, orderId, navigate]);
 
     const isPaid = order?.Status === "Paid";
     const isFailed = order?.Status === "Failed";
 
-    if (!orderId) {
+    if (!orderId || hasInvalidPayment) {
         return (
             <main className="payment-result-page">
                 <section className="payment-result-card">
-                    <h1>Không tìm thấy mã đơn hàng</h1>
+                    <FaTimesCircle className="payment-result-icon payment-result-failed" aria-hidden="true" />
+                    <h1>{hasInvalidPayment ? "Không xác thực được kết quả thanh toán" : "Không tìm thấy mã đơn hàng"}</h1>
+                    <p>{hasInvalidPayment ? "Vui lòng kiểm tra trạng thái đơn hàng trong tài khoản hoặc liên hệ hỗ trợ." : ""}</p>
                     <Link className="payment-result-link" to="/courses">Xem danh sách khóa học</Link>
                 </section>
             </main>
@@ -82,10 +85,10 @@ function PaymentResultPage() {
                 </h1>
                 <p>
                     {isPaid
-                        ? "Đơn hàng đã được MoMo xác nhận. Bạn có thể bắt đầu học ngay."
+                        ? `Đơn hàng đã được ${order?.PaymentMethod === "VNPAY" ? "VNPay" : order?.PaymentMethod === "MoMo" ? "MoMo" : "hệ thống"} xác nhận. Bạn có thể bắt đầu học ngay.`
                         : isFailed
                           ? "Giao dịch chưa hoàn tất. Bạn có thể quay lại khóa học và thử thanh toán lại."
-                          : "Đang chờ MoMo gửi xác nhận đến hệ thống. Vui lòng giữ trang này mở trong giây lát."}
+                          : `Đang chờ ${order?.PaymentMethod === "VNPAY" ? "VNPay" : "MoMo"} gửi xác nhận đến hệ thống. Vui lòng giữ trang này mở trong giây lát.`}
                 </p>
                 {order && <span className="payment-result-order">Mã đơn hàng: {order._id}</span>}
                 {error && <p className="payment-result-error" role="alert">{error}</p>}

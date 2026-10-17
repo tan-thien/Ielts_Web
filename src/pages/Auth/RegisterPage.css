@@ -177,6 +177,29 @@
     margin-bottom: 23px;
 }
 
+.register-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 22px;
+    color: var(--register-blue);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 160ms ease, transform 160ms ease;
+}
+
+.register-back-link:hover {
+    color: var(--register-orange);
+    transform: translateX(-2px);
+}
+
+.register-back-link:focus-visible {
+    border-radius: 4px;
+    outline: 2px solid var(--register-blue);
+    outline-offset: 4px;
+}
+
 .register-form-label {
     margin-bottom: 8px;
     color: var(--register-orange);

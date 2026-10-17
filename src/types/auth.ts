@@ -29,3 +29,50 @@ export interface RegisterResponse {
     Role: string;
   };
 }
+
+export interface GoogleRegistrationProfile {
+  Name: string;
+  Gender: "male" | "female" | "other";
+  Phone: string;
+  Address: string;
+  Birthday: string;
+}
+
+export interface ProfileData {
+  user: {
+    _id: string;
+    Email: string;
+    Role: string;
+  };
+  detail: {
+    Name?: string;
+    Gender?: "male" | "female" | "other";
+    Phone?: string;
+    Address?: string;
+    Birthday?: string;
+    Avatar?: string;
+  } | null;
+}
+
+export interface ProfileUpdateRequest {
+  Name: string;
+  Gender: "male" | "female" | "other";
+  Phone: string;
+  Address: string;
+  Birthday: string;
+  Avatar: string;
+}
+
+export type GoogleAuthResponse =
+  | {
+      registrationRequired: true;
+      registrationToken: string;
+      profile: {
+        Email: string;
+        Name: string;
+        Avatar: string;
+      };
+    }
+  | (LoginResponse & {
+      registrationRequired?: false;
+    });

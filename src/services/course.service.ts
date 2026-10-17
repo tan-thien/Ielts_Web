@@ -23,8 +23,11 @@ export const getCourseById = async (id:string)=>{
     return res.data.data;
 };
 
-export const createCoursePayment = async (courseId: string) => {
-    const res = await api.post(`/orders/course/${courseId}/payment`);
+export const createCoursePayment = async (
+    courseId: string,
+    paymentMethod: "MoMo" | "VNPAY" | "Free",
+) => {
+    const res = await api.post(`/orders/course/${courseId}/payment`, { paymentMethod });
     return res.data.data as { order: CourseOrder; paymentUrl: string | null; alreadyPaid: boolean };
 };
 
