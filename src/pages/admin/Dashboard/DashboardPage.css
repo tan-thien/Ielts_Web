@@ -1,0 +1,122 @@
+.dashboard-page {
+    display: grid;
+    gap: 20px;
+    color: #1b2b43;
+}
+
+.dashboard-header,
+.dashboard-actions {
+    display: flex;
+    align-items: center;
+}
+
+.dashboard-header {
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.dashboard-header h1 {
+    margin: 5px 0;
+    color: #17355f;
+    font-size: clamp(1.55rem, 2.4vw, 2rem);
+}
+
+.dashboard-header p {
+    margin: 0;
+    color: #738198;
+}
+
+.dashboard-actions {
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.dashboard-actions label {
+    color: #62728a;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.dashboard-actions select,
+.dashboard-actions button {
+    min-height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #dce4ef;
+    border-radius: 9px;
+    background: #fff;
+    color: #284566;
+    font: inherit;
+}
+
+.dashboard-actions button {
+    border-color: #1d55a5;
+    background: #1d55a5;
+    color: #fff;
+    cursor: pointer;
+}
+
+.dashboard-metric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.dashboard-metric {
+    min-height: 112px;
+    padding: 16px;
+}
+
+.dashboard-chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.dashboard-chart-panel {
+    min-width: 0;
+}
+
+.dashboard-chart .report-chart-month {
+    min-width: 0;
+}
+
+.dashboard-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.dashboard-footnote {
+    margin: -8px 0 0;
+    color: #8491a3;
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+@media (max-width: 1200px) {
+    .dashboard-metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 800px) {
+    .dashboard-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .dashboard-actions {
+        width: 100%;
+    }
+
+    .dashboard-chart-grid,
+    .dashboard-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .dashboard-metric-grid {
+        grid-template-columns: 1fr;
+    }
+}

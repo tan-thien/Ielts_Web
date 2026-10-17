@@ -67,7 +67,7 @@ function Header() {
                 {/* BRAND */}
                 <Link to="/home" className="navbar-brand header-brand">
                     <span className="brand-icon"><FaGraduationCap /></span>
-                    <span className="brand-name">IELTS<span> SMARTER</span></span>
+                    <span className="brand-name">IELTS<span> NGTANTH_</span></span>
                 </Link>
 
                 {/* MOBILE MENU */}

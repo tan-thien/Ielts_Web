@@ -7,6 +7,7 @@ export interface MonthlyReport {
     newCourses: number;
     completedLessons: number;
     submissions: number;
+    logins: number;
 }
 
 export interface ReportsData {
@@ -19,6 +20,7 @@ export interface ReportsData {
         courses: number;
         assignments: number;
         paidLearners: number;
+        allTimeLogins: number;
         paidOrders: number;
         allTimeRevenue: number;
         revenue: number;
@@ -27,6 +29,7 @@ export interface ReportsData {
         newCourses: number;
         completedLessons: number;
         submissions: number;
+        logins: number;
     };
     currentMonth: MonthlyReport;
     monthly: MonthlyReport[];

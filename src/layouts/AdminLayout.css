@@ -181,6 +181,9 @@ body {
     border-radius: 12px;
 
     transition: .25s;
+    min-height: 56px;
+    border: 1px solid #e5eaf2;
+    background: #fff;
 
 }
 
@@ -447,16 +450,69 @@ body {
 
 .profile-name {
 
+    margin: 0;
+
     font-weight: 700;
 
     color: #17479D;
+
+    font-size: 15px;
+    line-height: 1.25;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
 }
 
 .profile-info small {
 
     color: #777;
+    font-size: 12px;
+    line-height: 1.2;
 
+}
+
+.admin-navbar .profile-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    cursor: default;
+}
+
+.admin-navbar .profile-trigger {
+    gap: 10px;
+    cursor: pointer;
+}
+
+.admin-navbar .profile-trigger > div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.admin-navbar .profile-dropdown {
+    top: calc(100% + 8px);
+}
+
+.admin-navbar .avatar {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+}
+
+.admin-navbar .profile-name {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.25;
+}
+
+.admin-navbar .profile-trigger small {
+    color: #778198;
+    font-size: 12px;
+    line-height: 1.2;
 }
 
 /* ================= SIDEBAR ================= */
@@ -527,7 +583,7 @@ body {
 
     margin: 0;
 
-    font-size: 22px;
+    font-size: 18px;
 
     font-weight: 700;
 

@@ -21,7 +21,7 @@ function Footer() {
                                 <FaGraduationCap />
                             </span>
                             <span className="site-footer-brand-name">
-                                IELTS<span> SMARTER</span>
+                                IELTS<span> NGTANTH_</span>
                             </span>
                         </Link>
                         <p>

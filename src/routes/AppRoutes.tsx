@@ -26,6 +26,7 @@ import AssignmentManagementPage from "../pages/admin/Course/AssignmentManagement
 import ReportsPage from "../pages/admin/Reports/ReportsPage";
 import WritingAIPage from "../pages/admin/Dashboard/WritingAIPage";
 import SpeakingAIPage from "../pages/admin/Dashboard/SpeakingAIPage";
+import SpeakingPage from "../pages/User/SpeakingPage";
     
 function AppRoutes() {
     return (
@@ -44,6 +45,7 @@ function AppRoutes() {
                 <Route path="/payment/result" element={<PaymentResultPage />} />
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="/writingAI" element={<WritingPage />} />
+                <Route path="/speakingAI" element={<SpeakingPage />} />
             </Route>
 
             /*Admin  route */

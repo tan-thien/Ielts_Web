@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams  } from "react-router-dom";
-import { FaArrowLeft, FaBook, FaClipboardList, FaUsers, FaDollarSign, FaEdit } from "react-icons/fa";
+import { FaArrowLeft, FaBook, FaChalkboardTeacher, FaClipboardList, FaEdit, FaUsers } from "react-icons/fa";
 import "./ManagementCoursePage.css";
 import { getLessonByCourseId } from "../../../services/lesson.service";
 import { getCourseById } from "../../../services/course.service";
 import { getAssignments } from "../../../services/assignment.service";
+import { getManagementDashboard } from "../../../services/management.service";
 import type { Assignment } from "../../../types/assignment";
 import type { Course } from "../../../types/course";
 import type { Lesson } from "../../../types/lesson";
+import type { ManagedStudent, ManagementDashboard, ManagementTeacher } from "../../../types/management";
 import OverviewTab from "./components/OverviewTab";
 import LessonTab from "./components/LessonTab";
 import AssignmentTab from "./components/AssignmentTab";
@@ -26,6 +28,9 @@ function ManagementCoursePage() {
     const [lessons, setLessons] = useState<Lesson[]>([]);
     const [assignments, setAssignments] = useState<Assignment[]>([]);
     const [assignmentError, setAssignmentError] = useState("");
+    const [managementDashboard, setManagementDashboard] = useState<ManagementDashboard | null>(null);
+    const [participantsLoading, setParticipantsLoading] = useState(false);
+    const [participantsError, setParticipantsError] = useState("");
 
     const activeTab = searchParams.get("tab") || "overview";
     const loadLessons = useCallback(async () => {
@@ -71,6 +76,49 @@ function ManagementCoursePage() {
         }
     }, [courseId]);
 
+    useEffect(() => {
+        let cancelled = false;
+        const loadParticipants = async () => {
+            if (!courseId) return;
+            setParticipantsLoading(true);
+            setParticipantsError("");
+            try {
+                const firstPage = await getManagementDashboard({ studentsPage: 1, coursesSearch: course?.Name });
+                const totalPages = firstPage.pagination.students.totalPages;
+                const remainingPages = totalPages > 1
+                    ? await Promise.all(Array.from({ length: totalPages - 1 }, (_, index) =>
+                        getManagementDashboard({ studentsPage: index + 2, coursesSearch: course?.Name }),
+                    ))
+                    : [];
+                if (cancelled) return;
+                setManagementDashboard({
+                    ...firstPage,
+                    students: [firstPage.students, ...remainingPages.map((page) => page.students)].flat(),
+                });
+            } catch (error) {
+                if (cancelled) return;
+                console.error("Load course participants failed", error);
+                setParticipantsError("Unable to load the students and teachers for this course.");
+            } finally {
+                if (!cancelled) setParticipantsLoading(false);
+            }
+        };
+        void loadParticipants();
+        return () => { cancelled = true; };
+    }, [courseId, course?.Name]);
+
+    const courseAssignments = useMemo(() => assignments.filter((assignment) => {
+        const courseRef = typeof assignment.CourseID === "string" ? assignment.CourseID : assignment.CourseID?._id;
+        const lessonRef = typeof assignment.LessonID === "string" ? assignment.LessonID : assignment.LessonID?._id;
+        return courseRef === courseId || lessons.some((lesson) => lesson._id === lessonRef);
+    }), [assignments, courseId, lessons]);
+
+    const courseManagementData = managementDashboard?.courses.find((item) => item._id === courseId);
+    const courseTeachers: ManagementTeacher[] = courseManagementData?.Teachers || [];
+    const courseStudents: ManagedStudent[] = managementDashboard?.students.filter((student) =>
+        student.Courses.some((item) => item._id === courseId),
+    ) || [];
+
     return (
 
         <div className="course-management">
@@ -114,30 +162,20 @@ function ManagementCoursePage() {
 
                 <div className="stat-card">
                     <FaClipboardList />
-                    <h3>{assignments.filter((assignment) => {
-                        const courseRef = typeof assignment.CourseID === "string"
-                            ? assignment.CourseID
-                            : assignment.CourseID?._id;
-                        const lessonRef = typeof assignment.LessonID === "string"
-                            ? assignment.LessonID
-                            : assignment.LessonID?._id;
-
-                        return courseRef === courseId ||
-                            lessons.some((lesson) => lesson._id === lessonRef);
-                    }).length}</h3>
+                    <h3>{courseAssignments.length}</h3>
                     <p>Assignments</p>
                 </div>
 
                 <div className="stat-card">
                     <FaUsers />
-                    <h3>35</h3>
+                    <h3>{courseStudents.length}</h3>
                     <p>Students</p>
                 </div>
 
                 <div className="stat-card">
-                    <FaDollarSign />
-                    <h3>$250</h3>
-                    <p>Revenue</p>
+                    <FaChalkboardTeacher />
+                    <h3>{courseTeachers.length}</h3>
+                    <p>Teachers</p>
                 </div>
 
             </div>
@@ -169,15 +207,15 @@ function ManagementCoursePage() {
                     className={activeTab === "students" ? "active" : ""}
                     onClick={() => setSearchParams({ tab: "students" })}
                 >
-                    Students
+                    Students & Teachers
                 </button>
 
-                <button
+                {/* <button
                     className={activeTab === "settings" ? "active" : ""}
                     onClick={() => setSearchParams({ tab: "settings" })}
                 >
                     Settings
-                </button>
+                </button> */}
 
             </div>
 
@@ -185,7 +223,7 @@ function ManagementCoursePage() {
             <div className="course-content">
 
                 {activeTab === "overview" && (
-                    <OverviewTab course={course} lessons={lessons} />
+                    <OverviewTab course={course} lessons={lessons} assignments={courseAssignments} studentCount={courseStudents.length} teachers={courseTeachers} />
                 )}
 
                 {activeTab === "lessons" && (
@@ -206,7 +244,7 @@ function ManagementCoursePage() {
                 )}
 
                 {activeTab === "students" && (
-                    <StudentTab />
+                    <StudentTab courseId={courseId ?? ""} students={courseStudents} teachers={courseTeachers} loading={participantsLoading} error={participantsError} />
                 )}
 
                 {activeTab === "settings" && (
