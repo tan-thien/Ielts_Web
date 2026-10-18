@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
 import { useState } from "react";
 
-import Sidebar from "../shared/components/Sidebar";
-import Navbar from "../shared/components/Navbar";
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
 
 import "./AdminLayout.css";
 

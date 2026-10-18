@@ -1,0 +1,13 @@
+.student-tab-search { display:flex; align-items:center; gap:8px; border:1px solid #dbe3ef; border-radius:10px; padding:8px 12px; min-width:260px; background:#fff; }
+.student-tab-search input { border:0; outline:0; width:100%; }
+.participant-summary { display:flex; align-items:center; gap:14px; padding:18px; border:1px solid #e8edf5; border-radius:14px; background:#fbfcff; }
+.participant-summary svg { font-size:25px; }
+.participant-summary strong, .participant-summary span { display:block; }
+.participant-summary strong { color:#17479d; font-size:1.35rem; }
+.participant-summary span { color:#68758a; font-size:.9rem; }
+.participant-section { border:1px solid #e8edf5; border-radius:14px; padding:20px; background:#fff; }
+.participant-section thead th { color:#68758a; font-size:.78rem; text-transform:uppercase; white-space:nowrap; }
+.teacher-card { display:flex; align-items:center; gap:12px; border:1px solid #edf0f5; border-radius:12px; padding:14px; height:100%; }
+.teacher-avatar { display:grid; place-items:center; flex:0 0 40px; width:40px; height:40px; border-radius:50%; background:#e7f0ff; color:#17479d; font-weight:700; }
+.empty-participant { padding:30px 15px; text-align:center; color:#68758a; background:#fbfcff; border-radius:10px; }
+@media (max-width:576px) { .student-tab-search { width:100%; min-width:0; } .participant-section { padding:14px; } }

@@ -1,0 +1,211 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+.login-container{
+    display:flex;
+    height:100vh;
+    width:100%;
+    background:#f5f7fb;
+}
+
+.login-left{
+    flex:1;
+    background-image:url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f");
+    background-size:cover;
+    background-position:center;
+    position:relative;
+}
+
+.overlay{
+    width:100%;
+    height:100%;
+    background:rgba(23,71,157,.65);
+    color:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+    text-align:center;
+}
+
+.overlay h1{
+    font-size:50px;
+    margin-bottom:20px;
+}
+
+.overlay p{
+    font-size:20px;
+    line-height:1.6;
+}
+
+.login-right{
+    width:450px;
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+    overflow-y:auto;
+}
+
+.login-card {
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 35px 30px;
+    background: #fff;
+    border: 1px solid #edf0f5;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(23, 71, 157, 0.08);
+}
+
+.login-card h2 {
+    color: #17479D;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.login-card p {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 28px;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 13px 15px;
+    margin-bottom: 18px;
+    border: 1px solid #e0e5ed;
+    border-radius: 8px;
+    background: #f9fafc;
+    font-size: 14px;
+    transition: all 0.25s ease;
+}
+
+.login-card select {
+    width: 100%;
+    padding: 13px 15px;
+    margin-bottom: 18px;
+    border: 1px solid #e0e5ed;
+    border-radius: 8px;
+    background: #f9fafc;
+    color: #172b4d;
+    font-size: 14px;
+}
+
+.login-card select:focus {
+    outline: none;
+    border-color: #17479D;
+}
+
+.login-card input:focus {
+    outline: none;
+    border-color: #17479D;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(23, 71, 157, 0.08);
+}
+
+.login-card input::placeholder {
+    color: #a0a8b5;
+}
+
+.login-card button {
+    width: 100%;
+    padding: 13px;
+    margin-top: 4px;
+    background: #EE6823;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.login-card button:hover {
+    background: #d75b18;
+    box-shadow: 0 5px 14px rgba(238, 104, 35, 0.22);
+    transform: translateY(-1px);
+}
+
+.login-card button:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+}
+
+.google-signin-button {
+    display: flex;
+    justify-content: center;
+    min-height: 44px;
+}
+
+.login-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 18px 0;
+    color: #8b95a5;
+    font-size: 13px;
+}
+
+.login-divider::before,
+.login-divider::after {
+    flex: 1;
+    height: 1px;
+    background: #e7ebf1;
+    content: "";
+}
+
+.login-card .login-error,
+.login-card .login-setup,
+.login-card .login-status,
+.login-card .google-account-email {
+    margin: 14px 0 0;
+    line-height: 1.5;
+}
+
+.login-card .google-account-email {
+    margin: -18px 0 20px;
+    color: #17479D;
+    font-weight: 600;
+}
+
+.login-card .login-error {
+    color: #b42318;
+}
+
+.login-card .login-setup,
+.login-card .login-status {
+    color: #71809a;
+    font-size: 13px;
+}
+
+.login-card .login-secondary-button {
+    margin-top: 10px;
+    background: #eef2f8;
+    color: #344054;
+}
+
+.login-card .login-secondary-button:hover {
+    background: #e1e8f2;
+    box-shadow: none;
+}
+
+@media(max-width:900px){
+
+.login-left{
+    display:none;
+}
+
+.login-right{
+    width:100%;
+}
+
+}
