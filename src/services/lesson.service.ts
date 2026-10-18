@@ -75,3 +75,13 @@ export const deleteLessonDetail = async (id: string) => {
     const res = await api.delete(`/lesson-details/delete/${id}`);
     return res.data;
 };
+
+export const markCourseAccess = async (courseId: string) => {
+    const res = await api.post(`/lessons/activity/course/${courseId}`);
+    return res.data.data;
+};
+
+export const getStudyActivity = async (month: string): Promise<Array<{ StudyDate: string; CourseID: string }>> => {
+    const res = await api.get("/lessons/activity", { params: { month } });
+    return res.data.data;
+};

@@ -1,0 +1,81 @@
+.vocab-page {
+    width: min(1200px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 44px 0 80px;
+    color: var(--ink);
+}
+
+.vocab-hero {
+    margin-bottom: 24px;
+    padding: clamp(26px, 5vw, 48px);
+    border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: 24px;
+    background: radial-gradient(circle at 88% 8%, rgba(240, 120, 53, .36), transparent 30%), linear-gradient(125deg, var(--brand-blue-dark), var(--brand-blue));
+    box-shadow: 0 18px 42px rgba(18, 55, 104, .17);
+    color: #fff;
+}
+
+.vocab-hero > span { color: #ffd9bf; font-size: .76rem; font-weight: 800; letter-spacing: .14em; }
+.vocab-hero h1 { max-width: 760px; margin: 12px 0; font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 800; line-height: 1.15; }
+.vocab-hero p { max-width: 680px; margin: 0; color: rgba(255, 255, 255, .88); }
+
+.vocab-toolbar { display: flex; align-items: stretch; gap: 12px; margin-bottom: 24px; }
+.vocab-search { display: flex; min-width: 220px; flex: 1; align-items: center; gap: 10px; padding: 8px 10px 8px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: 0 5px 18px rgba(24, 59, 103, .04); }
+.vocab-search > svg { flex: 0 0 auto; color: var(--muted); }
+.vocab-search input { width: 100%; min-width: 0; padding: 7px 0; border: 0; outline: 0; background: transparent; color: var(--ink); font: inherit; }
+.vocab-search input:focus { box-shadow: none; }
+.vocab-search button, .note-editor button { flex: 0 0 auto; padding: 9px 14px; border: 0; border-radius: 10px; background: var(--brand-orange); color: #fff; font-weight: 700; cursor: pointer; }
+.vocab-search button:hover, .note-editor button:hover { background: var(--brand-orange-dark); }
+.vocab-search button:disabled { cursor: wait; opacity: .7; }
+.vocab-tabs { display: flex; gap: 8px; }
+.vocab-tabs button, .vocab-actions button, .note-editor button { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 8px; padding: 9px 13px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font: inherit; font-weight: 650; cursor: pointer; }
+.vocab-tabs button.active { border-color: var(--brand-blue); background: var(--brand-blue); color: #fff; }
+
+.topic-card-grid, .vocab-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.topic-card, .vocab-card { min-width: 0; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow-card); }
+.topic-card { padding: 23px; text-align: left; cursor: pointer; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.topic-card:hover { transform: translateY(-3px); border-color: rgba(240, 120, 53, .55); box-shadow: 0 18px 36px rgba(24, 59, 103, .12); }
+.topic-card > span { color: var(--brand-orange-dark); font-size: .72rem; font-weight: 800; letter-spacing: .12em; }
+.topic-card h2 { margin: 12px 0 8px; color: var(--brand-blue-dark); font-size: 1.3rem; font-weight: 750; }
+.topic-card p { min-height: 48px; color: var(--muted); }
+.topic-card strong { color: var(--brand-blue); }
+.topic-card strong span { margin-left: 4px; color: var(--brand-orange); }
+
+.vocab-card { padding: 20px; }
+.vocab-card-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.vocab-topic { overflow: hidden; padding: 5px 10px; border-radius: 20px; background: var(--brand-blue-soft); color: var(--brand-blue); font-size: .76rem; text-overflow: ellipsis; white-space: nowrap; }
+.bookmark-button { display: inline-grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; border: 1px solid transparent; border-radius: 50%; background: transparent; color: #9aa7b7; cursor: pointer; }
+.bookmark-button:hover, .bookmark-button.saved { background: var(--brand-orange-soft); color: var(--brand-orange-dark); }
+.vocab-card h2 { overflow-wrap: anywhere; margin: 13px 0 2px; color: var(--brand-blue-dark); font-size: 1.65rem; font-weight: 800; }
+.pronunciation { margin-bottom: 12px; color: var(--muted); font-family: Georgia, "Times New Roman", serif; }
+.sense-list { border-top: 1px solid var(--line); }
+.sense-item { padding: 13px 0; border-bottom: 1px solid var(--line); }
+.sense-item p { margin: 6px 0; overflow-wrap: anywhere; }
+.vocab-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 8px; color: var(--muted); font-size: .82rem; }
+.vocab-meta span { padding: 4px 8px; border-radius: 8px; background: #f2f5fa; }
+.translation { color: var(--brand-blue); }
+.example { margin-top: 10px; padding: 12px; border-radius: 10px; background: #f7f9fc; overflow-wrap: anywhere; }
+.example small { display: block; margin-top: 5px; color: var(--muted); }
+.vocab-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.vocab-actions button:first-child { border-color: transparent; background: var(--brand-blue-soft); color: var(--brand-blue); }
+.vocab-actions button:hover { border-color: var(--brand-orange); }
+.ai-translation { margin-top: 14px; padding: 11px 13px; border-left: 3px solid var(--brand-orange); border-radius: 0 10px 10px 0; background: var(--brand-orange-soft); overflow-wrap: anywhere; }
+.ai-translation p { margin: 5px 0 0; }
+.back-topic { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 18px; padding: 9px 13px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--brand-blue); font: inherit; cursor: pointer; }
+.back-topic:hover { border-color: var(--brand-orange); color: var(--brand-orange-dark); }
+.external-result { max-width: 640px; margin: 0 auto; }
+.external-result > h2 { margin-bottom: 12px; color: var(--brand-blue-dark); font-size: 1.3rem; }
+.vocab-error { margin-bottom: 15px; padding: 12px 15px; border: 1px solid #f2c7c7; border-radius: 11px; background: #fff4f3; color: #9f2929; }
+.vocab-empty { padding: 48px 20px; border: 1px dashed #ccd8e7; border-radius: 16px; background: rgba(255, 255, 255, .72); color: var(--muted); text-align: center; }
+.note-editor { margin-top: 12px; }
+.note-editor textarea { width: 100%; min-height: 70px; padding: 9px; border: 1px solid var(--line); border-radius: 9px; resize: vertical; }
+
+@media (max-width: 980px) { .topic-card-grid, .vocab-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 680px) {
+    .vocab-page { width: min(100% - 28px, 560px); padding: 28px 0 56px; }
+    .vocab-toolbar { flex-direction: column; }
+    .vocab-search { width: 100%; }
+    .vocab-tabs button { flex: 1; }
+    .topic-card-grid, .vocab-grid { grid-template-columns: 1fr; gap: 13px; }
+    .topic-card p { min-height: 0; }
+}

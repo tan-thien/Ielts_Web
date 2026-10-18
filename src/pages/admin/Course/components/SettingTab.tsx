@@ -10,13 +10,13 @@ function SettingTab({ course }: Props) {
 
             <div className="card-body">
 
-                <h4>Course Settings</h4>
+                <h4>Cài đặt khóa học</h4>
 
                 <hr />
 
                 <p>
 
-                    <strong>Name:</strong>
+                    <strong>Tên khóa học:</strong>
 
                     {course?.Name}
 
@@ -24,7 +24,7 @@ function SettingTab({ course }: Props) {
 
                 <p>
 
-                    <strong>Fee:</strong>
+                    <strong>Học phí:</strong>
 
                     {course?.Fee}
 
@@ -32,24 +32,24 @@ function SettingTab({ course }: Props) {
 
                 <p>
 
-                    <strong>Status:</strong>
+                    <strong>Trạng thái:</strong>
 
                     {
                         course?.Status
-                            ? "Active"
-                            : "Inactive"
+                            ? "Đang hoạt động"
+                            : "Ngừng hoạt động"
                     }
 
                 </p>
 
                 <p>
 
-                    <strong>Open:</strong>
+                    <strong>Đăng ký:</strong>
 
                     {
                         course?.IsOpen
-                            ? "Yes"
-                            : "No"
+                            ? "Đang mở"
+                            : "Đang đóng"
                     }
 
                 </p>

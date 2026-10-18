@@ -24,86 +24,86 @@ const features = [
     {
         id: "writing-feedback",
         icon: FaPenFancy,
-        title: "AI Writing Evaluation",
+        title: "Chấm bài Viết bằng AI",
         description:
-            "Get focused feedback on your writing, grammar, vocabulary and IELTS criteria.",
+            "Nhận góp ý cụ thể về bài viết, ngữ pháp, từ vựng và tiêu chí chấm IELTS.",
         color: "orange",
     },
     {
         id: "speaking-practice",
         icon: FaMicrophone,
-        title: "Speaking Practice",
+        title: "Luyện kỹ năng Nói",
         description:
-            "Build confidence with guided speaking prompts and focused practice.",
+            "Tự tin giao tiếp hơn với câu hỏi gợi ý và bài luyện tập có định hướng.",
         color: "blue",
     },
     {
         id: "listening-practice",
         icon: FaHeadphones,
-        title: "Listening Exercises",
+        title: "Luyện kỹ năng Nghe",
         description:
-            "Practice with listening exercises, questions and clear answer explanations.",
+            "Luyện nghe qua bài tập, câu hỏi và lời giải thích đáp án rõ ràng.",
         color: "orange",
     },
     {
         id: "reading-practice",
         icon: FaBookOpen,
-        title: "Reading Practice",
+        title: "Luyện kỹ năng Đọc",
         description:
-            "Improve reading comprehension, timing and your ability to find key details.",
+            "Cải thiện khả năng đọc hiểu, quản lý thời gian và tìm thông tin quan trọng.",
         color: "blue",
     },
     {
         id: "learning-progress",
         icon: FaChartLine,
-        title: "Learning Analytics",
+        title: "Theo dõi tiến độ học",
         description:
-            "Review your practice and identify the skills to focus on next.",
+            "Xem lại kết quả luyện tập và xác định kỹ năng cần ưu tiên.",
         color: "orange",
     },
     {
         id: "guided-courses",
         icon: FaGraduationCap,
-        title: "Professional Courses",
+        title: "Khóa học bài bản",
         description:
-            "Follow a structured path from English foundations to IELTS preparation.",
+            "Lộ trình học rõ ràng từ nền tảng tiếng Anh đến luyện thi IELTS.",
         color: "blue",
     },
 ];
 
 const courses = [
     {
-        title: "IELTS Foundation",
-        level: "Beginner",
+        title: "Nền tảng IELTS",
+        level: "Cơ bản",
         description:
-            "Strengthen grammar and vocabulary while building a foundation across all four skills.",
+            "Củng cố ngữ pháp, từ vựng và xây nền tảng cho cả bốn kỹ năng.",
         image:
             "https://images.unsplash.com/photo-1513258496099-48168024aec0?w=900",
         rating: "4.9",
         students: "2.4k",
-        duration: "8 weeks",
+        duration: "8 tuần",
     },
     {
-        title: "IELTS Speaking Mastery",
-        level: "Intermediate",
+        title: "Chinh phục IELTS Nói",
+        level: "Trung cấp",
         description:
-            "Develop ideas, respond with confidence and prepare for speaking test questions.",
+            "Phát triển ý tưởng, trả lời tự tin và làm quen với dạng câu hỏi thi Nói.",
         image:
             "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=900",
         rating: "4.8",
         students: "1.8k",
-        duration: "6 weeks",
+        duration: "6 tuần",
     },
     {
-        title: "IELTS Mock Test Series",
-        level: "All Levels",
+        title: "Bộ đề thi thử IELTS",
+        level: "Mọi trình độ",
         description:
-            "Get familiar with test formats, manage your time and review your performance.",
+            "Làm quen cấu trúc đề, quản lý thời gian và tự đánh giá kết quả.",
         image:
             "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=900",
         rating: "4.9",
         students: "1.2k",
-        duration: "Self-paced",
+        duration: "Tự học linh hoạt",
     },
 ];
 
@@ -111,46 +111,46 @@ const learningSteps = [
     {
         number: "01",
         icon: FaLaptop,
-        title: "Choose Your Course",
+        title: "Chọn khóa học",
         description:
-            "Choose a course and skill that match your current goals.",
+            "Chọn khóa học và kỹ năng phù hợp với mục tiêu hiện tại.",
     },
     {
         number: "02",
         icon: FaLightbulb,
-        title: "Learn & Practice",
+        title: "Học và luyện tập",
         description:
-            "Study key concepts, complete exercises and practice actively.",
+            "Nắm kiến thức trọng tâm, hoàn thành bài tập và chủ động thực hành.",
     },
     {
         number: "03",
         icon: FaChartLine,
-        title: "Track Your Progress",
+        title: "Theo dõi tiến độ",
         description:
-            "Review your results and choose what to work on next.",
+            "Xem kết quả và xác định nội dung cần cải thiện tiếp theo.",
     },
 ];
 
 const faqs = [
     {
-        question: "What English level is this platform for?",
+        question: "Nền tảng phù hợp với trình độ tiếng Anh nào?",
         answer:
-            "Start with foundational study or choose practice that matches the skills you want to improve.",
+            "Bạn có thể bắt đầu từ kiến thức nền tảng hoặc chọn bài luyện theo kỹ năng muốn cải thiện.",
     },
     {
-        question: "How does AI writing feedback work?",
+        question: "AI góp ý bài Viết như thế nào?",
         answer:
-            "Submit a draft to receive guidance on areas such as grammar, vocabulary and organization. AI feedback is for practice only and does not replace an official IELTS assessment.",
+            "Gửi bài viết để nhận góp ý về ngữ pháp, từ vựng và cách sắp xếp ý. Đây là phản hồi tham khảo, không thay thế kết quả chấm IELTS chính thức.",
     },
     {
-        question: "Can I practice all four IELTS skills?",
+        question: "Tôi có thể luyện đủ bốn kỹ năng IELTS không?",
         answer:
-            "Yes. The learning paths cover Listening, Reading, Writing and Speaking through courses and practice activities.",
+            "Có. Lộ trình học bao gồm Nghe, Đọc, Viết và Nói thông qua khóa học cùng các hoạt động thực hành.",
     },
     {
-        question: "Can I keep track of my learning?",
+        question: "Tôi có thể theo dõi quá trình học không?",
         answer:
-            "Review your practice results to see which skills you may want to focus on next.",
+            "Bạn có thể xem lại kết quả luyện tập để biết kỹ năng nào nên được ưu tiên tiếp theo.",
     },
 ];
 
@@ -168,28 +168,28 @@ function HomePage() {
                             <div className="hero-content">
                                 <span className="hero-badge">
                                     <FaGraduationCap />
-                                    Your smarter IELTS journey starts here
+                                    Bắt đầu hành trình IELTS hiệu quả hơn
                                 </span>
 
                                 <h1 className="hero-title">
-                                    Learn IELTS
+                                    Học IELTS
                                     <br />
-                                    <span>Smarter with AI</span>
+                                    <span>Hiệu quả hơn cùng AI</span>
                                 </h1>
 
                                 <p className="hero-description">
-                                    Improve your English with interactive courses,
-                                    AI-assisted writing feedback, speaking practice
-                                    and personalized progress tracking.
+                                    Cải thiện tiếng Anh với khóa học tương tác,
+                                    góp ý bài viết bằng AI, luyện nói và theo dõi
+                                    tiến độ học tập dành riêng cho bạn.
                                 </p>
 
                                 <div className="hero-actions">
                                     <Link to="/courses" className="btn-home btn-orange">
-                                        Explore Courses <FaArrowRight />
+                                        Khám phá khóa học <FaArrowRight />
                                     </Link>
 
                                     <a href="#features" className="btn-home btn-outline-light">
-                                        <FaPlay /> Discover the Platform
+                                        <FaPlay /> Khám phá nền tảng
                                     </a>
                                 </div>
 
@@ -210,7 +210,7 @@ function HomePage() {
                                             <FaStar />
                                         </div>
                                         <p>
-                                            A smarter way to practice English
+                                            Cách luyện tiếng Anh thông minh hơn
                                         </p>
                                     </div>
                                 </div>
@@ -218,11 +218,11 @@ function HomePage() {
                                 <div className="hero-benefits">
                                     <span>
                                         <FaCheckCircle />
-                                        Learn at your own pace
+                                        Học theo nhịp độ của bạn
                                     </span>
                                     <span>
                                         <FaCheckCircle />
-                                        Practice all four skills
+                                        Luyện đủ bốn kỹ năng
                                     </span>
                                 </div>
                             </div>
@@ -235,7 +235,7 @@ function HomePage() {
                                 <div className="hero-image-frame">
                                     <img
                                         src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1000"
-                                        alt="Students studying together"
+                                        alt="Học viên cùng nhau học tập"
                                     />
                                 </div>
 
@@ -244,8 +244,8 @@ function HomePage() {
                                         <FaStar />
                                     </div>
                                     <div>
-                                        <strong>Learn smarter</strong>
-                                        <span>Build better study habits</span>
+                                        <strong>Học tập thông minh</strong>
+                                        <span>Hình thành thói quen học tốt</span>
                                     </div>
                                 </div>
 
@@ -254,8 +254,8 @@ function HomePage() {
                                         <FaChartLine />
                                     </div>
                                     <div className="progress-card-content">
-                                        <strong>Your progress</strong>
-                                        <span>Practice one step at a time</span>
+                                        <strong>Tiến độ của bạn</strong>
+                                        <span>Luyện tập từng bước mỗi ngày</span>
                                         <div className="progress-track">
                                             <div />
                                         </div>
@@ -263,9 +263,9 @@ function HomePage() {
                                 </div>
 
                                 <div className="hero-note">
-                                    <span>Dream big.</span>
-                                    <span>Practice daily.</span>
-                                    <span>Grow confidently.</span>
+                                    <span>Ước mơ lớn.</span>
+                                    <span>Luyện tập mỗi ngày.</span>
+                                    <span>Tự tin tiến bước.</span>
                                 </div>
 
                                 <div className="hero-dot-pattern" />
@@ -276,19 +276,19 @@ function HomePage() {
                     <div className="hero-bottom-strip">
                         <div>
                             <FaBookOpen />
-                            <span>Structured Learning</span>
+                            <span>Lộ trình học bài bản</span>
                         </div>
                         <div>
                             <FaPenFancy />
-                            <span>AI-assisted Practice</span>
+                            <span>Luyện tập với AI</span>
                         </div>
                         <div>
                             <FaChartLine />
-                            <span>Progress Tracking</span>
+                            <span>Theo dõi tiến độ</span>
                         </div>
                         <div>
                             <FaUsers />
-                            <span>Learn at Your Pace</span>
+                            <span>Học theo nhịp độ riêng</span>
                         </div>
                     </div>
                 </div>
@@ -298,14 +298,14 @@ function HomePage() {
             <section className="section-padding features-section" id="features">
                 <div className="container">
                     <div className="section-heading text-center">
-                        <span className="section-eyebrow">OUR FEATURES</span>
+                        <span className="section-eyebrow">TÍNH NĂNG NỔI BẬT</span>
                         <h2>
-                            Everything You Need to
-                            <br className="desktop-break" /> Master IELTS
+                            Mọi điều bạn cần để
+                            <br className="desktop-break" /> chinh phục IELTS
                         </h2>
                         <p>
-                            Build your skills with a learning experience designed
-                            to make every practice session more meaningful.
+                            Phát triển kỹ năng với trải nghiệm học tập giúp mỗi
+                            buổi luyện tập đều thiết thực và hiệu quả.
                         </p>
                     </div>
 
@@ -329,7 +329,7 @@ function HomePage() {
                                         <p>{feature.description}</p>
 
                                         <div className="feature-card-bottom">
-                                            <span>Explore feature</span>
+                                            <span>Khám phá tính năng</span>
                                             <span className="feature-arrow">
                                                 <FaArrowRight />
                                             </span>
@@ -348,17 +348,17 @@ function HomePage() {
                     <div className="section-heading-row">
                         <div className="section-heading">
                             <span className="section-eyebrow">
-                                LEARN YOUR WAY
+                                HỌC THEO CÁCH CỦA BẠN
                             </span>
-                            <h2>Explore Our IELTS Courses</h2>
+                            <h2>Khám phá khóa học IELTS</h2>
                             <p>
-                                Find a course that matches your goals and start
-                                making progress today.
+                                Chọn khóa học phù hợp với mục tiêu và bắt đầu
+                                tiến bộ ngay hôm nay.
                             </p>
                         </div>
 
                         <Link to="/courses" className="btn-home btn-outline-blue">
-                            View All Courses <FaArrowRight />
+                            Xem tất cả khóa học <FaArrowRight />
                         </Link>
                     </div>
 
@@ -395,15 +395,15 @@ function HomePage() {
                                         <div className="course-footer">
                                             <span className="course-students">
                                                 <FaUsers />
-                                                {course.students} learners
+                                                {course.students} học viên
                                             </span>
 
                                             <button
                                                 type="button"
                                                 className="course-link"
-                                                aria-label={`Learn more about ${course.title}`}
+                                                aria-label={`Tìm hiểu thêm về ${course.title}`}
                                             >
-                                                Learn More
+                                                Tìm hiểu thêm
                                                 <FaArrowRight />
                                             </button>
                                         </div>
@@ -425,17 +425,17 @@ function HomePage() {
                         <div className="col-lg-6">
                             <div className="section-heading results-heading">
                                 <span className="section-eyebrow">
-                                    WHY CHOOSE US
+                                    VÌ SAO CHỌN CHÚNG TÔI
                                 </span>
                                 <h2>
-                                    A Clearer Way to Learn IELTS,
+                                    Cách học IELTS rõ ràng hơn,
                                     <br />
-                                    One Step at a Time
+                                    từng bước một
                                 </h2>
                                 <p>
-                                    Build a steady study routine with structured
-                                    lessons, focused practice and clear next steps
-                                    across all four IELTS skills.
+                                    Xây dựng thói quen học đều đặn với bài học
+                                    bài bản, nội dung luyện tập trọng tâm và lộ
+                                    trình rõ ràng cho cả bốn kỹ năng IELTS.
                                 </p>
                             </div>
 
@@ -444,32 +444,32 @@ function HomePage() {
                                     <div className="stat-icon orange">
                                         <FaUsers />
                                     </div>
-                                    <strong>4 Skills</strong>
-                                    <span>One place to practice</span>
+                                    <strong>4 kỹ năng</strong>
+                                    <span>Luyện tập trên cùng nền tảng</span>
                                 </div>
 
                                 <div className="stat-item">
                                     <div className="stat-icon blue">
                                         <FaChartLine />
                                     </div>
-                                    <strong>Track Progress</strong>
-                                    <span>See what to practice next</span>
+                                    <strong>Theo dõi tiến độ</strong>
+                                    <span>Biết nội dung cần luyện tiếp theo</span>
                                 </div>
 
                                 <div className="stat-item">
                                     <div className="stat-icon orange">
                                         <FaGraduationCap />
                                     </div>
-                                    <strong>Flexible Learning</strong>
-                                    <span>Study at your own pace</span>
+                                    <strong>Học tập linh hoạt</strong>
+                                    <span>Học theo nhịp độ của riêng bạn</span>
                                 </div>
 
                                 <div className="stat-item">
                                     <div className="stat-icon blue">
                                         <FaCheckCircle />
                                     </div>
-                                    <strong>Focused Practice</strong>
-                                    <span>Build one skill at a time</span>
+                                    <strong>Luyện tập trọng tâm</strong>
+                                    <span>Phát triển từng kỹ năng</span>
                                 </div>
                             </div>
                         </div>
@@ -478,13 +478,13 @@ function HomePage() {
                             <div className="testimonial-layout">
                                 <div className="testimonial-card">
                                     <span className="section-eyebrow">
-                                        A FOCUSED APPROACH
+                                        LỘ TRÌNH TẬP TRUNG
                                     </span>
 
                                     <p className="testimonial-text">
-                                        Set a clear goal, practice one skill at a
-                                        time, and use feedback to decide what to
-                                        work on next.
+                                        Đặt mục tiêu rõ ràng, luyện tập từng kỹ
+                                        năng và sử dụng góp ý để xác định bước
+                                        tiến tiếp theo.
                                     </p>
 
                                     <div className="testimonial-author">
@@ -493,7 +493,7 @@ function HomePage() {
                                         </div>
                                         <div>
                                             <strong>IELTS AI</strong>
-                                            <span>Your learning companion</span>
+                                            <span>Người bạn đồng hành học tập</span>
                                         </div>
                                     </div>
                                 </div>
@@ -501,14 +501,14 @@ function HomePage() {
                                 <div className="testimonial-image">
                                     <img
                                         src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=900"
-                                        alt="Student learning with a laptop"
+                                        alt="Học viên học tập với máy tính"
                                         loading="lazy"
                                     />
                                     <div className="image-caption">
                                         <FaGraduationCap />
                                         <span>
-                                            Your goals.
-                                            <strong> Your journey.</strong>
+                                            Mục tiêu của bạn.
+                                            <strong> Hành trình của bạn.</strong>
                                         </span>
                                     </div>
                                 </div>
@@ -522,11 +522,11 @@ function HomePage() {
             <section className="section-padding process-section">
                 <div className="container">
                     <div className="section-heading text-center">
-                        <span className="section-eyebrow">HOW IT WORKS</span>
-                        <h2>Your IELTS Journey in 3 Simple Steps</h2>
+                        <span className="section-eyebrow">CÁCH THỨC HOẠT ĐỘNG</span>
+                        <h2>Hành trình IELTS qua 3 bước đơn giản</h2>
                         <p>
-                            A simple learning process to help you stay focused
-                            and keep moving forward.
+                            Lộ trình học đơn giản giúp bạn luôn tập trung
+                            và không ngừng tiến bộ.
                         </p>
                     </div>
 
@@ -563,19 +563,19 @@ function HomePage() {
                         <div className="col-lg-5">
                             <div className="section-heading faq-heading">
                                 <span className="section-eyebrow">
-                                    NEED HELP?
+                                    BẠN CẦN HỖ TRỢ?
                                 </span>
-                                <h2>Frequently Asked Questions</h2>
+                                <h2>Câu hỏi thường gặp</h2>
                                 <p>
-                                    Have questions about your learning journey?
-                                    Find answers to some common questions here.
+                                    Bạn có thắc mắc về hành trình học tập?
+                                    Hãy tham khảo lời giải đáp cho các câu hỏi phổ biến.
                                 </p>
 
                                 <div className="faq-help">
                                     <FaQuestionCircle />
                                     <span>
-                                        Still have questions?
-                                        <strong> We're here to help.</strong>
+                                        Bạn vẫn còn thắc mắc?
+                                        <strong> Chúng tôi luôn sẵn sàng hỗ trợ.</strong>
                                     </span>
                                 </div>
                             </div>
@@ -613,16 +613,16 @@ function HomePage() {
                         </div>
 
                         <div className="cta-text">
-                            <span>YOUR NEXT CHAPTER STARTS HERE</span>
-                            <h2>Ready to Start Your IELTS Journey?</h2>
+                            <span>CHƯƠNG MỚI CỦA BẠN BẮT ĐẦU TỪ ĐÂY</span>
+                            <h2>Sẵn sàng bắt đầu hành trình IELTS?</h2>
                             <p>
-                                Set your goals, build your confidence and make
-                                every practice session count.
+                                Đặt mục tiêu, xây dựng sự tự tin và tận dụng
+                                hiệu quả từng buổi luyện tập.
                             </p>
                         </div>
 
                         <Link to="/register" className="btn-home btn-cta">
-                            Get Started <FaArrowRight />
+                            Bắt đầu ngay <FaArrowRight />
                         </Link>
 
                         <div className="cta-decoration" />

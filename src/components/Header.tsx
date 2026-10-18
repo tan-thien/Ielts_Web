@@ -9,7 +9,6 @@ import {
 } from "react-bootstrap";
 import { Link, NavLink } from "react-router-dom";
 import {
-    FaGraduationCap,
     FaUserCircle,
     FaBook,
     FaCog,
@@ -66,8 +65,7 @@ function Header() {
             <Container>
                 {/* BRAND */}
                 <Link to="/home" className="navbar-brand header-brand">
-                    <span className="brand-icon"><FaGraduationCap /></span>
-                    <span className="brand-name">IELTS<span> NGTANTH_</span></span>
+                    <img className="header-logo" src="/Logo_Name.png" alt="IELTS Học Tập" />
                 </Link>
 
                 {/* MOBILE MENU */}
@@ -84,28 +82,22 @@ function Header() {
                 >
                     <Offcanvas.Header closeButton>
                         <Offcanvas.Title id="main-navbar-title">
-                            <span className="brand-name">
-                                IELTS<span>AI</span>
-                            </span>
+                            <img className="header-logo" src="/Logo_Name.png" alt="IELTS Học Tập" />
                         </Offcanvas.Title>
                     </Offcanvas.Header>
 
                     <Offcanvas.Body>
                         {/* NAVIGATION */}
                         <Nav className="header-nav mx-lg-auto">
-                            <NavLink to="/home" end className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Home</NavLink>
+                            <NavLink to="/home" end className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Trang chủ</NavLink>
 
-                            <NavLink to="/courses" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Courses</NavLink>
+                            <NavLink to="/courses" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Khóa học</NavLink>
 
-                            <NavLink to="/writingAI" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Writing AI</NavLink>
+                            <NavLink to="/writingAI" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Luyện Viết AI</NavLink>
 
-                            {/* <NavLink to="/reading" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Reading</NavLink>
+                            <NavLink to="/speakingAI" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Luyện Nói AI</NavLink>
 
-                            <NavLink to="/listening" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Listening</NavLink> */}
-
-                            <NavLink to="/speakingAI" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Speaking AI</NavLink>
-
-                            <NavLink to="/vocabulary" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Vocabulary</NavLink>
+                            <NavLink to="/vocabulary" className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}>Từ vựng</NavLink>
                         </Nav>
 
                         {/* ACCOUNT */}
@@ -125,29 +117,33 @@ function Header() {
                                                 "https://i.pravatar.cc/100"
                                             }
                                             className="user-avatar"
-                                            alt="User avatar"
+                                            alt="Ảnh đại diện người dùng"
                                         />
 
                                         <span className="user-info">
                                             <strong>
-                                                {profile?.detail?.Name || "User"}
+                                                {profile?.detail?.Name || "Người dùng"}
                                             </strong>
 
                                             <small>
-                                                {profile?.user?.Role || role || "Member"}
+                                                {profile?.user?.Role === "admin" || role === "admin"
+                                                    ? "Quản trị viên"
+                                                    : profile?.user?.Role === "teacher" || role === "teacher"
+                                                        ? "Giảng viên"
+                                                        : "Học viên"}
                                             </small>
                                         </span>
                                     </Dropdown.Toggle>
 
                                     <Dropdown.Menu className="user-dropdown">
-                                        <Link to="/profile" className="dropdown-item"><FaUserCircle /> My Profile</Link>
+                                        <Link to="/profile" className="dropdown-item"><FaUserCircle /> Hồ sơ của tôi</Link>
 
-                                        <Link to="/my-courses" className="dropdown-item"><FaBook /> My Courses</Link>
+                                        <Link to="/my-courses" className="dropdown-item"><FaBook /> Khóa học của tôi</Link>
 
-                                        <Link to="/settings" className="dropdown-item"><FaCog /> Settings</Link>
+                                        <Link to="/settings" className="dropdown-item"><FaCog /> Cài đặt</Link>
 
                                         {role?.toLowerCase() === "admin" && (
-                                            <Link to="/admin" className="dropdown-item admin-dropdown-item"><FaTachometerAlt /> Admin Dashboard</Link>
+                                            <Link to="/admin" className="dropdown-item admin-dropdown-item"><FaTachometerAlt /> Trang quản trị</Link>
                                         )}
 
                                         <Dropdown.Divider />
@@ -157,18 +153,18 @@ function Header() {
                                             className="logout-item"
                                         >
                                             <FaSignOutAlt />
-                                            Logout
+                                            Đăng xuất
                                         </Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
                             ) : (
                                 <div className="guest-actions">
                                     <Link to="/login" className="header-login-btn">
-                                        Login
+                                        Đăng nhập
                                     </Link>
 
                                     <Link to="/register" className="header-start-btn">
-                                        Get Started
+                                        Bắt đầu học
                                         <FaArrowRight />
                                     </Link>
                                 </div>

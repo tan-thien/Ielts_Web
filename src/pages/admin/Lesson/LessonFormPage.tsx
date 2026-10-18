@@ -32,7 +32,7 @@ function LessonFormPage() {
             .then(setCourses)
             .catch((error) => {
                 console.error("Load lesson courses error:", error);
-                setLoadError("Failed to load courses. Please try again.");
+                setLoadError("Không thể tải danh sách khóa học. Vui lòng thử lại.");
             });
     }, []);
 
@@ -92,22 +92,22 @@ function LessonFormPage() {
         try {
 
             if (!lesson.Name.trim()) {
-                alert("Lesson name is required.");
+                alert("Vui lòng nhập tên bài học.");
                 return;
             }
 
             if (!lesson.Description.trim()) {
-                alert("Description is required.");
+                alert("Vui lòng nhập mô tả bài học.");
                 return;
             }
 
             if (!lesson.Unit.trim()) {
-                alert("Unit is required.");
+                alert("Vui lòng nhập tên chương.");
                 return;
             }
 
             if (!lesson.CourseID) {
-                alert("Course is required.");
+                alert("Vui lòng chọn khóa học.");
                 return;
             }
 
@@ -144,8 +144,8 @@ function LessonFormPage() {
 
             alert(
                 isEdit
-                    ? "Lesson updated successfully!"
-                    : "Lesson created successfully!"
+                    ? "Cập nhật bài học thành công!"
+                    : "Tạo bài học thành công!"
             );
 
             if (isStandalone) {
@@ -167,7 +167,7 @@ function LessonFormPage() {
             const message =
                 errorDetails?.response?.data?.message ||
                 errorDetails?.message ||
-                "Failed to save lesson.";
+                "Không thể lưu bài học.";
 
             alert(message);
         }
@@ -182,7 +182,7 @@ function LessonFormPage() {
                 <div className="card-header text-white">
 
                     <h3>
-                        {isEdit ? "Update Lesson" : "Create Lesson"}
+                        {isEdit ? "Cập nhật bài học" : "Tạo bài học"}
                     </h3>
 
                 </div>
@@ -195,7 +195,7 @@ function LessonFormPage() {
 
                         <div className="mb-3">
 
-                            <label htmlFor="CourseID">Course</label>
+                            <label htmlFor="CourseID">Khóa học</label>
                             <select
                                 id="CourseID"
                                 className="form-select"
@@ -204,7 +204,7 @@ function LessonFormPage() {
                                 onChange={handleChange}
                                 required
                             >
-                                <option value="">Select a course</option>
+                                <option value="">Chọn khóa học</option>
                                 {courses.map(course => (
                                     <option key={course._id} value={course._id}>{course.Name}</option>
                                 ))}
@@ -213,7 +213,7 @@ function LessonFormPage() {
 
                         <div className="mb-3">
 
-                            <label>Name</label>
+                            <label>Tên bài học</label>
 
                             <input
                                 className="form-control"
@@ -226,7 +226,7 @@ function LessonFormPage() {
 
                         <div className="mb-3">
 
-                            <label>Description</label>
+                            <label>Mô tả</label>
 
                             <textarea
                                 className="form-control"
@@ -241,7 +241,7 @@ function LessonFormPage() {
 
                             <div className="col-md-4">
 
-                                <label>Unit</label>
+                                <label>Chương</label>
 
                                 <input
                                     className="form-control"
@@ -254,7 +254,7 @@ function LessonFormPage() {
 
                             <div className="col-md-4">
 
-                                <label>Date</label>
+                                <label>Ngày học</label>
 
                                 <input
                                     type="date"
@@ -268,7 +268,7 @@ function LessonFormPage() {
 
                             <div className="col-md-4">
 
-                                <label>Status</label>
+                                <label>Trạng thái</label>
 
                                 <select
                                     className="form-select"
@@ -277,10 +277,10 @@ function LessonFormPage() {
                                     onChange={handleChange}
                                 >
 
-                                    <option value="Draft">Draft</option>
-                                    <option value="Pending">Pending</option>
-                                    <option value="Active">Active</option>
-                                    <option value="Finished">Finished</option>
+                                    <option value="Draft">Bản nháp</option>
+                                    <option value="Pending">Đang chờ duyệt</option>
+                                    <option value="Active">Đang hoạt động</option>
+                                    <option value="Finished">Đã hoàn tất</option>
 
                                 </select>
 
@@ -299,7 +299,7 @@ function LessonFormPage() {
 
                             <label className="form-check-label">
 
-                                Open Lesson
+                                Công khai bài học
 
                             </label>
 
@@ -312,7 +312,7 @@ function LessonFormPage() {
                                 type="submit"
                             >
 
-                                Save
+                                Lưu bài học
 
                             </button>
 
@@ -322,7 +322,7 @@ function LessonFormPage() {
                                 onClick={() => navigate(-1)}
                             >
 
-                                Cancel
+                                Hủy
 
                             </button>
 

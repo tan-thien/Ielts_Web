@@ -147,8 +147,8 @@ function ProfilePage() {
         <main className="profile-page container-fluid">
             <div className="profile-cover">
                 <div className="page-header">
-                    <h2>My Profile</h2>
-                    <p>Manage your personal information</p>
+                    <h2>Hồ sơ của tôi</h2>
+                    <p>Quản lý thông tin cá nhân của bạn</p>
                 </div>
             </div>
 
@@ -192,10 +192,10 @@ function ProfilePage() {
                             <h3 className="profile-name">{profile.detail?.Name || profile.user.Email}</h3>
                             <p className="profile-role">
                                 {profile.user.Role === "admin"
-                                    ? "Administrator"
+                                    ? "Quản trị viên"
                                     : profile.user.Role === "teacher"
-                                        ? "Teacher"
-                                        : "Student"}
+                                        ? "Giảng viên"
+                                        : "Học viên"}
                             </p>
                             <div className="role-badge">{profile.user.Role.toUpperCase()}</div>
                             <button

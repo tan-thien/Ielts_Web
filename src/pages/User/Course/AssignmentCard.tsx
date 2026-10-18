@@ -7,10 +7,25 @@ import {
 } from "../../../services/assignment.service";
 import type {
     Assignment,
+    AssignmentSkill,
     AssignmentQuestion,
     AssignmentSubmission,
     SubmissionAnswer,
 } from "../../../types/assignment";
+
+const skillLabels: Record<AssignmentSkill, string> = {
+    Reading: "Đọc",
+    Listening: "Nghe",
+    Writing: "Viết",
+    Speaking: "Nói",
+};
+
+const assignmentTypeLabels: Record<Assignment["AssignmentType"], string> = {
+    Practice: "Luyện tập",
+    Quiz: "Kiểm tra nhanh",
+    Exam: "Bài thi",
+    Homework: "Bài tập về nhà",
+};
 
 interface Props {
     assignment: Assignment;
@@ -37,6 +52,7 @@ function getErrorMessage(error: unknown): string {
 }
 
 function assignmentIdFor(submission: AssignmentSubmission): string {
+    if (!submission.AssignmentID) return "";
     return typeof submission.AssignmentID === "string"
         ? submission.AssignmentID
         : submission.AssignmentID._id;
@@ -187,7 +203,7 @@ function AssignmentCard({ assignment, submissions, onSubmissionChange }: Props) 
                 <div>
                     <h3>{assignment.Title}</h3>
                     <p>
-                        {assignment.Skill} · {assignment.AssignmentType}
+                        {skillLabels[assignment.Skill]} · {assignmentTypeLabels[assignment.AssignmentType]}
                         {assignment.Duration > 0 ? ` · ${assignment.Duration} phút` : ""}
                         {assignment.AttemptLimit > 0 ? ` · Tối đa ${assignment.AttemptLimit} lần` : ""}
                     </p>

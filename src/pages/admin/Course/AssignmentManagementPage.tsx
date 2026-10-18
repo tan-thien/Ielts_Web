@@ -70,14 +70,14 @@ function AssignmentManagementPage() {
     return (
         <div className="container-fluid py-4">
             <div className="mb-4">
-                <h1 className="h3 mb-1">Assignment management</h1>
-                <p className="text-muted mb-0">Create and manage course and lesson assignments.</p>
+                <h1 className="h3 mb-1">Quản lý bài tập</h1>
+                <p className="text-muted mb-0">Tạo và quản lý bài tập cho khóa học và từng bài học.</p>
             </div>
 
             {loadError && (
                 <div className="alert alert-danger d-flex justify-content-between align-items-center" role="alert">
                     {loadError}
-                    <button className="btn btn-sm btn-outline-danger" onClick={() => void loadData()}>Retry</button>
+                    <button className="btn btn-sm btn-outline-danger" onClick={() => void loadData()}>Thử lại</button>
                 </div>
             )}
 
@@ -85,7 +85,7 @@ function AssignmentManagementPage() {
                 <div className="card-body">
                     <div className="row g-3 mb-4">
                         <div className="col-md-6">
-                            <label className="form-label" htmlFor="assignment-course">Course</label>
+                            <label className="form-label" htmlFor="assignment-course">Khóa học</label>
                             <select
                                 id="assignment-course"
                                 className="form-select"
@@ -93,26 +93,26 @@ function AssignmentManagementPage() {
                                 onChange={(event) => setSelectedCourseId(event.target.value)}
                                 disabled={isLoading}
                             >
-                                <option value="">Select a course</option>
+                                <option value="">Chọn khóa học</option>
                                 {courses.map((course) => (
                                     <option key={course._id} value={course._id}>{course.Name}</option>
                                 ))}
                             </select>
                         </div>
                         <div className="col-md-6">
-                            <label className="form-label" htmlFor="assignment-search">Search assignments</label>
+                            <label className="form-label" htmlFor="assignment-search">Tìm bài tập</label>
                             <input
                                 id="assignment-search"
                                 className="form-control"
                                 value={search}
                                 onChange={(event) => setSearch(event.target.value)}
-                                placeholder="Search by title, description, skill or type"
+                                placeholder="Tìm theo tiêu đề, mô tả, kỹ năng hoặc dạng bài"
                             />
                         </div>
                     </div>
 
                     {isLoading ? (
-                        <div className="text-center py-5">Loading assignments...</div>
+                        <div className="text-center py-5">Đang tải bài tập...</div>
                     ) : selectedCourseId ? (
                         <AssignmentTab
                             assignments={searchedAssignments}
@@ -122,7 +122,7 @@ function AssignmentManagementPage() {
                             onChange={loadData}
                         />
                     ) : (
-                        <div className="alert alert-info mb-0">Create a course before managing its assignments.</div>
+                        <div className="alert alert-info mb-0">Hãy tạo khóa học trước khi quản lý bài tập.</div>
                     )}
                 </div>
             </div>

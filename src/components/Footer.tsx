@@ -2,7 +2,6 @@
 import { Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import {
-    FaGraduationCap,
     FaArrowRight,
     FaEnvelope,
     FaPhoneAlt,
@@ -16,42 +15,37 @@ function Footer() {
             <Container>
                 <div className="site-footer-main">
                     <div className="site-footer-about">
-                        <Link to="/home" className="site-footer-brand" aria-label="IELTS AI home">
-                            <span className="site-footer-brand-icon">
-                                <FaGraduationCap />
-                            </span>
-                            <span className="site-footer-brand-name">
-                                IELTS<span> NGTANTH_</span>
-                            </span>
+                        <Link to="/home" className="site-footer-brand" aria-label="Trang chủ IELTS AI">
+                            <img className="footer-logo" src="/Logo_Name.png" alt="IELTS Học Tập" />
                         </Link>
                         <p>
-                            A focused place to study, practice all four IELTS
-                            skills and keep moving toward your English goals.
+                            Không gian học tập IELTS bài bản, giúp bạn rèn luyện
+                            bốn kỹ năng và tiến gần hơn tới mục tiêu tiếng Anh.
                         </p>
                         <Link to="/register" className="site-footer-cta">
-                            Start learning <FaArrowRight aria-hidden="true" />
+                            Bắt đầu học <FaArrowRight aria-hidden="true" />
                         </Link>
                     </div>
 
-                    <nav className="site-footer-links" aria-label="Explore IELTS AI">
-                        <h2>Explore</h2>
-                        <Link to="/home#courses">Courses</Link>
-                        <Link to="/home#features">All features</Link>
-                        <Link to="/home#why-choose-us">Why choose us</Link>
-                        <Link to="/home#faq">FAQs</Link>
+                    <nav className="site-footer-links" aria-label="Khám phá IELTS AI">
+                        <h2>Khám phá</h2>
+                        <Link to="/home#courses">Khóa học</Link>
+                        <Link to="/home#features">Tính năng</Link>
+                        <Link to="/home#why-choose-us">Vì sao chọn chúng tôi</Link>
+                        <Link to="/home#faq">Câu hỏi thường gặp</Link>
                     </nav>
 
-                    <nav className="site-footer-links" aria-label="Practice IELTS skills">
-                        <h2>Practice</h2>
-                        <Link to="/home#writing-feedback">Writing</Link>
-                        <Link to="/home#speaking-practice">Speaking</Link>
-                        <Link to="/home#listening-practice">Listening</Link>
-                        <Link to="/home#reading-practice">Reading</Link>
+                    <nav className="site-footer-links" aria-label="Luyện tập các kỹ năng IELTS">
+                        <h2>Luyện tập</h2>
+                        <Link to="/home#writing-feedback">Viết</Link>
+                        <Link to="/home#speaking-practice">Nói</Link>
+                        <Link to="/home#listening-practice">Nghe</Link>
+                        <Link to="/home#reading-practice">Đọc</Link>
                     </nav>
 
                     <div className="site-footer-contact">
-                        <h2>Get in touch</h2>
-                        <p>Questions about getting started? Contact our team.</p>
+                        <h2>Liên hệ</h2>
+                        <p>Bạn cần hỗ trợ? Hãy liên hệ với đội ngũ của chúng tôi.</p>
                         <a href="mailto:admin@gmail.com">
                             <span className="site-footer-contact-icon">
                                 <FaEnvelope aria-hidden="true" />
@@ -69,10 +63,10 @@ function Footer() {
 
                 <div className="site-footer-bottom">
                     <span>
-                        © {new Date().getFullYear()} IELTS AI. All rights reserved.
+                        © {new Date().getFullYear()} IELTS AI. Bảo lưu mọi quyền.
                     </span>
                     <span>
-                        Learn smarter. <strong>Grow confidently.</strong>
+                        Học tập thông minh. <strong>Tự tin tiến bước.</strong>
                     </span>
                 </div>
             </Container>

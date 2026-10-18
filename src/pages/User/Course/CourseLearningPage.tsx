@@ -8,6 +8,7 @@ import {
     getCourseLessonProgress,
     getLessonByCourseId,
     getLessonDetailsByLessonId,
+    markCourseAccess,
 } from "../../../services/lesson.service";
 import type { Course } from "../../../types/course";
 import type { Assignment, AssignmentSubmission } from "../../../types/assignment";
@@ -35,6 +36,7 @@ function CourseLearningPage() {
         if (!courseId) return;
 
         if (!localStorage.getItem("token") || localStorage.getItem("role") !== "user") return;
+        void markCourseAccess(courseId).catch(() => undefined);
 
         let isMounted = true;
         Promise.all([
@@ -266,7 +268,7 @@ function CourseLearningPage() {
                                     )}
                                     {detail.Type === "Audio" && detail.FileUrl && (
                                         <audio controls preload="metadata" src={detail.FileUrl}>
-                                            Trình duyệt của bạn không hỗ trợ audio.
+                                            Trình duyệt của bạn không hỗ trợ phát âm thanh.
                                         </audio>
                                     )}
                                     {detail.Type === "Image" && detail.FileUrl && (

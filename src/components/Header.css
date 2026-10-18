@@ -37,6 +37,15 @@
     color: #17479D;
 }
 
+.header-logo {
+    display: block;
+    width: 150px;
+    height: 44px;
+    max-width: none;
+    object-fit: cover;
+    object-position: center;
+}
+
 .brand-icon {
     display: flex;
     width: 39px;
@@ -200,13 +209,15 @@
     min-width: 65px;
     flex-direction: column;
     gap: 3px;
+    align-items: center;
+    text-align: center;
 }
 
 .user-info strong {
-    max-width: 120px;
+    max-width: 160px;
     overflow: hidden;
     color: #17479D;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -358,6 +369,11 @@
 }
 
 @media (max-width: 400px) {
+    .header-logo {
+        width: 124px;
+        height: 38px;
+    }
+
     .brand-name {
         font-size: 18px;
     }

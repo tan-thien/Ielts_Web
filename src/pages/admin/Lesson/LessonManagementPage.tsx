@@ -12,7 +12,17 @@ function getCourseId(lesson: LessonWithCourse): string {
 function getCourseName(lesson: LessonWithCourse): string {
     return typeof lesson.CourseID === "object" && lesson.CourseID
         ? lesson.CourseID.Name
-        : "Unknown course";
+        : "Chưa xác định khóa học";
+}
+
+function getStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+        Draft: "Bản nháp",
+        Pending: "Đang chờ duyệt",
+        Active: "Đang hoạt động",
+        Finished: "Đã hoàn tất",
+    };
+    return labels[status] || status;
 }
 
 function LessonManagementPage() {
@@ -29,7 +39,7 @@ function LessonManagementPage() {
             setLessons(await getAllLessons());
         } catch (requestError) {
             console.error("Load lessons error:", requestError);
-            setError("Failed to load lessons. Please try again.");
+            setError("Không thể tải danh sách bài học. Vui lòng thử lại.");
         } finally {
             setIsLoading(false);
         }
@@ -40,7 +50,7 @@ function LessonManagementPage() {
             .then(setLessons)
             .catch((requestError) => {
                 console.error("Load lessons error:", requestError);
-                setError("Failed to load lessons. Please try again.");
+                setError("Không thể tải danh sách bài học. Vui lòng thử lại.");
             })
             .finally(() => setIsLoading(false));
     }, []);
@@ -55,13 +65,13 @@ function LessonManagementPage() {
     }, [lessons, search]);
 
     const handleDelete = async (lesson: LessonWithCourse) => {
-        if (!window.confirm(`Delete lesson "${lesson.Name}"?`)) return;
+        if (!window.confirm(`Bạn có chắc muốn xóa bài học "${lesson.Name}" không?`)) return;
         try {
             await deleteLesson(lesson._id!);
             await loadLessons();
         } catch (requestError) {
             console.error("Delete lesson error:", requestError);
-            setError("Failed to delete lesson. Please try again.");
+            setError("Không thể xóa bài học. Vui lòng thử lại.");
         }
     };
 
@@ -69,15 +79,15 @@ function LessonManagementPage() {
         <div className="container-fluid py-4">
             <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
                 <div>
-                    <h1 className="h3 mb-1">Lesson management</h1>
-                    <p className="text-muted mb-0">Create, edit and organize course lessons.</p>
+                    <h1 className="h3 mb-1">Quản lý bài học</h1>
+                    <p className="text-muted mb-0">Tạo, chỉnh sửa và sắp xếp bài học trong khóa học.</p>
                 </div>
                 <button
                     className="btn btn-primary"
                     onClick={() => navigate("/admin/lessons/create")}
                 >
                     <FaPlus className="me-2" />
-                    New lesson
+                    Thêm bài học
                 </button>
             </div>
 
@@ -87,13 +97,13 @@ function LessonManagementPage() {
                 <div className="card-body">
                     <div className="row g-3 mb-3">
                         <div className="col-md-6">
-                            <label className="form-label" htmlFor="lesson-search">Search lessons</label>
+                            <label className="form-label" htmlFor="lesson-search">Tìm bài học</label>
                             <input
                                 id="lesson-search"
                                 className="form-control"
                                 value={search}
                                 onChange={(event) => setSearch(event.target.value)}
-                                placeholder="Search by lesson, unit, course or status"
+                                placeholder="Tìm theo tên bài, chương, khóa học hoặc trạng thái"
                             />
                         </div>
                     </div>
@@ -102,17 +112,17 @@ function LessonManagementPage() {
                         <table className="table table-hover align-middle">
                             <thead className="table-light">
                                 <tr>
-                                    <th>Lesson</th>
-                                    <th>Course</th>
-                                    <th>Unit</th>
-                                    <th>Status</th>
-                                    <th>Visibility</th>
-                                    <th>Actions</th>
+                                    <th>Bài học</th>
+                                    <th>Khóa học</th>
+                                    <th>Chương</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hiển thị</th>
+                                    <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {isLoading ? (
-                                    <tr><td colSpan={6} className="text-center py-5">Loading lessons...</td></tr>
+                                    <tr><td colSpan={6} className="text-center py-5">Đang tải bài học...</td></tr>
                                 ) : filteredLessons.length ? filteredLessons.map((lesson) => (
                                     <tr key={lesson._id}>
                                         <td>
@@ -121,16 +131,16 @@ function LessonManagementPage() {
                                         </td>
                                         <td>{getCourseName(lesson)}</td>
                                         <td>{lesson.Unit}</td>
-                                        <td><span className="badge bg-secondary">{lesson.Status}</span></td>
+                                        <td><span className="badge bg-secondary">{getStatusLabel(lesson.Status)}</span></td>
                                         <td>
                                             <span className={`badge ${lesson.IsOpen ? "bg-success" : "bg-secondary"}`}>
-                                                {lesson.IsOpen ? "Open" : "Closed"}
+                                                {lesson.IsOpen ? "Đang mở" : "Đang đóng"}
                                             </span>
                                         </td>
                                         <td className="text-nowrap">
                                             <button
                                                 className="btn btn-outline-primary btn-sm me-2"
-                                                title="Manage lesson details"
+                                                title="Quản lý nội dung bài học"
                                                 disabled={!getCourseId(lesson)}
                                                 onClick={() => navigate(`/admin/courses/${getCourseId(lesson)}/lessons/${lesson._id}/details`)}
                                             >
@@ -138,14 +148,14 @@ function LessonManagementPage() {
                                             </button>
                                             <button
                                                 className="btn btn-warning btn-sm me-2"
-                                                title="Edit lesson"
+                                                title="Chỉnh sửa bài học"
                                                 onClick={() => navigate(`/admin/lessons/${lesson._id}/edit`)}
                                             >
                                                 <FaEdit />
                                             </button>
                                             <button
                                                 className="btn btn-danger btn-sm"
-                                                title="Delete lesson"
+                                                title="Xóa bài học"
                                                 onClick={() => void handleDelete(lesson)}
                                             >
                                                 <FaTrash />
@@ -153,12 +163,12 @@ function LessonManagementPage() {
                                         </td>
                                     </tr>
                                 )) : (
-                                    <tr><td colSpan={6} className="text-center py-5 text-muted">No lessons found.</td></tr>
+                                    <tr><td colSpan={6} className="text-center py-5 text-muted">Không tìm thấy bài học.</td></tr>
                                 )}
                             </tbody>
                         </table>
                     </div>
-                    <div className="text-muted small">Showing {filteredLessons.length} of {lessons.length} lessons</div>
+                    <div className="text-muted small">Đang hiển thị {filteredLessons.length}/{lessons.length} bài học</div>
                 </div>
             </div>
         </div>

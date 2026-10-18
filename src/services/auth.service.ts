@@ -24,6 +24,16 @@ export const login = async (data: LoginRequest): Promise<LoginResponse> => {
     return result;
 };
 
+export const requestPasswordReset = async (email: string): Promise<{ message: string; resetUrl?: string }> => {
+    const response = await api.post<{ message: string; resetUrl?: string }>("/auth/forgot-password", { email });
+    return response.data;
+};
+
+export const resetPassword = async (token: string, password: string): Promise<{ message: string }> => {
+    const response = await api.post<{ message: string }>("/auth/reset-password", { token, password });
+    return response.data;
+};
+
 export const googleLogin = async (credential: string): Promise<GoogleAuthResponse> => {
     const response = await api.post<GoogleAuthResponse>("/auth/google", { credential });
     const result = response.data;

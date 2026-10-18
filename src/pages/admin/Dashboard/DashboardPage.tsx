@@ -173,15 +173,15 @@ function DashboardPage() {
     );
 
     if (isLoading && !reports) {
-        return <div className="dashboard-page"><div className="report-loading">Đang tải Dashboard...</div></div>;
+        return <div className="dashboard-page"><div className="report-loading">Đang tải bảng điều khiển...</div></div>;
     }
 
     return (
         <div className="dashboard-page">
             <header className="dashboard-header">
                 <div>
-                    <span className="reports-eyebrow">IELTS LEARNING MANAGEMENT</span>
-                    <h1>Dashboard</h1>
+                    <span className="reports-eyebrow">QUẢN LÝ HỌC TẬP IELTS</span>
+                    <h1>Bảng điều khiển</h1>
                     <p>Tổng quan hoạt động, người dùng, học tập và doanh thu của website.</p>
                 </div>
                 <div className="dashboard-actions">

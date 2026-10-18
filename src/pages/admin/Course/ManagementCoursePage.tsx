@@ -127,7 +127,7 @@ function ManagementCoursePage() {
                 onClick={() => navigate("/admin/courses")}
             >
                 <FaArrowLeft />
-                Back
+                Quay lại
             </button>
 
             <div className="course-banner">
@@ -136,11 +136,11 @@ function ManagementCoursePage() {
                     <p>{course?.Description}</p>
                     <div className="course-tags">
                         <span className={`tag ${course?.Status ? "active" : "inactive"}`}>
-                            {course?.Status ? "Active" : "Inactive"}
+                            {course?.Status ? "Đang hoạt động" : "Ngừng hoạt động"}
                         </span>
 
                         <span className={`tag ${course?.IsOpen ? "open" : "closed"}`}>
-                            {course?.IsOpen ? "Open" : "Closed"}
+                            {course?.IsOpen ? "Đang mở đăng ký" : "Đã đóng đăng ký"}
                         </span>
                     </div>
 
@@ -148,7 +148,7 @@ function ManagementCoursePage() {
 
                 <button className="edit-course">
                     <FaEdit />
-                    Edit Course
+                    Chỉnh sửa khóa học
                 </button>
 
             </div>
@@ -157,25 +157,25 @@ function ManagementCoursePage() {
                 <div className="stat-card">
                     <FaBook />
                     <h3>{lessons.length}</h3>
-                    <p>Lessons</p>
+                    <p>Bài học</p>
                 </div>
 
                 <div className="stat-card">
                     <FaClipboardList />
                     <h3>{courseAssignments.length}</h3>
-                    <p>Assignments</p>
+                    <p>Bài tập</p>
                 </div>
 
                 <div className="stat-card">
                     <FaUsers />
                     <h3>{courseStudents.length}</h3>
-                    <p>Students</p>
+                    <p>Học viên</p>
                 </div>
 
                 <div className="stat-card">
                     <FaChalkboardTeacher />
                     <h3>{courseTeachers.length}</h3>
-                    <p>Teachers</p>
+                    <p>Giảng viên</p>
                 </div>
 
             </div>
@@ -186,35 +186,35 @@ function ManagementCoursePage() {
                     className={activeTab === "overview" ? "active" : ""}
                     onClick={() => setSearchParams({ tab: "overview" })}
                 >
-                    Overview
+                    Tổng quan
                 </button>
 
                 <button
                     className={activeTab === "lessons" ? "active" : ""}
                     onClick={() => setSearchParams({ tab: "lessons" })}
                 >
-                    Lessons
+                    Bài học
                 </button>
 
                 <button
                     className={activeTab === "assignments" ? "active" : ""}
                     onClick={() => setSearchParams({ tab: "assignments" })}
                 >
-                    Assignments
+                    Bài tập
                 </button>
 
                 <button
                     className={activeTab === "students" ? "active" : ""}
                     onClick={() => setSearchParams({ tab: "students" })}
                 >
-                    Students & Teachers
+                    Học viên và giảng viên
                 </button>
 
                 {/* <button
                     className={activeTab === "settings" ? "active" : ""}
                     onClick={() => setSearchParams({ tab: "settings" })}
                 >
-                    Settings
+                    Cài đặt
                 </button> */}
 
             </div>

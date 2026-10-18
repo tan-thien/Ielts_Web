@@ -1,0 +1,21 @@
+import api from "./api";
+import type { SavedVocabulary, VocabularyTopic, VocabularyTranslation, VocabularyWord } from "../types/vocabulary";
+
+const data = <T>(response: { data: { data: T } }) => response.data.data;
+export const getVocabularyTopics = async (includeInactive = false) => data<VocabularyTopic[]>(await api.get("/vocabulary/topics", { params: { includeInactive } }));
+export const getVocabularyWords = async (params: { topicId?: string; search?: string; includeInactive?: boolean } = {}) => data<VocabularyWord[]>(await api.get("/vocabulary/words", { params }));
+export const searchExternalVocabulary = async (word: string) => data<VocabularyWord>(await api.get("/vocabulary/dictionary/search", { params: { word } }));
+export const getSavedVocabulary = async () => data<SavedVocabulary[]>(await api.get("/vocabulary/saved"));
+export const saveVocabularyWord = async (wordId: string, Note = "") => data<SavedVocabulary>(await api.post(`/vocabulary/saved/${wordId}`, { Note }));
+export const saveExternalVocabularyWord = async (word: string) => data<SavedVocabulary>(await api.post("/vocabulary/saved/external", { word }));
+export const updateSavedVocabulary = async (wordId: string, body: { Note: string; IsLearned: boolean }) => data<SavedVocabulary>(await api.put(`/vocabulary/saved/${wordId}`, body));
+export const removeSavedVocabulary = async (wordId: string) => data<unknown>(await api.delete(`/vocabulary/saved/${wordId}`));
+export const translateVocabulary = async (word: string, context = "") => data<VocabularyTranslation>(await api.post("/vocabulary/translate", { word, context }));
+export const lookupVocabularyWord = async (word: string) => data<Omit<VocabularyWord, "_id" | "TopicID" | "IsActive">>(await api.post("/vocabulary/admin/lookup", { word }));
+export const bulkImportVocabulary = async (topicId: string, words: string) => data<{ imported: VocabularyWord[]; failed: Array<{ word: string; message: string }> }>(await api.post("/vocabulary/admin/import", { topicId, words }));
+export const createVocabularyTopic = async (body: { Name: string; Description: string; IsActive: boolean }) => data<VocabularyTopic>(await api.post("/vocabulary/admin/topics", body));
+export const updateVocabularyTopic = async (id: string, body: { Name: string; Description: string; IsActive: boolean }) => data<VocabularyTopic>(await api.put(`/vocabulary/admin/topics/${id}`, body));
+export const deleteVocabularyTopic = async (id: string) => data<unknown>(await api.delete(`/vocabulary/admin/topics/${id}`));
+export const createVocabularyWord = async (body: Omit<VocabularyWord, "_id" | "IsActive" | "TopicID"> & { TopicID: string; IsActive: boolean }) => data<VocabularyWord>(await api.post("/vocabulary/admin/words", body));
+export const updateVocabularyWord = async (id: string, body: Omit<VocabularyWord, "_id" | "IsActive" | "TopicID"> & { TopicID: string; IsActive: boolean }) => data<VocabularyWord>(await api.put(`/vocabulary/admin/words/${id}`, body));
+export const deleteVocabularyWord = async (id: string) => data<unknown>(await api.delete(`/vocabulary/admin/words/${id}`));

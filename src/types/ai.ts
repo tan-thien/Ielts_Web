@@ -27,6 +27,8 @@ export interface AIEvaluationResult {
     priorityErrors: AIErrorItem[];
     actionPlan: string[];
     generalFeedback: string;
+    bandRationale?: string;
+    correctedResponse?: string;
     transcript?: string;
     limitation?: string;
     disclaimer: string;

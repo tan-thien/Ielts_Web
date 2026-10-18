@@ -181,18 +181,18 @@ function RegisterPage() {
                             <FaGraduationCap />
                         </span>
                         <span>
-                            IELTS<span className="register-brand-accent"> SMARTER</span>
+                            IELTS<span className="register-brand-accent"> THÔNG MINH</span>
                         </span>
                     </Link>
 
                     <div className="register-intro-content">
                         <span className="register-eyebrow">
-                            YOUR JOURNEY STARTS HERE
+                            HÀNH TRÌNH CỦA BẠN BẮT ĐẦU TỪ ĐÂY
                         </span>
                         <h1>
-                            Learn IELTS
+                            Học IELTS
                             <br />
-                            <span>Smarter with AI.</span>
+                            <span>Hiệu quả hơn cùng AI.</span>
                         </h1>
                         <p>
                             Tạo tài khoản để bắt đầu hành trình học IELTS,
@@ -202,7 +202,7 @@ function RegisterPage() {
                         <div className="register-benefit">
                             <span><FaCheckCircle /></span>
                             <div>
-                                <strong>Learn at your own pace</strong>
+                                <strong>Học theo nhịp độ riêng</strong>
                                 <small>Học theo mục tiêu của riêng bạn</small>
                             </div>
                         </div>
@@ -210,14 +210,14 @@ function RegisterPage() {
                         <div className="register-benefit">
                             <span><FaCheckCircle /></span>
                             <div>
-                                <strong>Practice with confidence</strong>
+                                <strong>Luyện tập đầy tự tin</strong>
                                 <small>Luyện tập từng bước mỗi ngày</small>
                             </div>
                         </div>
                     </div>
 
                     <div className="register-intro-footer">
-                        Build your skills. Reach your goals.
+                        Phát triển kỹ năng. Chinh phục mục tiêu.
                     </div>
                 </aside>
 
@@ -228,9 +228,9 @@ function RegisterPage() {
                             Quay lại đăng nhập
                         </Link>
                         <span className="register-form-label">
-                            GET STARTED FOR FREE
+                            BẮT ĐẦU HỌC MIỄN PHÍ
                         </span>
-                        <h2>Create your account</h2>
+                        <h2>Tạo tài khoản</h2>
                         <p>Điền thông tin bên dưới để đăng ký.</p>
                     </div>
 
@@ -261,7 +261,7 @@ function RegisterPage() {
                                 <strong>Ảnh đại diện</strong>
                                 <span>
                                     {uploading
-                                        ? "Đang tải ảnh lên Cloudinary..."
+                                        ? "Đang tải ảnh lên..."
                                         : "JPG, PNG hoặc WebP · Tối đa 5 MB"}
                                 </span>
                                 <button
@@ -439,7 +439,7 @@ function RegisterPage() {
                                 </>
                             ) : (
                                 <>
-                                    Create Account
+                                    Tạo tài khoản
                                     <FaArrowRight />
                                 </>
                             )}
