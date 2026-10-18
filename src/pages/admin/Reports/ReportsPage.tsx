@@ -278,7 +278,7 @@ function PrintReport({ reports, months }: { reports: ReportsData; months: number
     return (
         <article className="report-print-document">
             <header className="print-report-header">
-                <div className="print-report-brand">IELTS <span>NGTANTH_</span></div>
+                <div className="print-report-brand">IELTS <span>HỌC TẬP</span></div>
                 <p>BÁO CÁO QUẢN TRỊ</p>
                 <h1>Báo cáo hoạt động &amp; kinh doanh</h1>
                 <div className="print-report-meta">
@@ -383,7 +383,7 @@ function PrintReport({ reports, months }: { reports: ReportsData; months: number
             </section>
 
             <footer className="print-report-footer">
-                Dữ liệu được tổng hợp từ hệ thống IELTS NGTANTH_. Doanh thu chỉ tính các đơn đã thanh toán.
+                Dữ liệu được tổng hợp từ hệ thống IELTS Học Tập. Doanh thu chỉ tính các đơn đã thanh toán.
                 Lượt đăng nhập được ghi nhận từ thời điểm triển khai; số đăng ký theo tháng ước tính theo ObjectId tài khoản.
             </footer>
         </article>

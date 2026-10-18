@@ -21,7 +21,8 @@ async function streamRequest(
         signal,
     });
     if (!response.ok || !response.body) {
-        throw new Error(`AI request failed (${response.status})`);
+        const errorBody = await response.json().catch(() => null) as { message?: string } | null;
+        throw new Error(errorBody?.message || `Yêu cầu AI thất bại (${response.status}). Vui lòng thử lại.`);
     }
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
@@ -98,12 +99,29 @@ export async function getAIHistory(skill?: "Writing" | "Speaking"): Promise<AIPr
 
 export function getEvaluation(attempt: AIPracticeAttempt | null): AIEvaluationResult | null {
     const result = attempt?.Answers?.[0]?.AIReview;
-    if (!result || !Number.isFinite(result.estimatedOverallBand) || result.criteria.length !== 4) return null;
+    if (!result || !Number.isFinite(result.estimatedOverallBand) || !Array.isArray(result.criteria) || result.criteria.length !== 4) return null;
     if (result.criteria.some((criterion) => !Number.isFinite(criterion.band) || criterion.band < 0 || criterion.band > 9)) return null;
-    const rawPriorityErrors = (result as AIEvaluationResult & { priorityErrors: unknown[] }).priorityErrors;
-    const priorityErrors = Array.isArray(rawPriorityErrors) ? rawPriorityErrors.map((item) => {
-        if (typeof item !== "string") return item;
-        return { type: "Writing issue", quote: "", location: "", explanation: item, suggestion: "" };
-    }) : [];
+    const rawPriorityErrors: unknown = result.priorityErrors;
+    const priorityErrors = Array.isArray(rawPriorityErrors)
+        ? rawPriorityErrors.flatMap((item): NonNullable<AIEvaluationResult["priorityErrors"]>[number][] => {
+            if (typeof item === "string") {
+                return [{
+                    type: "Writing issue",
+                    quote: "",
+                    explanation: item,
+                    suggestion: "",
+                }];
+            }
+            if (typeof item !== "object" || item === null) return [];
+            const value = item as Record<string, unknown>;
+            return [{
+                type: typeof value.type === "string" ? value.type : "Cần cải thiện",
+                quote: typeof value.quote === "string" ? value.quote : "",
+                location: typeof value.location === "string" ? value.location : "",
+                explanation: typeof value.explanation === "string" ? value.explanation : "",
+                suggestion: typeof value.suggestion === "string" ? value.suggestion : "",
+            }];
+        })
+        : [];
     return { ...result, priorityErrors };
 }

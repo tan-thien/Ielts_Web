@@ -144,7 +144,7 @@ function ManagementPage({ mode }: ManagementPageProps) {
                     <p>
                         {mode === "teachers"
                             ? "Phân quyền tài khoản, phân công giáo viên vào khóa học và theo dõi tải giảng dạy."
-                            : "Theo dõi khóa học, tiến độ từng lesson, bài tập và điểm của mỗi học viên."}
+                            : "Theo dõi khóa học, tiến độ từng bài học, bài tập và điểm của mỗi học viên."}
                     </p>
                 </div>
                 <button
@@ -292,7 +292,7 @@ function ManagementPage({ mode }: ManagementPageProps) {
                                         <div className="management-course-heading">
                                             <h3>{course.Name}</h3>
                                             <span className={course.Teachers.length ? "teacher-badge assigned" : "teacher-badge"}>
-                                                {course.Teachers.length} giáo viên
+                                                {course.Teachers.length} giảng viên
                                             </span>
                                         </div>
                                         <p>
@@ -346,7 +346,7 @@ function ManagementPage({ mode }: ManagementPageProps) {
                     <div className="management-panel-heading student-heading">
                         <div>
                             <h2>Bảng theo dõi học viên</h2>
-                            <p>Mở chi tiết từng học viên để xem khóa học, lesson và trạng thái/điểm bài tập.</p>
+                            <p>Mở chi tiết từng học viên để xem khóa học, tiến độ bài học và trạng thái/điểm bài tập.</p>
                         </div>
                         <input
                             className="management-search"
@@ -365,7 +365,7 @@ function ManagementPage({ mode }: ManagementPageProps) {
                                 <tr>
                                     <th>Học viên</th>
                                     <th>Khóa học</th>
-                                    <th>Lesson hoàn thành</th>
+                                    <th>Bài học hoàn thành</th>
                                     <th>Tiến độ</th>
                                     <th>Bài tập đã làm</th>
                                     <th>Chi tiết</th>
@@ -399,17 +399,17 @@ function ManagementPage({ mode }: ManagementPageProps) {
                                                             <header>
                                                                 <div>
                                                                     <h3>{course.Name}</h3>
-                                                                    <p>Giáo viên ({course.TeacherCount}): {course.Teachers.map((teacher) => teacher.Name).join(", ") || "Chưa phân công"}</p>
+                                                                    <p>Giảng viên ({course.TeacherCount}): {course.Teachers.map((teacher) => teacher.Name).join(", ") || "Chưa phân công"}</p>
                                                                 </div>
-                                                                <span>{course.LessonProgress}% lesson</span>
+                                                                <span>{course.LessonProgress}% bài học</span>
                                                             </header>
                                                             <p className="student-course-summary">
-                                                                Lesson: {course.CompletedLessons}/{course.TotalLessons} hoàn thành ·
+                                                                Bài học: {course.CompletedLessons}/{course.TotalLessons} hoàn thành ·
                                                                 Bài tập: {course.CompletedAssignments}/{course.TotalAssignments} đã làm
                                                             </p>
                                                             {course.Lessons.length > 0 && (
                                                                 <div className="lesson-progress-list">
-                                                                    <strong>Tiến độ lesson</strong>
+                                                                    <strong>Tiến độ bài học</strong>
                                                                     <div>
                                                                         {course.Lessons.map((lesson, index) => (
                                                                             <span className={lesson.Completed ? "completed" : ""} key={lesson._id}>

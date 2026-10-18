@@ -192,20 +192,20 @@ function LoginPage() {
         <div className="login-container">
             <div className="login-left">
                 <div className="overlay">
-                    <h1>IELTS Learning</h1>
-                    <p>Learn English smarter. Practice IELTS with AI.</p>
+                    <h1>Học IELTS</h1>
+                    <p>Học tiếng Anh thông minh hơn, luyện thi IELTS cùng AI.</p>
                 </div>
             </div>
             <div className="login-right">
                 <div className="login-card">
                     {!googleRegistrationToken ? (
                         <>
-                            <h2>Welcome Back 👋</h2>
-                            <p>Please login to continue</p>
+                            <h2>Chào mừng bạn quay lại 👋</h2>
+                            <p>Đăng nhập để tiếp tục hành trình học tập.</p>
                             <form onSubmit={handleLogin}>
                                 <input
                                     type="email"
-                                    placeholder="Email"
+                                    placeholder="Địa chỉ email"
                                     autoComplete="email"
                                     value={email}
                                     onChange={(event) => setEmail(event.target.value)}
@@ -213,16 +213,17 @@ function LoginPage() {
                                 />
                                 <input
                                     type="password"
-                                    placeholder="Password"
+                                    placeholder="Mật khẩu"
                                     autoComplete="current-password"
                                     value={password}
                                     onChange={(event) => setPassword(event.target.value)}
                                     required
                                 />
                                 <button type="submit" disabled={submitting}>
-                                    {submitting ? "Đang đăng nhập..." : "Login"}
+                                    {submitting ? "Đang đăng nhập..." : "Đăng nhập"}
                                 </button>
                             </form>
+                            <p className="login-forgot"><a href="/forgot-password">Quên mật khẩu?</a></p>
                             <div className="login-divider"><span>hoặc</span></div>
                             {GOOGLE_CLIENT_ID ? (
                                 <>

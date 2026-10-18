@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaArrowRight, FaBookOpen, FaSearch } from "react-icons/fa";
+import { FaArrowRight, FaBookOpen, FaSearch, FaCheck } from "react-icons/fa";
 import { getCourses } from "../../services/course.service";
+import { getStudyActivity } from "../../services/lesson.service";
+import type { MyCourseSummary } from "../../services/course.service";
 import type { Course } from "../../types/course";
 import "./CoursePage.css";
 
@@ -13,6 +15,18 @@ function formatFee(fee: number) {
               currency: "VND",
               maximumFractionDigits: 0,
           }).format(fee);
+}
+
+export function LearningDashboard({ items }: { items: MyCourseSummary[] }) {
+    const [month, setMonth] = useState(() => new Date());
+    const [studyDates, setStudyDates] = useState<Set<string>>(new Set());
+    const monthValue = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, "0")}`;
+    useEffect(() => { getStudyActivity(monthValue).then((data) => setStudyDates(new Set(data.map((item) => item.StudyDate)))).catch(() => setStudyDates(new Set())); }, [monthValue]);
+    const firstDay = new Date(month.getFullYear(), month.getMonth(), 1).getDay();
+    const days = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate();
+    const cells = [...Array((firstDay + 6) % 7).fill(null), ...Array.from({ length: days }, (_, index) => index + 1)];
+    const shiftMonth = (delta: number) => setMonth(new Date(month.getFullYear(), month.getMonth() + delta, 1));
+    return <section className="student-learning-dashboard"><div className="student-dashboard-heading"><div><span className="public-courses-eyebrow">TIẾN ĐỘ HỌC TẬP</span><h2>Khóa học của tôi</h2></div><span>{items.length} khóa học đã đăng ký</span></div><div className="my-course-grid">{items.map((item) => <article className="my-course-card" key={item.course._id}><div className="my-course-card-main">{item.course.Thumbnail ? <img src={item.course.Thumbnail} alt={item.course.Name} /> : <FaBookOpen /> }<div><h3>{item.course.Name}</h3><p>{item.completedLessons}/{item.totalLessons} bài học đã hoàn thành</p><div className="course-progress-track"><span style={{ width: `${item.progressPercent}%` }} /></div><small>{item.progressPercent}% tiến độ</small></div></div><Link to={`/courses/${item.course._id}/learn`}>Tiếp tục học <FaArrowRight /></Link></article>)}</div><div className="study-calendar"><div className="calendar-heading"><button onClick={() => shiftMonth(-1)} aria-label="Tháng trước">‹</button><h3>Tháng {month.getMonth() + 1}/{month.getFullYear()}</h3><button onClick={() => shiftMonth(1)} aria-label="Tháng sau">›</button></div><div className="calendar-weekdays">{["T2", "T3", "T4", "T5", "T6", "T7", "CN"].map((day) => <span key={day}>{day}</span>)}</div><div className="calendar-grid">{cells.map((day, index) => { const date = day ? `${monthValue}-${String(day).padStart(2, "0")}` : ""; const studied = Boolean(date && studyDates.has(date)); return <span className={studied ? "studied" : ""} key={`${date}-${index}`}>{day}{studied && <FaCheck aria-label="Đã học" />}</span>; })}</div><p className="calendar-note"><i /> Ngày đã vào học sẽ được tô màu xanh.</p></div></section>;
 }
 
 function CoursePageUser() {
@@ -61,7 +75,7 @@ function CoursePageUser() {
         <div className="public-courses">
             <section className="public-courses-hero">
                 <div className="public-courses-container">
-                    <span className="public-courses-eyebrow">IELTS LEARNING</span>
+                    <span className="public-courses-eyebrow">HỌC IELTS</span>
                     <h1>Chọn khóa học phù hợp với bạn</h1>
                     <p>
                         Khám phá lộ trình học IELTS, xem nội dung từng khóa học và

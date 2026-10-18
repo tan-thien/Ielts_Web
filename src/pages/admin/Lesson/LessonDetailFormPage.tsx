@@ -42,7 +42,7 @@ function LessonDetailFormPage() {
             }
         }).catch(error => {
             console.error("Load lesson detail error:", error);
-            alert("Failed to load lesson content.");
+            alert("Không thể tải nội dung bài học.");
         });
 
         return () => {
@@ -98,7 +98,7 @@ function LessonDetailFormPage() {
             setUploading(true);
 
             if (form.Type === "Text" || form.Type === "Quiz") {
-                throw new Error("This lesson content type does not support file uploads.");
+                throw new Error("Loại nội dung này không hỗ trợ tải tệp lên.");
             }
             const url = await uploadCloudinaryResource(file, form.Type);
             setForm(prev => ({ ...prev, FileUrl: url }));
@@ -107,7 +107,7 @@ function LessonDetailFormPage() {
 
             console.log(err);
 
-            alert(err instanceof Error ? err.message : "Upload failed");
+            alert(err instanceof Error ? err.message : "Tải tệp lên không thành công.");
 
         } finally {
 
@@ -128,7 +128,7 @@ function LessonDetailFormPage() {
                 }
             >
                 <FaArrowLeft className="me-2" />
-                Back
+                Quay lại
             </button>
 
             <div className="card shadow">
@@ -137,7 +137,7 @@ function LessonDetailFormPage() {
 
                     <h4 className="mb-0 text-white ">
 
-                        {isEdit ? "Edit Lesson Content" : "Create Lesson Content"}
+                        {isEdit ? "Chỉnh sửa nội dung bài học" : "Thêm nội dung bài học"}
 
                     </h4>
 
@@ -152,7 +152,7 @@ function LessonDetailFormPage() {
 
                             <label className="form-label">
 
-                                Type
+                                Loại nội dung
 
                             </label>
 
@@ -163,17 +163,17 @@ function LessonDetailFormPage() {
                                 onChange={handleChange}
                             >
 
-                                <option value="Text">Text</option>
+                                <option value="Text">Văn bản</option>
 
                                 <option value="Video">Video</option>
 
-                                <option value="Audio">Audio</option>
+                                <option value="Audio">Âm thanh</option>
 
-                                <option value="PDF">PDF</option>
+                                <option value="PDF">Tài liệu PDF</option>
 
-                                <option value="Image">Image</option>
+                                <option value="Image">Hình ảnh</option>
 
-                                <option value="Quiz">Quiz</option>
+                                <option value="Quiz">Câu hỏi</option>
 
                             </select>
 
@@ -188,7 +188,7 @@ function LessonDetailFormPage() {
 
                                         <label className="form-label">
 
-                                            Content
+                                            Nội dung
 
                                         </label>
 
@@ -221,7 +221,7 @@ function LessonDetailFormPage() {
                                             
                                             <label className="form-label">
 
-                                                Upload File
+                                                Tải tệp lên
 
                                             </label>
 
@@ -231,7 +231,7 @@ function LessonDetailFormPage() {
                                                 name="FileUrl"
                                                 value={form.FileUrl}
                                                 onChange={handleChange}
-                                                placeholder="https://example.com/file"
+                                                placeholder="Dán đường dẫn tệp (https://...)"
                                             />
 
                                             <input
@@ -255,7 +255,7 @@ function LessonDetailFormPage() {
                                                 uploading &&
                                                 <div className="text-primary mt-2">
 
-                                                    Uploading...
+                                                    Đang tải lên...
 
                                                 </div>
                                             }
@@ -264,7 +264,7 @@ function LessonDetailFormPage() {
                                                 form.FileUrl &&
                                                 <div className="text-success mt-2">
 
-                                                    ✓ Uploaded successfully
+                                                    ✓ Tải lên thành công
 
                                                 </div>
                                             }
@@ -320,7 +320,7 @@ function LessonDetailFormPage() {
 
                                     <label className="form-check-label">
 
-                                        Active
+                                        Đang hoạt động
 
                                     </label>
 
@@ -339,7 +339,7 @@ function LessonDetailFormPage() {
 
                                 <FaSave className="me-2" />
 
-                                Save
+                                Lưu nội dung
 
                             </button>
 

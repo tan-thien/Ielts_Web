@@ -10,7 +10,6 @@ import {
     FaPenNib,
     // FaHeadphones,
     FaSignOutAlt,
-    FaGraduationCap,
     FaCog
 } from "react-icons/fa";
 
@@ -24,7 +23,7 @@ function Sidebar({ collapsed }: SidebarProps) {
 
     const handleLogout = () => {
 
-        if (!window.confirm("Do you want to logout?"))
+        if (!window.confirm("Bạn có muốn đăng xuất không?"))
             return;
 
         localStorage.removeItem("token");
@@ -38,42 +37,42 @@ function Sidebar({ collapsed }: SidebarProps) {
         {
             path: "/admin/dashboard",
             icon: <FaChartPie />,
-            text: "Dashboard"
+            text: "Tổng quan"
         },
         {
             path: "/admin/courses",
             icon: <FaBook />,
-            text: "Courses"
+            text: "Khóa học"
         },
         {
             path: "/admin/lessons",
             icon: <FaBookOpen />,
-            text: "Lessons"
+            text: "Bài học"
         },
         {
             path: "/admin/assignments",
             icon: <FaClipboardList />,
-            text: "Assignments"
+            text: "Bài tập"
         },
         {
             path: "/admin/students",
             icon: <FaUsers />,
-            text: "Students"
+            text: "Học viên"
         },
         {
             path: "/admin/teachers",
             icon: <FaChalkboardTeacher />,
-            text: "Teachers"
+            text: "Giảng viên"
         },
         {
             path: "/admin/speakingAI",
             icon: <FaMicrophone />,
-            text: "Speaking AI"
+            text: "Luyện Nói AI"
         },
         {
             path: "/admin/writingAI",
             icon: <FaPenNib />,
-            text: "Writing AI"
+            text: "Luyện Viết AI"
         },
         // {
         //     path: "/admin/reading",
@@ -88,17 +87,17 @@ function Sidebar({ collapsed }: SidebarProps) {
         {
             path: "/admin/vocabulary",
             icon: <FaBook />,
-            text: "Vocabulary"
+            text: "Từ vựng"
         },
         {
             path: "/admin/reports",
             icon: <FaChartPie />,
-            text: "Reports"
+            text: "Báo cáo"
         },
         {
             path: "/admin/settings",
             icon: <FaCog />,
-            text: "Settings"
+            text: "Cài đặt"
         }
     ];
 
@@ -108,15 +107,15 @@ function Sidebar({ collapsed }: SidebarProps) {
 
             <div className="sidebar-logo">
 
-                <FaGraduationCap className="logo-icon" />
+                <img className="logo-icon" src="/Logo.png" alt="" />
 
                 {!collapsed && (
 
                     <div>
 
-                        <h2>IELTS NGTANTH_</h2>
+                        <h2>IELTS HỌC TẬP</h2>
 
-                        <p>Admin Panel</p>
+                        <p>Khu vực quản trị</p>
 
                     </div>
 
@@ -167,7 +166,7 @@ function Sidebar({ collapsed }: SidebarProps) {
 
                         !collapsed &&
 
-                        <span>Logout</span>
+                        <span>Đăng xuất</span>
 
                     }
 

@@ -72,15 +72,11 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
 
                 <div>
 
-                    <h4 className="page-title">
-
-                        IELTS Admin
-
-                    </h4>
+                    <h4 className="page-title">Quản trị IELTS</h4>
 
                     <span>
 
-                        Learning Management System
+                        Hệ thống quản lý học tập
 
                     </span>
 
@@ -114,6 +110,7 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
                                 "https://i.pravatar.cc/100"
                             }
                             className="avatar"
+                            alt="Ảnh đại diện quản trị viên"
                         />
 
                         <div>
@@ -126,7 +123,7 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
 
                             <small>
 
-                                {user?.user?.Role}
+                                {user?.user?.Role === "admin" ? "Quản trị viên" : "Giảng viên"}
 
                             </small>
 
@@ -139,15 +136,15 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
                         <div className="profile-dropdown">
                             <button onClick={() => navigate('/admin/profile')}>
                                 <FaUser />
-                                Profile
+                                Hồ sơ cá nhân
                             </button>
                             <button>
                                 <FaKey />
-                                Change password
+                                Đổi mật khẩu
                             </button>
                             <button onClick={() => navigate('/home')}>
                                 <FaArrowAltCircleLeft />
-                                Page user
+                                Trang học viên
                             </button>
                         </div>
 

@@ -241,6 +241,15 @@
     color: #17479D;
 }
 
+.footer-logo {
+    display: block;
+    width: 150px;
+    height: 42px;
+    max-width: none;
+    object-fit: cover;
+    object-position: center;
+}
+
 .site-footer-brand-icon {
     display: inline-flex;
     width: 34px;

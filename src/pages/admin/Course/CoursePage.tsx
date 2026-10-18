@@ -73,7 +73,7 @@ function CoursePage() {
             });
         } catch (error) {
             console.log(error);
-            alert(error instanceof Error ? error.message : "Upload image failed");
+            alert(error instanceof Error ? error.message : "Tải ảnh lên không thành công.");
         }
 
     };
@@ -82,10 +82,10 @@ function CoursePage() {
 
             if (editingId === "") {
                 await createCourse(form);
-                alert("Create Success");
+                alert("Tạo khóa học thành công.");
             } else {
                 await updateCourse(editingId, form);
-                alert("Update Success");
+                alert("Cập nhật khóa học thành công.");
             }
 
             resetForm();
@@ -119,7 +119,7 @@ function CoursePage() {
 
         try {
             await deleteCourse(id);
-            alert("Delete Success");
+            alert("Xóa khóa học thành công.");
             loadCourses();
         } catch (error) {
             console.log(error);
@@ -149,11 +149,11 @@ function CoursePage() {
 
                 <div>
                     <h2 className="fw-bold text-primary mb-1">
-                        Course Management
+                        Quản lý khóa học
                     </h2>
 
                     <p className="text-muted mb-0">
-                        Manage all IELTS courses
+                        Quản lý các khóa học IELTS
                     </p>
                 </div>
 
@@ -162,7 +162,7 @@ function CoursePage() {
                     onClick={resetForm}
                 >
                     <FaPlus className="me-2" />
-                    New Course
+                    Thêm khóa học
                 </button>
 
             </div>
@@ -175,7 +175,7 @@ function CoursePage() {
 
                     <h4 className="fw-bold text-white">
 
-                        {editingId ? "Update Course" : "Create Course"}
+                        {editingId ? "Cập nhật khóa học" : "Tạo khóa học"}
 
                     </h4>
 
@@ -188,7 +188,7 @@ function CoursePage() {
                         <div className="col-lg-6">
 
                             <label className="form-label">
-                                Course Name
+                                Tên khóa học
                             </label>
 
                             <input
@@ -196,7 +196,7 @@ function CoursePage() {
                                 name="Name"
                                 value={form.Name}
                                 onChange={handleChange}
-                                placeholder="Enter course name"
+                                placeholder="Nhập tên khóa học"
                             />
 
                         </div>
@@ -204,7 +204,7 @@ function CoursePage() {
                         <div className="col-lg-6">
 
                             <label className="form-label">
-                                Fee
+                                Học phí
                             </label>
 
                             <input
@@ -213,7 +213,7 @@ function CoursePage() {
                                 name="Fee"
                                 value={form.Fee}
                                 onChange={handleChange}
-                                placeholder="Course Fee"
+                                placeholder="Nhập học phí"
                             />
 
                         </div>
@@ -221,7 +221,7 @@ function CoursePage() {
                         <div className="col-lg-6">
 
                             <label className="form-label">
-                                Description
+                                Mô tả
                             </label>
 
                             <input
@@ -229,7 +229,7 @@ function CoursePage() {
                                 name="Description"
                                 value={form.Description}
                                 onChange={handleChange}
-                                placeholder="Description"
+                                placeholder="Nhập mô tả khóa học"
                             />
 
                         </div>
@@ -237,7 +237,7 @@ function CoursePage() {
                         <div className="col-lg-6">
 
                             <label className="form-label">
-                                Date
+                                Ngày khai giảng
                             </label>
 
                             <input
@@ -293,7 +293,7 @@ function CoursePage() {
 
                                 <label className="form-check-label">
 
-                                    Active
+                                    Đang hoạt động
 
                                 </label>
 
@@ -315,7 +315,7 @@ function CoursePage() {
 
                                 <label className="form-check-label">
 
-                                    Open Registration
+                                    Mở đăng ký
 
                                 </label>
 
@@ -332,7 +332,7 @@ function CoursePage() {
                             onClick={handleSave}
                         >
 
-                            {editingId ? "Update" : "Create"}
+                            {editingId ? "Cập nhật" : "Tạo khóa học"}
 
                         </button>
 
@@ -341,7 +341,7 @@ function CoursePage() {
                             onClick={resetForm}
                         >
 
-                            Cancel
+                            Hủy
 
                         </button>
 
@@ -362,7 +362,7 @@ function CoursePage() {
 
                     <input
                         className="form-control"
-                        placeholder="Search..."
+                        placeholder="Tìm kiếm khóa học..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
@@ -379,7 +379,7 @@ function CoursePage() {
 
                     <h4 className="fw-bold mb-0 text-white">
 
-                        Course List
+                        Danh sách khóa học
 
                     </h4>
 
@@ -395,18 +395,18 @@ function CoursePage() {
 
                             <tr>
 
-                                <th>Name</th>
+                                <th>Tên khóa học</th>
 
-                                <th>Fee</th>
+                                <th>Học phí</th>
 
-                                <th>Status</th>
+                                <th>Trạng thái</th>
 
-                                <th>Open</th>
+                                <th>Đăng ký</th>
 
-                                <th>Created By</th>
+                                <th>Người tạo</th>
 
                                 <th style={{ width: "180px" }}>
-                                    Actions
+                                    Thao tác
                                 </th>
 
                             </tr>
@@ -427,7 +427,7 @@ function CoursePage() {
 
                                         <span className={`badge ${course.Status ? "bg-success" : "bg-danger"}`}>
 
-                                            {course.Status ? "Active" : "Inactive"}
+                                            {course.Status ? "Đang hoạt động" : "Ngừng hoạt động"}
 
                                         </span>
 
@@ -437,7 +437,7 @@ function CoursePage() {
 
                                         <span className={`badge ${course.IsOpen ? "bg-primary" : "bg-secondary"}`}>
 
-                                            {course.IsOpen ? "Open" : "Close"}
+                                            {course.IsOpen ? "Đang mở" : "Đang đóng"}
 
                                         </span>
 
@@ -453,6 +453,7 @@ function CoursePage() {
                                         <div className="d-flex justify-content-center gap-2 flex-nowrap">
                                             <button
                                                 className="btn btn-primary btn-sm me-2"
+                                                title="Quản lý khóa học"
                                                 onClick={() => navigate(`/admin/courses/${course._id}`)}
                                             >
                                                 <FaBook className="me-1" />
@@ -460,18 +461,21 @@ function CoursePage() {
                                             </button>
                                             <button
                                                 className="btn btn-info btn-sm me-2"
+                                                title="Xem chi tiết"
                                                 onClick={() => handleView(course)}
                                             >
                                                 <FaEye />
                                             </button>
                                             <button
                                                 className="btn btn-warning btn-sm me-2"
+                                                title="Chỉnh sửa khóa học"
                                                 onClick={() => handleEdit(course)}
                                             >
                                                 <FaEdit />
                                             </button>
                                             <button
                                                 className="btn btn-danger btn-sm"
+                                                title="Xóa khóa học"
                                                 onClick={() => handleDelete(course._id)}
                                             >
                                                 <FaTrash />
@@ -500,7 +504,7 @@ function CoursePage() {
 
                         <div className="modal-header">
 
-                            <h3>Course Detail</h3>
+                            <h3>Chi tiết khóa học</h3>
 
                             <button
                                 className="btn-close"
@@ -521,21 +525,21 @@ function CoursePage() {
 
                                 <div className="col-md-6">
 
-                                    <p><strong>Name:</strong> {selectedCourse.Name}</p>
+                                    <p><strong>Tên khóa học:</strong> {selectedCourse.Name}</p>
 
-                                    <p><strong>Fee:</strong> {selectedCourse.Fee.toLocaleString()} VNĐ</p>
+                                    <p><strong>Học phí:</strong> {selectedCourse.Fee.toLocaleString()} VNĐ</p>
 
-                                    <p><strong>Status:</strong> {selectedCourse.Status ? "Active" : "Inactive"}</p>
+                                    <p><strong>Trạng thái:</strong> {selectedCourse.Status ? "Đang hoạt động" : "Ngừng hoạt động"}</p>
 
                                 </div>
 
                                 <div className="col-md-6">
 
-                                    <p><strong>Open:</strong> {selectedCourse.IsOpen ? "Open" : "Close"}</p>
+                                    <p><strong>Đăng ký:</strong> {selectedCourse.IsOpen ? "Đang mở" : "Đang đóng"}</p>
 
-                                    <p><strong>Date:</strong> {new Date(selectedCourse.Time).toLocaleDateString()}</p>
+                                    <p><strong>Ngày khai giảng:</strong> {new Date(selectedCourse.Time).toLocaleDateString("vi-VN")}</p>
 
-                                    <p><strong>Created By:</strong> {selectedCourse.UserCreate.Email}</p>
+                                    <p><strong>Người tạo:</strong> {selectedCourse.UserCreate.Email}</p>
 
                                 </div>
 

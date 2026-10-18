@@ -41,6 +41,15 @@ import type { Lesson, LessonDetail } from "../../../types/lesson";
 
 import "./LessonDetailForm.css";
 
+const contentTypeLabels: Record<string, string> = {
+    Text: "Văn bản",
+    Video: "Video",
+    Audio: "Âm thanh",
+    PDF: "Tài liệu PDF",
+    Image: "Hình ảnh",
+    Quiz: "Câu hỏi",
+};
+
 function isValidHttpUrl(value: string) {
     try {
         const url = new URL(value);
@@ -74,8 +83,8 @@ function SortableDetail({ detail, disabled, onEdit, onDelete }: SortableDetailPr
             <button
                 type="button"
                 className="btn btn-light content-drag-handle"
-                aria-label={`Reorder ${detail.Type} content`}
-                title="Drag to reorder"
+                aria-label={`Sắp xếp lại nội dung ${detail.Type}`}
+                title="Kéo để sắp xếp"
                 {...attributes}
                 {...listeners}
             >
@@ -95,22 +104,22 @@ function SortableDetail({ detail, disabled, onEdit, onDelete }: SortableDetailPr
 
             <div className="content-info">
                 <div className="content-top">
-                    <span className="content-type">{detail.Type}</span>
+                    <span className="content-type">{contentTypeLabels[detail.Type] || detail.Type}</span>
                     <span className={detail.Status ? "content-status active" : "content-status inactive"}>
-                        {detail.Status ? "Active" : "Inactive"}
+                        {detail.Status ? "Đang hoạt động" : "Ngừng hoạt động"}
                     </span>
                 </div>
 
                 <div className="content-preview">
                     {showsContent
-                        ? detail.Content || "No content"
-                        : detail.FileUrl || "No file"}
+                        ? detail.Content || "Chưa có nội dung"
+                        : detail.FileUrl || "Chưa có tệp"}
                 </div>
 
                 {detail.Type === "Image" && validFileUrl && (
                     <img
                         src={detail.FileUrl}
-                        alt="Lesson content preview"
+                        alt="Ảnh xem trước nội dung bài học"
                         className="content-image-preview"
                         onError={(event) => {
                             event.currentTarget.hidden = true;
@@ -125,7 +134,7 @@ function SortableDetail({ detail, disabled, onEdit, onDelete }: SortableDetailPr
                         rel="noreferrer"
                         className="file-link"
                     >
-                        Open {detail.Type}
+                        Mở {contentTypeLabels[detail.Type] || detail.Type}
                     </a>
                 )}
             </div>
@@ -133,14 +142,14 @@ function SortableDetail({ detail, disabled, onEdit, onDelete }: SortableDetailPr
             <div className="content-actions">
                 <button
                     className="btn btn-outline-warning"
-                    aria-label="Edit content"
+                    aria-label="Chỉnh sửa nội dung"
                     onClick={() => onEdit(detail._id!)}
                 >
                     <FaEdit />
                 </button>
                 <button
                     className="btn btn-outline-danger"
-                    aria-label="Delete content"
+                    aria-label="Xóa nội dung"
                     onClick={() => onDelete(detail._id!)}
                 >
                     <FaTrash />
@@ -205,7 +214,7 @@ function LessonDetailPage() {
 
     async function handleDelete(id: string) {
 
-        if (!window.confirm("Delete this content?")) {
+        if (!window.confirm("Bạn có chắc muốn xóa nội dung này không?")) {
             return;
         }
 
@@ -287,7 +296,7 @@ function LessonDetailPage() {
 
                 <FaArrowLeft className="me-2" />
 
-                Back to Lessons
+                Quay lại danh sách bài học
 
             </button>
 
@@ -304,19 +313,19 @@ function LessonDetailPage() {
 
                         <div className="lesson-label">
 
-                            LESSON CONTENT
+                            NỘI DUNG BÀI HỌC
 
                         </div>
 
                         <h2>
 
-                            {lesson?.Name || "Lesson"}
+                            {lesson?.Name || "Bài học"}
 
                         </h2>
 
                         <p>
 
-                            {lesson?.Description || "Manage lesson content"}
+                            {lesson?.Description || "Quản lý nội dung bài học"}
 
                         </p>
 
@@ -328,7 +337,7 @@ function LessonDetailPage() {
                         onClick={handleAddContent}
                     >
                         <FaPlus className="me-2" />
-                        Add Content
+                        Thêm nội dung
                     </button>
 
                 </div>
@@ -347,7 +356,7 @@ function LessonDetailPage() {
 
                         <span className="summary-label">
 
-                            Content Items
+                            Mục nội dung
 
                         </span>
 
@@ -366,7 +375,7 @@ function LessonDetailPage() {
 
                         <span className="summary-label">
 
-                            Active
+                            Đang hoạt động
 
                         </span>
 
@@ -386,7 +395,7 @@ function LessonDetailPage() {
 
                         <span className="summary-label">
 
-                            Text
+                            Văn bản
 
                         </span>
 
@@ -397,7 +406,7 @@ function LessonDetailPage() {
 
                 {isSavingOrder && (
                     <div className="alert alert-info mx-4 mt-3 mb-0" role="status">
-                        Saving content order...
+                        Đang lưu thứ tự nội dung...
                     </div>
                 )}
 
@@ -423,13 +432,13 @@ function LessonDetailPage() {
 
                             <h5>
 
-                                No content yet
+                                Chưa có nội dung
 
                             </h5>
 
                             <p>
 
-                                Add your first content to this lesson.
+                                Hãy thêm nội dung đầu tiên cho bài học này.
 
                             </p>
 
@@ -440,7 +449,7 @@ function LessonDetailPage() {
 
                                 <FaPlus className="me-2" />
 
-                                Add Content
+                                Thêm nội dung
 
                             </button>
 

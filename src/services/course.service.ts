@@ -1,5 +1,5 @@
 import api from "./api";
-import type { CourseRequest, CourseOrder } from "../types/course";
+import type { Course, CourseRequest, CourseOrder } from "../types/course";
 
 export const getCourses = async () => {
     const res = await api.get("/courses/get-all");
@@ -38,5 +38,18 @@ export const getCourseOrder = async (courseId: string): Promise<CourseOrder | nu
 
 export const getOrderById = async (orderId: string): Promise<CourseOrder> => {
     const res = await api.get(`/orders/${orderId}`);
+    return res.data.data;
+};
+
+export interface MyCourseSummary {
+    course: Course;
+    order: { _id: string; PaidAt?: string; createdAt: string };
+    totalLessons: number;
+    completedLessons: number;
+    progressPercent: number;
+}
+
+export const getMyCourses = async (): Promise<MyCourseSummary[]> => {
+    const res = await api.get("/orders/my-courses");
     return res.data.data;
 };

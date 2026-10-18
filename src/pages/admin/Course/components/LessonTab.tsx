@@ -25,7 +25,7 @@ function LessonTab({ lessons, onDelete}: Props) {
     const handleDelete = async (id: string) => {
 
         const confirmDelete = window.confirm(
-            "Are you sure you want to delete this lesson?"
+            "Bạn có chắc muốn xóa bài học này không?"
         );
 
         if (!confirmDelete) {
@@ -36,7 +36,7 @@ function LessonTab({ lessons, onDelete}: Props) {
 
             await deleteLesson(id);
 
-            alert("Lesson deleted successfully.");
+            alert("Đã xóa bài học thành công.");
 
             await onDelete();
 
@@ -47,7 +47,7 @@ function LessonTab({ lessons, onDelete}: Props) {
             const message =
                 error?.response?.data?.message ||
                 error?.message ||
-                "Failed to delete lesson.";
+                "Không thể xóa bài học.";
 
             alert(message);
         }
@@ -59,7 +59,7 @@ function LessonTab({ lessons, onDelete}: Props) {
             <div className="d-flex justify-content-between align-items-center mb-4">
 
                 <h4 className="mb-0">
-                    Lesson List
+                    Danh sách bài học
                 </h4>
 
                 <button
@@ -71,7 +71,7 @@ function LessonTab({ lessons, onDelete}: Props) {
                     }
                 >
                     <FaPlus className="me-2" />
-                    New Lesson
+                    Thêm bài học
                 </button>
 
             </div>
@@ -82,11 +82,11 @@ function LessonTab({ lessons, onDelete}: Props) {
                 <thead className="table-light">
 
                     <tr>
-                        <th>Name</th>
-                        <th>Unit</th>
-                        <th>Status</th>
-                        <th>Open</th>
-                        <th>Action</th>
+                        <th>Tên bài học</th>
+                        <th>Chương</th>
+                        <th>Trạng thái</th>
+                        <th>Hiển thị</th>
+                        <th>Thao tác</th>
                     </tr>
 
                 </thead>
@@ -122,7 +122,7 @@ function LessonTab({ lessons, onDelete}: Props) {
                                                             : "bg-dark"
                                             }`}
                                         >
-                                            {lesson.Status}
+                                            {lesson.Status === "Active" ? "Đang hoạt động" : lesson.Status === "Pending" ? "Đang chờ" : lesson.Status === "Finished" ? "Đã hoàn tất" : lesson.Status}
                                         </span>
 
                                     </td>
@@ -138,8 +138,8 @@ function LessonTab({ lessons, onDelete}: Props) {
                                         >
                                             {
                                                 lesson.IsOpen
-                                                    ? "Open"
-                                                    : "Closed"
+                                                    ? "Đang mở"
+                                                    : "Đang đóng"
                                             }
                                         </span>
 
@@ -150,6 +150,7 @@ function LessonTab({ lessons, onDelete}: Props) {
                                         {/* Lesson Detail */}
                                         <button
                                             className="btn btn-primary btn-sm me-2"
+                                            title="Quản lý nội dung"
                                             onClick={() =>
                                                 navigate(
                                                     `/admin/courses/${courseId}/lessons/${lesson._id}/details`
@@ -163,6 +164,7 @@ function LessonTab({ lessons, onDelete}: Props) {
                                         {/* Edit */}
                                         <button
                                             className="btn btn-warning btn-sm me-2"
+                                            title="Chỉnh sửa bài học"
                                             onClick={() =>
                                                 navigate(
                                                     `/admin/courses/${courseId}/lessons/${lesson._id}/edit`
@@ -176,6 +178,7 @@ function LessonTab({ lessons, onDelete}: Props) {
                                         {/* Delete */}
                                         <button
                                             className="btn btn-danger btn-sm"
+                                            title="Xóa bài học"
                                             onClick={() =>
                                                 handleDelete(lesson._id)
                                             }
@@ -197,7 +200,7 @@ function LessonTab({ lessons, onDelete}: Props) {
                                     colSpan={5}
                                     className="text-center py-5 text-muted"
                                 >
-                                    No lessons found.
+                                    Chưa có bài học nào.
                                 </td>
 
                             </tr>

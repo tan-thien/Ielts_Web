@@ -55,9 +55,21 @@ const emptyForm: AssignmentForm = {
 
 const skills: AssignmentSkill[] = ["Reading", "Listening", "Writing", "Speaking"];
 const assignmentTypes: AssignmentType[] = ["Practice", "Quiz", "Exam", "Homework"];
+const skillLabels: Record<AssignmentSkill, string> = {
+    Reading: "Đọc",
+    Listening: "Nghe",
+    Writing: "Viết",
+    Speaking: "Nói",
+};
+const assignmentTypeLabels: Record<AssignmentType, string> = {
+    Practice: "Luyện tập",
+    Quiz: "Kiểm tra nhanh",
+    Exam: "Bài thi",
+    Homework: "Bài tập về nhà",
+};
 const questionTypeGroups: { label: string; types: AssignmentQuestionType[] }[] = [
     {
-        label: "Reading and Listening",
+        label: "Đọc và Nghe",
         types: [
             "MultipleChoice", "Checkbox", "TrueFalse", "TrueFalseNotGiven",
             "YesNo", "YesNoNotGiven", "Matching", "MatchingHeadings", "MatchingInformation",
@@ -65,7 +77,7 @@ const questionTypeGroups: { label: string; types: AssignmentQuestionType[] }[] =
         ],
     },
     {
-        label: "Completion and short answers",
+        label: "Dạng điền từ và trả lời ngắn",
         types: [
             "FillBlank", "ShortAnswer", "SentenceCompletion", "NoteCompletion",
             "FormCompletion", "TableCompletion", "SummaryCompletion",
@@ -73,7 +85,7 @@ const questionTypeGroups: { label: string; types: AssignmentQuestionType[] }[] =
         ],
     },
     {
-        label: "Writing and Speaking",
+        label: "Viết và Nói",
         types: ["Essay", "Speaking"],
     },
 ];
@@ -91,56 +103,56 @@ const fixedChoices: Partial<Record<AssignmentQuestionType, string[]>> = {
     YesNoNotGiven: ["Yes", "No", "Not Given"],
 };
 const questionTypeLabels: Record<AssignmentQuestionType, string> = {
-    MultipleChoice: "Multiple choice",
-    Checkbox: "Choose multiple answers",
-    TrueFalse: "True / False",
-    TrueFalseNotGiven: "True / False / Not Given",
-    YesNo: "Yes / No",
-    YesNoNotGiven: "Yes / No / Not Given",
-    Matching: "Matching",
-    MatchingHeadings: "Matching headings",
-    MatchingInformation: "Matching information",
-    MatchingFeatures: "Matching features",
-    MatchingSentenceEndings: "Matching sentence endings",
-    Ordering: "Plan / process ordering",
-    FillBlank: "Fill in the blanks",
-    ShortAnswer: "Short answer",
-    SentenceCompletion: "Sentence completion",
-    NoteCompletion: "Note completion",
-    FormCompletion: "Form completion",
-    TableCompletion: "Table completion",
-    SummaryCompletion: "Summary completion",
-    FlowChartCompletion: "Flow-chart completion",
-    MapLabeling: "Map labelling",
-    DiagramLabeling: "Diagram labelling",
-    Essay: "Writing task / essay",
-    Speaking: "Speaking response",
+    MultipleChoice: "Trắc nghiệm một đáp án",
+    Checkbox: "Chọn nhiều đáp án",
+    TrueFalse: "Đúng / Sai",
+    TrueFalseNotGiven: "Đúng / Sai / Không có thông tin",
+    YesNo: "Có / Không",
+    YesNoNotGiven: "Có / Không / Không có thông tin",
+    Matching: "Nối đáp án",
+    MatchingHeadings: "Nối tiêu đề",
+    MatchingInformation: "Nối thông tin",
+    MatchingFeatures: "Nối đặc điểm",
+    MatchingSentenceEndings: "Nối phần kết câu",
+    Ordering: "Sắp xếp trình tự",
+    FillBlank: "Điền vào chỗ trống",
+    ShortAnswer: "Trả lời ngắn",
+    SentenceCompletion: "Hoàn thành câu",
+    NoteCompletion: "Hoàn thành ghi chú",
+    FormCompletion: "Hoàn thành biểu mẫu",
+    TableCompletion: "Hoàn thành bảng",
+    SummaryCompletion: "Hoàn thành phần tóm tắt",
+    FlowChartCompletion: "Hoàn thành lưu đồ",
+    MapLabeling: "Ghi chú trên bản đồ",
+    DiagramLabeling: "Ghi chú trên sơ đồ",
+    Essay: "Bài viết",
+    Speaking: "Câu trả lời nói",
 };
 const questionTypeHints: Record<AssignmentQuestionType, string> = {
-    MultipleChoice: "Add each option separately, then select the one correct answer.",
-    Checkbox: "Add each option separately. Select every correct answer.",
-    TrueFalse: "The answer choices are fixed to True and False.",
-    TrueFalseNotGiven: "The answer choices are fixed to True, False and Not Given.",
-    YesNo: "The answer choices are fixed to Yes and No.",
-    YesNoNotGiven: "The answer choices are fixed to Yes, No and Not Given.",
-    Matching: "Enter the prompts as separate questions and provide the matching options.",
-    MatchingHeadings: "Enter one paragraph statement, then add the heading options below.",
-    MatchingInformation: "Enter the information to locate, then add paragraph labels as options.",
-    MatchingFeatures: "Add the people/features as options and choose the matching one.",
-    MatchingSentenceEndings: "Enter the sentence beginning and add possible endings as options.",
-    Ordering: "Add the steps as options and enter their correct order using option letters.",
-    FillBlank: "Use ___ in the prompt for each blank. For multiple blanks, enter one answer per line.",
-    ShortAnswer: "Enter accepted answers separated by |, for example: 16 | sixteen.",
-    SentenceCompletion: "Use ___ in the sentence. Put accepted answers on one line per blank.",
-    NoteCompletion: "Use ___ for each missing note. Put accepted answers on one line per blank.",
-    FormCompletion: "Use ___ for each missing field. Put accepted answers on one line per blank.",
-    TableCompletion: "Use ___ for each missing cell. Put accepted answers on one line per blank.",
-    SummaryCompletion: "Paste the summary with ___ at each gap. One answer line per gap.",
-    FlowChartCompletion: "Use ___ at each missing step. One answer line per gap.",
-    MapLabeling: "Add a map image/resource above and use one answer line per label.",
-    DiagramLabeling: "Add a diagram image/resource above and use one answer line per label.",
-    Essay: "Add the IELTS Writing task prompt. This answer is submitted for teacher review.",
-    Speaking: "Add the speaking cue card/prompt and optional audio resource. Teacher reviews the response.",
+    MultipleChoice: "Thêm từng lựa chọn riêng, sau đó chọn một đáp án đúng.",
+    Checkbox: "Thêm từng lựa chọn riêng và chọn tất cả đáp án đúng.",
+    TrueFalse: "Các lựa chọn cố định là Đúng và Sai.",
+    TrueFalseNotGiven: "Các lựa chọn cố định là Đúng, Sai và Không có thông tin.",
+    YesNo: "Các lựa chọn cố định là Có và Không.",
+    YesNoNotGiven: "Các lựa chọn cố định là Có, Không và Không có thông tin.",
+    Matching: "Nhập từng câu hỏi riêng và thêm các lựa chọn cần nối.",
+    MatchingHeadings: "Nhập nội dung đoạn văn, sau đó thêm các tiêu đề lựa chọn.",
+    MatchingInformation: "Nhập thông tin cần tìm, sau đó thêm nhãn đoạn văn làm lựa chọn.",
+    MatchingFeatures: "Thêm người hoặc đặc điểm vào danh sách lựa chọn.",
+    MatchingSentenceEndings: "Nhập phần đầu câu và thêm các phương án kết thúc.",
+    Ordering: "Thêm các bước làm lựa chọn và nhập thứ tự đúng bằng ký tự đáp án.",
+    FillBlank: "Dùng ___ để đánh dấu mỗi chỗ trống. Mỗi dòng là một đáp án.",
+    ShortAnswer: "Nhập các đáp án được chấp nhận, phân cách bằng |. Ví dụ: 16 | sixteen.",
+    SentenceCompletion: "Dùng ___ trong câu để đánh dấu chỗ trống. Mỗi dòng là một đáp án.",
+    NoteCompletion: "Dùng ___ để đánh dấu chỗ trống trong ghi chú. Mỗi dòng là một đáp án.",
+    FormCompletion: "Dùng ___ để đánh dấu từng ô còn thiếu. Mỗi dòng là một đáp án.",
+    TableCompletion: "Dùng ___ để đánh dấu từng ô còn thiếu. Mỗi dòng là một đáp án.",
+    SummaryCompletion: "Dán phần tóm tắt và dùng ___ tại mỗi chỗ trống. Mỗi dòng là một đáp án.",
+    FlowChartCompletion: "Dùng ___ để đánh dấu từng bước còn thiếu. Mỗi dòng là một đáp án.",
+    MapLabeling: "Thêm hình ảnh bản đồ ở trên và nhập một đáp án cho mỗi nhãn.",
+    DiagramLabeling: "Thêm hình ảnh sơ đồ ở trên và nhập một đáp án cho mỗi nhãn.",
+    Essay: "Thêm đề bài Viết IELTS. Câu trả lời sẽ được gửi cho giáo viên chấm.",
+    Speaking: "Thêm thẻ gợi ý/câu hỏi Nói và tệp âm thanh nếu cần. Giáo viên sẽ chấm câu trả lời.",
 };
 const resourceTypes: AssignmentQuestion["Resources"][number]["Type"][] = [
     "Text", "Image", "Audio", "Video", "PDF",
@@ -299,7 +311,7 @@ function getErrorMessage(error: unknown): string {
         }
     }
 
-    return error instanceof Error ? error.message : "Something went wrong.";
+    return error instanceof Error ? error.message : "Đã xảy ra lỗi. Vui lòng thử lại.";
 }
 
 function AssignmentTab({
@@ -539,7 +551,7 @@ function AssignmentTab({
     };
 
     const handleDelete = async (assignment: Assignment) => {
-        if (!window.confirm(`Delete assignment "${assignment.Title}"?`)) return;
+        if (!window.confirm(`Bạn có chắc muốn xóa bài tập "${assignment.Title}" không?`)) return;
 
         setActionError("");
         try {
@@ -554,10 +566,10 @@ function AssignmentTab({
     return (
         <>
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h4 className="mb-0">Assignment List</h4>
+                <h4 className="mb-0">Danh sách bài tập</h4>
                 <button className="btn btn-primary" onClick={openCreateForm}>
                     <FaPlus className="me-2" />
-                    New Assignment
+                    Thêm bài tập
                 </button>
             </div>
 
@@ -571,13 +583,13 @@ function AssignmentTab({
                 <form className="card border-0 shadow-sm mb-4" onSubmit={handleSubmit}>
                     <div className="card-body">
                         <h5 className="mb-3">
-                            {editingId ? "Edit Assignment" : "Create Assignment"}
+                            {editingId ? "Chỉnh sửa bài tập" : "Tạo bài tập"}
                         </h5>
 
                         <div className="row g-3">
                             <div className="col-md-6">
                                 <label className="form-label" htmlFor="assignment-title">
-                                    Title
+                                    Tiêu đề
                                 </label>
                                 <input
                                     id="assignment-title"
@@ -592,7 +604,7 @@ function AssignmentTab({
 
                             <div className="col-md-3">
                                 <label className="form-label" htmlFor="assignment-skill">
-                                    Skill
+                                    Kỹ năng
                                 </label>
                                 <select
                                     id="assignment-skill"
@@ -619,14 +631,14 @@ function AssignmentTab({
                                     }
                                 >
                                     {skills.map((skill) => (
-                                        <option key={skill} value={skill}>{skill}</option>
+                                        <option key={skill} value={skill}>{skillLabels[skill]}</option>
                                     ))}
                                 </select>
                             </div>
 
                             <div className="col-md-3">
                                 <label className="form-label" htmlFor="assignment-type">
-                                    Type
+                                    Dạng bài tập
                                 </label>
                                 <select
                                     id="assignment-type"
@@ -640,14 +652,14 @@ function AssignmentTab({
                                     }
                                 >
                                     {assignmentTypes.map((type) => (
-                                        <option key={type} value={type}>{type}</option>
+                                        <option key={type} value={type}>{assignmentTypeLabels[type]}</option>
                                     ))}
                                 </select>
                             </div>
 
                             <div className="col-12">
                                 <label className="form-label" htmlFor="assignment-description">
-                                    Description
+                                    Mô tả
                                 </label>
                                 <textarea
                                     id="assignment-description"
@@ -662,7 +674,7 @@ function AssignmentTab({
 
                             <div className="col-md-6">
                                 <label className="form-label" htmlFor="assignment-lesson">
-                                    Lesson
+                                    Bài học
                                 </label>
                                 <select
                                     id="assignment-lesson"
@@ -675,7 +687,7 @@ function AssignmentTab({
                                         })
                                     }
                                 >
-                                    <option value="">Course-wide assignment</option>
+                                    <option value="">Bài tập chung của khóa học</option>
                                     {lessons.map((lesson) => (
                                         <option key={lesson._id} value={lesson._id}>
                                             {lesson.Name}
@@ -686,7 +698,7 @@ function AssignmentTab({
 
                             <div className="col-md-2">
                                 <label className="form-label" htmlFor="assignment-duration">
-                                    Duration (minutes, 0 = no limit)
+                                    Thời lượng (phút, 0 = không giới hạn)
                                 </label>
                                 <input
                                     id="assignment-duration"
@@ -702,7 +714,7 @@ function AssignmentTab({
 
                             <div className="col-md-2">
                                 <label className="form-label" htmlFor="assignment-score">
-                                    Total score
+                                    Tổng điểm
                                 </label>
                                 <input
                                     id="assignment-score"
@@ -719,7 +731,7 @@ function AssignmentTab({
 
                             <div className="col-md-2">
                                 <label className="form-label" htmlFor="assignment-attempts">
-                                    Attempt limit
+                                    Số lượt làm tối đa
                                 </label>
                                 <input
                                     id="assignment-attempts"
@@ -735,7 +747,7 @@ function AssignmentTab({
 
                             <div className="col-md-3">
                                 <label className="form-label" htmlFor="assignment-start-date">
-                                    Start date
+                                    Ngày bắt đầu
                                 </label>
                                 <input
                                     id="assignment-start-date"
@@ -750,7 +762,7 @@ function AssignmentTab({
 
                             <div className="col-md-3">
                                 <label className="form-label" htmlFor="assignment-end-date">
-                                    End date
+                                    Ngày kết thúc
                                 </label>
                                 <input
                                     id="assignment-end-date"
@@ -775,7 +787,7 @@ function AssignmentTab({
                                         }
                                     />
                                     <label className="form-check-label" htmlFor="assignment-open">
-                                        Open for students
+                                        Mở bài tập cho học viên
                                     </label>
                                 </div>
                             </div>
@@ -784,7 +796,7 @@ function AssignmentTab({
                                 <div className="d-flex justify-content-between align-items-center mb-3">
                                     <div>
                                     <h6 className="mb-1">
-                                        IELTS questions ({form.Questions.length})
+                                        Câu hỏi IELTS ({form.Questions.length})
                                     </h6>
                                     <small className="text-muted">
                                         Mỗi câu có mẫu nhập và cách chấm riêng theo dạng IELTS.
@@ -809,7 +821,7 @@ function AssignmentTab({
                                         }
                                     >
                                         <FaPlus className="me-2" />
-                                        Add Question
+                                        Thêm câu hỏi
                                     </button>
                                 </div>
 
@@ -817,11 +829,11 @@ function AssignmentTab({
                                     <div className="card bg-light mb-3" key={index}>
                                         <div className="card-body">
                                             <div className="d-flex justify-content-between align-items-center mb-3">
-                                                <h6 className="mb-0">Question {index + 1}</h6>
+                                                <h6 className="mb-0">Câu hỏi {index + 1}</h6>
                                                 <button
                                                     className="btn btn-outline-danger btn-sm"
                                                     type="button"
-                                                    aria-label={`Remove question ${index + 1}`}
+                                                    aria-label={`Xóa câu hỏi ${index + 1}`}
                                                     disabled={uploadingResourceKey !== null}
                                                     onClick={() =>
                                                         setForm({
@@ -842,7 +854,7 @@ function AssignmentTab({
                                             <div className="row g-3">
                                                 <div className="col-md-4">
                                                     <label className="form-label">
-                                                        Question type
+                                                        Dạng câu hỏi
                                                     </label>
                                                     <select
                                                         className="form-select"
@@ -867,7 +879,7 @@ function AssignmentTab({
                                                 </div>
 
                                                 <div className="col-md-2">
-                                                    <label className="form-label">Part</label>
+                                                    <label className="form-label">Phần thi</label>
                                                     <select
                                                         className="form-select"
                                                         value={question.Part ?? ""}
@@ -879,7 +891,7 @@ function AssignmentTab({
                                                             })
                                                         }
                                                     >
-                                                        <option value="">Not set</option>
+                                                        <option value="">Chưa chọn</option>
                                                         {Array.from(
                                                             { length: partCountForSkill(form.Skill) },
                                                             (_, partIndex) => partIndex + 1,
@@ -919,7 +931,7 @@ function AssignmentTab({
                                                 </div>
 
                                                 <div className="col-md-4">
-                                                    <label className="form-label">Question group (optional)</label>
+                                                    <label className="form-label">Nhóm câu hỏi (không bắt buộc)</label>
                                                     <input
                                                         className="form-control"
                                                         value={question.GroupID}
@@ -935,7 +947,7 @@ function AssignmentTab({
                                                         {question.Type === "Essay"
                                                             ? "Đề bài Writing"
                                                             : question.Type === "Speaking"
-                                                                ? "Cue card / câu hỏi Speaking"
+                                                                ? "Thẻ gợi ý / câu hỏi Nói"
                                                                 : "Câu hỏi / nội dung có chỗ trống"}
                                                     </label>
                                                     <textarea
@@ -961,7 +973,7 @@ function AssignmentTab({
                                                 {question.Type === "Essay" || question.Type === "Speaking" ? (
                                                 <div className="col-md-6">
                                                     <label className="form-label">
-                                                        {question.Type === "Essay" ? "Word limit (optional)" : "Thời lượng trả lời (giây, tùy chọn)"}
+                                                        {question.Type === "Essay"                                                         ? "Giới hạn số từ (không bắt buộc)" : "Thời lượng trả lời (giây, không bắt buộc)"}
                                                     </label>
                                                     <input
                                                         className="form-control"
@@ -1244,7 +1256,7 @@ function AssignmentTab({
                                                 </div>
 
                                                 <div className="col-md-6">
-                                                    <label className="form-label">Instructions</label>
+                                                    <label className="form-label">Hướng dẫn</label>
                                                     <textarea
                                                         className="form-control"
                                                         rows={2}
@@ -1258,7 +1270,7 @@ function AssignmentTab({
                                                 </div>
 
                                                 <div className="col-md-6">
-                                                    <label className="form-label">Explanation</label>
+                                                    <label className="form-label">Giải thích đáp án</label>
                                                     <textarea
                                                         className="form-control"
                                                         rows={2}
@@ -1279,7 +1291,7 @@ function AssignmentTab({
 
                         <div className="d-flex gap-2 mt-4">
                             <button className="btn btn-primary" type="submit" disabled={isSaving}>
-                                {isSaving ? "Saving..." : editingId ? "Save Changes" : "Create"}
+                                {isSaving ? "Đang lưu..." : editingId ? "Lưu thay đổi" : "Tạo bài tập"}
                             </button>
                             <button
                                 className="btn btn-outline-secondary"
@@ -1287,7 +1299,7 @@ function AssignmentTab({
                                 onClick={() => setIsEditorOpen(false)}
                                 disabled={isSaving}
                             >
-                                Cancel
+                                Hủy
                             </button>
                         </div>
                     </div>
@@ -1298,13 +1310,13 @@ function AssignmentTab({
                 <table className="table table-hover align-middle">
                     <thead className="table-light">
                         <tr>
-                            <th>Title</th>
-                            <th>Lesson</th>
-                            <th>Skill</th>
-                            <th>Type</th>
-                            <th>Questions</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th>Tiêu đề</th>
+                            <th>Bài học</th>
+                            <th>Kỹ năng</th>
+                            <th>Dạng bài</th>
+                            <th>Số câu hỏi</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1319,27 +1331,27 @@ function AssignmentTab({
                                 <td>
                                     {lessons.find(
                                         (lesson) => lesson._id === getReferenceId(assignment.LessonID)
-                                    )?.Name ?? "Course-wide"}
+                                    )?.Name ?? "Bài tập toàn khóa"}
                                 </td>
-                                <td>{assignment.Skill}</td>
-                                <td>{assignment.AssignmentType}</td>
+                                <td>{skillLabels[assignment.Skill]}</td>
+                                <td>{assignmentTypeLabels[assignment.AssignmentType]}</td>
                                 <td>{assignment.Questions?.length ?? 0}</td>
                                 <td>
                                     <span className={`badge ${assignment.IsOpen ? "bg-success" : "bg-secondary"}`}>
-                                        {assignment.IsOpen ? "Open" : "Closed"}
+                                        {assignment.IsOpen ? "Đang mở" : "Đã đóng"}
                                     </span>
                                 </td>
                                 <td className="text-nowrap">
                                     <button
                                         className="btn btn-warning btn-sm me-2"
-                                        aria-label={`Edit ${assignment.Title}`}
+                                        aria-label={`Chỉnh sửa ${assignment.Title}`}
                                         onClick={() => openEditForm(assignment)}
                                     >
                                         <FaEdit />
                                     </button>
                                     <button
                                         className="btn btn-danger btn-sm"
-                                        aria-label={`Delete ${assignment.Title}`}
+                                        aria-label={`Xóa ${assignment.Title}`}
                                         onClick={() => handleDelete(assignment)}
                                     >
                                         <FaTrash />
@@ -1349,7 +1361,7 @@ function AssignmentTab({
                         )) : (
                             <tr>
                                 <td colSpan={7} className="text-center py-5 text-muted">
-                                    {loadError ? "Assignments could not be loaded." : "No assignments found for this course."}
+                                    {loadError ? "Không thể tải bài tập." : "Khóa học chưa có bài tập."}
                                 </td>
                             </tr>
                         )}
