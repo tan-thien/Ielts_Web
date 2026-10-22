@@ -29,6 +29,7 @@ function RegisterPage() {
     const [searchParams] = useSearchParams();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const googleButtonRef = useRef<HTMLDivElement>(null);
+    const googleInitializedRef = useRef(false);
 
     const [form, setForm] = useState<RegisterRequest>({
         Email: "",
@@ -90,13 +91,27 @@ function RegisterPage() {
     useEffect(() => {
         const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
         if (!clientId || !googleButtonRef.current) return;
+
         const renderGoogleButton = () => {
             if (!window.google || !googleButtonRef.current) return;
-            window.google.accounts.id.initialize({ client_id: clientId, callback: (response) => { void handleGoogleCredential(response.credential); }, auto_select: false });
+
+            if (!googleInitializedRef.current) {
+                window.google.accounts.id.initialize({
+                    client_id: clientId,
+                    callback: (response) => {
+                        void handleGoogleCredential(response.credential);
+                    },
+                    auto_select: false,
+                });
+                googleInitializedRef.current = true;
+            }
+
             googleButtonRef.current.replaceChildren();
             const buttonWidth = Math.min(
                 400,
-                Math.floor(googleButtonRef.current.clientWidth)
+                Math.floor(
+                    googleButtonRef.current.parentElement?.clientWidth ?? 400
+                )
             );
 
             window.google.accounts.id.renderButton(
@@ -110,10 +125,24 @@ function RegisterPage() {
                 }
             );
         };
-        let script = document.querySelector<HTMLScriptElement>('script[data-google-identity-services="true"]');
-        if (window.google) renderGoogleButton();
-        else if (script) script.addEventListener("load", renderGoogleButton, { once: true });
-        else { script = document.createElement("script"); script.src = "https://accounts.google.com/gsi/client"; script.async = true; script.defer = true; script.dataset.googleIdentityServices = "true"; script.addEventListener("load", renderGoogleButton, { once: true }); document.head.appendChild(script); }
+
+        let script = document.querySelector<HTMLScriptElement>(
+            'script[data-google-identity-services="true"]'
+        );
+        if (window.google) {
+            renderGoogleButton();
+        } else if (script) {
+            script.addEventListener("load", renderGoogleButton, { once: true });
+        } else {
+            script = document.createElement("script");
+            script.src = "https://accounts.google.com/gsi/client";
+            script.async = true;
+            script.defer = true;
+            script.dataset.googleIdentityServices = "true";
+            script.addEventListener("load", renderGoogleButton, { once: true });
+            document.head.appendChild(script);
+        }
+
         return () => script?.removeEventListener("load", renderGoogleButton);
     }, [handleGoogleCredential]);
 
@@ -432,7 +461,8 @@ function RegisterPage() {
                                         placeholder="Ít nhất 6 ký tự"
                                         autoComplete="new-password"
                                         minLength={6}
-                                        required
+                                        required={!googleRegistrationToken}
+                                        disabled={Boolean(googleRegistrationToken)}
                                     />
                                 </div>
                             </div>
@@ -452,7 +482,8 @@ function RegisterPage() {
                                         }
                                         placeholder="Nhập lại mật khẩu"
                                         autoComplete="new-password"
-                                        required
+                                        required={!googleRegistrationToken}
+                                        disabled={Boolean(googleRegistrationToken)}
                                     />
                                 </div>
                             </div>
