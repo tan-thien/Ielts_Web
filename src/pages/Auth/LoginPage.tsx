@@ -28,7 +28,7 @@ interface GoogleIdentityServices {
                     theme: "outline";
                     size: "large";
                     width: number;
-                    text: "signin_with";
+                    text: "signin_with" | "signup_with";
                     shape: "rectangular";
                 },
             ) => void;
@@ -77,12 +77,10 @@ function LoginPage() {
         try {
             const result = await googleLogin(credential);
             if (result.registrationRequired) {
-                setGoogleRegistrationToken(result.registrationToken);
+                sessionStorage.setItem("googleRegistrationToken", result.registrationToken);
+                sessionStorage.setItem("googleRegistrationProfile", JSON.stringify(result.profile));
                 setGoogleEmail(result.profile.Email);
-                setRegistrationProfile((current) => ({
-                    ...current,
-                    Name: result.profile.Name || current.Name,
-                }));
+                navigate("/register?google=complete");
             } else {
                 finishLogin(result.role);
             }

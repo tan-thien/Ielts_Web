@@ -174,24 +174,82 @@
 }
 
 .register-form-heading {
-    margin-bottom: 23px;
+    margin-bottom: 26px;
+}
+
+.register-heading-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
 }
 
 .register-back-link {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    margin: 0 0 22px;
+    min-height: 48px;
+    padding: 0 16px;
+    flex-shrink: 0;
+    border: 1px solid #DCE6F7;
+    border-radius: 999px;
+    background: #F8FAFE;
     color: var(--register-blue);
     font-size: 13px;
     font-weight: 700;
     text-decoration: none;
-    transition: color 160ms ease, transform 160ms ease;
+    transition: all 160ms ease;
 }
 
 .register-back-link:hover {
     color: var(--register-orange);
-    transform: translateX(-2px);
+    border-color: #F4C5AC;
+    background: #FFF7F2;
+    transform: translateY(-1px);
+}
+
+.register-google-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 0 0 24px;
+}
+
+.register-google-button {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 48px;
+}
+
+/* Căn giữa vùng Google render */
+.register-google-button > div {
+    margin-inline: auto !important;
+}
+
+/* Phần tử button do Google tạo */
+.register-google-button [role="button"] {
+    margin-inline: auto !important;
+}
+
+
+/* .register-google-option > span {
+    display: none;
+} */
+
+.register-google-account {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border: 1px solid #BDE8CE;
+    border-radius: 10px;
+    background: #F0FFF5;
+    color: #187747;
+    font-size: 12px;
+    line-height: 1.6;
 }
 
 .register-back-link:focus-visible {
@@ -201,24 +259,38 @@
 }
 
 .register-form-label {
-    margin-bottom: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    margin: 0;
+    padding: 0 16px;
+    border: 1px solid #F4C5AC;
+    border-radius: 999px;
+    background: #FFF7F2;
     color: var(--register-orange);
-    font-size: 10px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    white-space: nowrap;
 }
 
 .register-form-heading h2 {
-    margin: 0 0 8px;
+    margin: 0 0 10px;
     color: var(--register-blue-dark);
-    font-size: 27px;
+    font-size: clamp(28px, 3vw, 34px);
     font-weight: 850;
     letter-spacing: -0.8px;
+    line-height: 1.3;
+    text-align: center;
 }
 
 .register-form-heading p {
     margin: 0;
     color: var(--register-muted);
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.7;
+    text-align: center;
 }
 
 .avatar-upload {
@@ -552,3 +624,29 @@
         height: 65px;
     }
 }
+
+@media (max-width: 480px) {
+    .register-heading-topbar {
+        gap: 10px;
+        margin-bottom: 24px;
+    }
+
+    .register-back-link {
+        min-height: 42px;
+        gap: 6px;
+        padding: 0 10px;
+        font-size: 11px;
+    }
+
+    .register-form-label {
+        min-height: 42px;
+        padding: 0 10px;
+        font-size: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    .register-form-heading h2 {
+        font-size: 27px;
+    }
+}
+

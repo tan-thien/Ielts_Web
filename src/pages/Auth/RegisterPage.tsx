@@ -1,7 +1,7 @@
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
     FaGraduationCap,
     FaUser,
@@ -17,7 +17,7 @@ import {
     FaSpinner,
 } from "react-icons/fa";
 
-import { register } from "../../services/auth.service";
+import { completeGoogleRegistration, googleLogin, register } from "../../services/auth.service";
 import type { RegisterRequest } from "../../types/auth";
 import "./RegisterPage.css";
 
@@ -26,7 +26,9 @@ const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 function RegisterPage() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const googleButtonRef = useRef<HTMLDivElement>(null);
 
     const [form, setForm] = useState<RegisterRequest>({
         Email: "",
@@ -45,6 +47,75 @@ function RegisterPage() {
     const [submitting, setSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
+    const [googleRegistrationToken, setGoogleRegistrationToken] = useState("");
+    const [googleAccountEmail, setGoogleAccountEmail] = useState("");
+
+    useEffect(() => {
+        if (searchParams.get("google") !== "complete") return;
+        const token = sessionStorage.getItem("googleRegistrationToken");
+        const profileValue = sessionStorage.getItem("googleRegistrationProfile");
+        if (!token || !profileValue) return;
+        try {
+            const profile = JSON.parse(profileValue) as { Email?: string; Name?: string; Avatar?: string };
+            setGoogleRegistrationToken(token);
+            setGoogleAccountEmail(profile.Email || "");
+            setForm((current) => ({ ...current, Email: profile.Email || current.Email, Name: profile.Name || current.Name, Avatar: profile.Avatar || current.Avatar }));
+            setPreview(profile.Avatar || "");
+        } catch {
+            setErrorMessage("Phiên đăng ký Google không hợp lệ. Vui lòng thử lại.");
+        } finally {
+            sessionStorage.removeItem("googleRegistrationToken");
+            sessionStorage.removeItem("googleRegistrationProfile");
+        }
+    }, [searchParams]);
+
+    const handleGoogleCredential = useCallback(async (credential: string) => {
+        setSubmitting(true); setErrorMessage(""); setSuccessMessage("");
+        try {
+            const result = await googleLogin(credential);
+            if (result.registrationRequired) {
+                setGoogleRegistrationToken(result.registrationToken);
+                setGoogleAccountEmail(result.profile.Email);
+                setForm((current) => ({ ...current, Email: result.profile.Email, Name: result.profile.Name || current.Name, Avatar: result.profile.Avatar || current.Avatar }));
+                setPreview(result.profile.Avatar || "");
+                setSuccessMessage("Đã xác thực Google. Hãy bổ sung thông tin để hoàn tất tài khoản.");
+            } else {
+                navigate("/home");
+            }
+        } catch (error: any) {
+            setErrorMessage(error?.response?.data?.message || "Đăng ký bằng Google thất bại. Vui lòng thử lại.");
+        } finally { setSubmitting(false); }
+    }, [navigate]);
+
+    useEffect(() => {
+        const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+        if (!clientId || !googleButtonRef.current) return;
+        const renderGoogleButton = () => {
+            if (!window.google || !googleButtonRef.current) return;
+            window.google.accounts.id.initialize({ client_id: clientId, callback: (response) => { void handleGoogleCredential(response.credential); }, auto_select: false });
+            googleButtonRef.current.replaceChildren();
+            const buttonWidth = Math.min(
+                400,
+                Math.floor(googleButtonRef.current.clientWidth)
+            );
+
+            window.google.accounts.id.renderButton(
+                googleButtonRef.current,
+                {
+                    theme: "outline",
+                    size: "large",
+                    width: buttonWidth,
+                    text: "signup_with",
+                    shape: "rectangular",
+                }
+            );
+        };
+        let script = document.querySelector<HTMLScriptElement>('script[data-google-identity-services="true"]');
+        if (window.google) renderGoogleButton();
+        else if (script) script.addEventListener("load", renderGoogleButton, { once: true });
+        else { script = document.createElement("script"); script.src = "https://accounts.google.com/gsi/client"; script.async = true; script.defer = true; script.dataset.googleIdentityServices = "true"; script.addEventListener("load", renderGoogleButton, { once: true }); document.head.appendChild(script); }
+        return () => script?.removeEventListener("load", renderGoogleButton);
+    }, [handleGoogleCredential]);
 
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -143,6 +214,16 @@ function RegisterPage() {
             return;
         }
 
+        if (googleRegistrationToken) {
+            setSubmitting(true);
+            try {
+                await completeGoogleRegistration(googleRegistrationToken, { Name: form.Name, Gender: form.Gender, Phone: form.Phone, Address: form.Address, Birthday: form.Birthday });
+                navigate("/home");
+            } catch (error: any) { setErrorMessage(error?.response?.data?.message || "Không thể hoàn tất đăng ký Google."); }
+            finally { setSubmitting(false); }
+            return;
+        }
+
         if (form.Password !== confirmPassword) {
             setErrorMessage("Mật khẩu xác nhận không khớp.");
             return;
@@ -162,7 +243,7 @@ function RegisterPage() {
         } catch (error: any) {
             setErrorMessage(
                 error?.response?.data?.message ||
-                    "Đăng ký thất bại. Vui lòng thử lại."
+                "Đăng ký thất bại. Vui lòng thử lại."
             );
         } finally {
             setSubmitting(false);
@@ -223,16 +304,24 @@ function RegisterPage() {
 
                 <div className="register-form-panel">
                     <div className="register-form-heading">
-                        <Link to="/login" className="register-back-link">
-                            <FaArrowLeft aria-hidden="true" />
-                            Quay lại đăng nhập
-                        </Link>
-                        <span className="register-form-label">
-                            BẮT ĐẦU HỌC MIỄN PHÍ
-                        </span>
+                        <div className="register-heading-topbar">
+                            <Link to="/login" className="register-back-link">
+                                <FaArrowLeft aria-hidden="true" />
+                                Quay lại đăng nhập
+                            </Link>
+                            <span className="register-form-label">
+                                BẮT ĐẦU HỌC MIỄN PHÍ
+                            </span>
+                        </div>
                         <h2>Tạo tài khoản</h2>
                         <p>Điền thông tin bên dưới để đăng ký.</p>
                     </div>
+
+                    {!googleRegistrationToken && <div className="register-google-option">
+                        <div className="register-google-button" ref={googleButtonRef} />
+                        <span>Hoặc đăng ký bằng Google</span>
+                    </div>}
+                    {googleRegistrationToken && <div className="register-google-account">Đang tạo tài khoản cho <strong>{googleAccountEmail}</strong>. Bổ sung thông tin bên dưới để hoàn tất.</div>}
 
                     <form onSubmit={handleRegister}>
                         <div className="avatar-upload">
@@ -324,12 +413,13 @@ function RegisterPage() {
                                         onChange={handleChange}
                                         placeholder="you@example.com"
                                         autoComplete="email"
+                                        readOnly={Boolean(googleRegistrationToken)}
                                         required
                                     />
                                 </div>
                             </div>
 
-                            <div className="register-field">
+                            <div className="register-field" hidden={Boolean(googleRegistrationToken)}>
                                 <label htmlFor="Password">Mật khẩu *</label>
                                 <div className="register-input-wrap">
                                     <FaLock />
@@ -347,7 +437,7 @@ function RegisterPage() {
                                 </div>
                             </div>
 
-                            <div className="register-field">
+                            <div className="register-field" hidden={Boolean(googleRegistrationToken)}>
                                 <label htmlFor="ConfirmPassword">
                                     Xác nhận mật khẩu *
                                 </label>
