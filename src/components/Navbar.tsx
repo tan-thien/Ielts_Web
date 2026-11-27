@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import {FaBars,FaBell,FaUser,FaArrowAltCircleLeft,FaKey} from "react-icons/fa";
+import {FaBars,FaBell,FaUser,FaArrowAltCircleLeft,FaKey,FaCog} from "react-icons/fa";
 
 import { getProfile } from "../services/auth.service";
 import { useNavigate } from "react-router-dom";
+import type { ProfileData } from "../types/auth";
 
 type NavbarProps = {
     toggleSidebar: () => void;
@@ -10,38 +11,31 @@ type NavbarProps = {
 
 export default function Navbar({ toggleSidebar }: NavbarProps) {
 
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<ProfileData | null>(null);
     const [open, setOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
+        let isMounted = true;
+        getProfile()
+            .then((data) => {
+                if (isMounted) setUser(data);
+            })
+            .catch((error: unknown) => {
+                console.error("Không thể tải hồ sơ quản trị viên:", error);
+            });
 
-        loadProfile();
-
+        return () => {
+            isMounted = false;
+        };
     }, []);
-
-    async function loadProfile() {
-
-        try {
-
-            const data = await getProfile();
-
-            setUser(data);
-
-        }
-        catch {
-
-        }
-
-    }
 
     useEffect(() => {
 
-        function handleClick(e: any) {
+        function handleClick(e: MouseEvent) {
 
-            if (menuRef.current &&
-                !menuRef.current.contains(e.target)) {
+            if (menuRef.current && e.target instanceof Node && !menuRef.current.contains(e.target)) {
 
                 setOpen(false);
 
@@ -137,6 +131,10 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
                             <button onClick={() => navigate('/admin/profile')}>
                                 <FaUser />
                                 Hồ sơ cá nhân
+                            </button>
+                            <button onClick={() => { setOpen(false); navigate('/admin/settings'); }}>
+                                <FaCog />
+                                Cài đặt
                             </button>
                             <button>
                                 <FaKey />

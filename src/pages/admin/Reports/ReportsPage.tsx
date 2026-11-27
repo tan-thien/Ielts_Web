@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import { getAdminReports } from "../../../services/reports.service";
 import type { MonthlyReport, ReportsData } from "../../../types/reports";
+import ReportPagination from "./ReportPagination";
 import "./ReportsPage.css";
 
 const currency = new Intl.NumberFormat("vi-VN", {
@@ -481,10 +482,12 @@ function ReportsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isExportingExcel, setIsExportingExcel] = useState(false);
     const [reloadKey, setReloadKey] = useState(0);
+    const [popularCoursesPage, setPopularCoursesPage] = useState(1);
+    const [recentOrdersPage, setRecentOrdersPage] = useState(1);
 
     useEffect(() => {
         let cancelled = false;
-        getAdminReports(months)
+        getAdminReports({ months, popularCoursesPage, recentOrdersPage })
             .then((data) => {
                 if (!cancelled) setReports(data);
             })
@@ -497,12 +500,14 @@ function ReportsPage() {
         return () => {
             cancelled = true;
         };
-    }, [months, reloadKey]);
+    }, [months, popularCoursesPage, recentOrdersPage, reloadKey]);
 
     const refreshReports = () => {
         setError("");
         setReports(null);
         setIsLoading(true);
+        setPopularCoursesPage(1);
+        setRecentOrdersPage(1);
         setReloadKey((key) => key + 1);
     };
 
@@ -533,6 +538,8 @@ function ReportsPage() {
                             setError("");
                             setReports(null);
                             setIsLoading(true);
+                            setPopularCoursesPage(1);
+                            setRecentOrdersPage(1);
                             setMonths(Number(event.target.value));
                         }}
                     >
@@ -723,7 +730,10 @@ function ReportsPage() {
                                 <div className="report-course-list">
                                     {reports.popularCourses.map((course, index) => (
                                         <div className="report-course-row" key={course._id}>
-                                            <span className="report-course-rank">{index + 1}</span>
+                                            <span className="report-course-rank">
+                                                {(reports.pagination.popularCourses.page - 1) *
+                                                    reports.pagination.popularCourses.pageSize + index + 1}
+                                            </span>
                                             <div className="report-course-info">
                                                 <div>
                                                     <strong>{course.name}</strong>
@@ -739,6 +749,13 @@ function ReportsPage() {
                             ) : (
                                 <p className="report-empty">Chưa có đơn hàng thanh toán thành công.</p>
                             )}
+                            <ReportPagination
+                                pagination={reports.pagination.popularCourses}
+                                onPageChange={(page) => {
+                                    setIsLoading(true);
+                                    setPopularCoursesPage(page);
+                                }}
+                            />
                         </section>
 
                         <section className="report-panel">
@@ -796,6 +813,13 @@ function ReportsPage() {
                             ) : (
                                 <p className="report-empty">Chưa có giao dịch để hiển thị.</p>
                             )}
+                            <ReportPagination
+                                pagination={reports.pagination.recentPaidOrders}
+                                onPageChange={(page) => {
+                                    setIsLoading(true);
+                                    setRecentOrdersPage(page);
+                                }}
+                            />
                         </section>
                     </div>
                     <p className="report-footnote">

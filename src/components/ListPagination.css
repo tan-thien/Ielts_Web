@@ -1,0 +1,41 @@
+.list-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    color: #748198;
+    font-size: 0.84rem;
+}
+
+.list-pagination > div {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.list-pagination button {
+    padding: 6px 11px;
+    border: 1px solid #dce4ef;
+    border-radius: 8px;
+    background: #fff;
+    color: #284566;
+    cursor: pointer;
+}
+
+.list-pagination button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.list-pagination strong {
+    color: #2c405e;
+    white-space: nowrap;
+}
+
+@media (max-width: 576px) {
+    .list-pagination {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

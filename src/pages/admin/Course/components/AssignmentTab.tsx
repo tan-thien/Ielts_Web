@@ -14,6 +14,7 @@ import type {
     AssignmentSkill,
     AssignmentType,
 } from "../../../../types/assignment";
+import ListPagination from "../../../../components/ListPagination";
 import "./AssignmentTab.css";
 
 interface LessonOption {
@@ -327,6 +328,7 @@ function AssignmentTab({
     const [isSaving, setIsSaving] = useState(false);
     const [uploadingResourceKey, setUploadingResourceKey] = useState<string | null>(null);
     const [actionError, setActionError] = useState("");
+    const [assignmentPage, setAssignmentPage] = useState(1);
 
     const courseAssignments = useMemo(() => {
         const lessonIds = new Set(lessons.map((lesson) => lesson._id));
@@ -336,6 +338,13 @@ function AssignmentTab({
                 lessonIds.has(getReferenceId(assignment.LessonID)!))
         );
     }, [assignments, courseId, lessons]);
+    const assignmentPageSize = 50;
+    const assignmentPageCount = Math.max(1, Math.ceil(courseAssignments.length / assignmentPageSize));
+    const currentAssignmentPage = Math.min(assignmentPage, assignmentPageCount);
+    const visibleAssignments = courseAssignments.slice(
+        (currentAssignmentPage - 1) * assignmentPageSize,
+        currentAssignmentPage * assignmentPageSize,
+    );
 
     const openCreateForm = () => {
         setEditingId(null);
@@ -1320,7 +1329,7 @@ function AssignmentTab({
                         </tr>
                     </thead>
                     <tbody>
-                        {courseAssignments.length > 0 ? courseAssignments.map((assignment) => (
+                        {courseAssignments.length > 0 ? visibleAssignments.map((assignment) => (
                             <tr key={assignment._id}>
                                 <td>
                                     <div className="fw-semibold">{assignment.Title}</div>
@@ -1368,6 +1377,12 @@ function AssignmentTab({
                     </tbody>
                 </table>
             </div>
+            <ListPagination
+                total={courseAssignments.length}
+                page={currentAssignmentPage}
+                onPageChange={setAssignmentPage}
+                pageSize={assignmentPageSize}
+            />
         </>
     );
 }

@@ -63,6 +63,27 @@
     box-shadow: 0 8px 30px rgba(23, 71, 157, 0.08);
 }
 
+.login-card .login-back-link {
+    display: inline-flex;
+    width: auto;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 20px;
+    padding: 8px 0;
+    background: transparent;
+    color: #17479D;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.login-card .login-back-link:hover {
+    background: transparent;
+    color: #EE6823;
+    box-shadow: none;
+    transform: translateX(-2px);
+}
+
 .login-card h2 {
     color: #17479D;
     font-size: 28px;

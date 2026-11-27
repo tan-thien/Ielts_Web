@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import axios from "axios";
+import { FaArrowLeft } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import {
     completeGoogleRegistration,
     googleLogin,
@@ -95,7 +97,7 @@ function LoginPage() {
         } finally {
             setSubmitting(false);
         }
-    }, [finishLogin]);
+    }, [finishLogin, navigate]);
 
     useEffect(() => {
         if (!GOOGLE_CLIENT_ID || !googleButtonRef.current) return;
@@ -198,6 +200,10 @@ function LoginPage() {
             </div>
             <div className="login-right">
                 <div className="login-card">
+                    <Link to="/home" className="login-back-link">
+                        <FaArrowLeft aria-hidden="true" />
+                        Về trang chủ
+                    </Link>
                     {!googleRegistrationToken ? (
                         <>
                             <h2>Chào mừng bạn quay lại 👋</h2>

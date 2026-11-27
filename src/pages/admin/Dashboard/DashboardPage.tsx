@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import { getAdminReports } from "../../../services/reports.service";
 import type { MonthlyReport, ReportsData } from "../../../types/reports";
+import ReportPagination from "../Reports/ReportPagination";
 import "../Reports/ReportsPage.css";
 import "./DashboardPage.css";
 
@@ -146,10 +147,12 @@ function DashboardPage() {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [reloadKey, setReloadKey] = useState(0);
+    const [popularCoursesPage, setPopularCoursesPage] = useState(1);
+    const [recentOrdersPage, setRecentOrdersPage] = useState(1);
 
     useEffect(() => {
         let cancelled = false;
-        getAdminReports(months)
+        getAdminReports({ months, popularCoursesPage, recentOrdersPage })
             .then((data) => {
                 if (!cancelled) {
                     setReports(data);
@@ -165,7 +168,7 @@ function DashboardPage() {
         return () => {
             cancelled = true;
         };
-    }, [months, reloadKey]);
+    }, [months, popularCoursesPage, recentOrdersPage, reloadKey]);
 
     const topCourseMaximum = useMemo(
         () => Math.max(1, ...(reports?.popularCourses.map((course) => course.learners) ?? [])),
@@ -190,9 +193,10 @@ function DashboardPage() {
                         id="dashboard-range"
                         value={months}
                         onChange={(event) => {
-                            setReports(null);
                             setError("");
                             setIsLoading(true);
+                            setPopularCoursesPage(1);
+                            setRecentOrdersPage(1);
                             setMonths(Number(event.target.value));
                         }}
                     >
@@ -203,7 +207,6 @@ function DashboardPage() {
                     <button
                         type="button"
                         onClick={() => {
-                            setReports(null);
                             setError("");
                             setIsLoading(true);
                             setReloadKey((key) => key + 1);
@@ -220,7 +223,6 @@ function DashboardPage() {
                     <button
                         type="button"
                         onClick={() => {
-                            setReports(null);
                             setError("");
                             setIsLoading(true);
                             setReloadKey((key) => key + 1);
@@ -338,7 +340,10 @@ function DashboardPage() {
                                 <div className="report-course-list">
                                     {reports.popularCourses.map((course, index) => (
                                         <div className="report-course-row" key={course._id}>
-                                            <span className="report-course-rank">{index + 1}</span>
+                                            <span className="report-course-rank">
+                                                {(reports.pagination.popularCourses.page - 1) *
+                                                    reports.pagination.popularCourses.pageSize + index + 1}
+                                            </span>
                                             <div className="report-course-info">
                                                 <div>
                                                     <strong>{course.name}</strong>
@@ -356,6 +361,13 @@ function DashboardPage() {
                             ) : (
                                 <p className="report-empty">Chưa có đơn hàng thanh toán thành công.</p>
                             )}
+                            <ReportPagination
+                                pagination={reports.pagination.popularCourses}
+                                onPageChange={(page) => {
+                                    setIsLoading(true);
+                                    setPopularCoursesPage(page);
+                                }}
+                            />
                         </section>
 
                         <section className="report-panel">
@@ -381,6 +393,13 @@ function DashboardPage() {
                             ) : (
                                 <p className="report-empty">Chưa có giao dịch để hiển thị.</p>
                             )}
+                            <ReportPagination
+                                pagination={reports.pagination.recentPaidOrders}
+                                onPageChange={(page) => {
+                                    setIsLoading(true);
+                                    setRecentOrdersPage(page);
+                                }}
+                            />
                         </section>
                     </div>
 
