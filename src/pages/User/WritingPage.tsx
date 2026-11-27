@@ -14,7 +14,8 @@ const prompts: Record<WritingTaskType, string> = {
     task1: "The chart below shows information about a topic. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
     task2: "Some people believe that online education is more effective than traditional classroom education. To what extent do you agree or disagree?",
 };
-const requestTimeoutMs = 210_000;
+const requestTimeoutMs = 190_000;
+type RequestStage = "sending" | "analyzing" | "receiving";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === "object" && value !== null;
@@ -39,13 +40,19 @@ function WritingPage() {
     const [imageName, setImageName] = useState("");
     const [attempt, setAttempt] = useState<AIPracticeAttempt | null>(null);
     const [history, setHistory] = useState<AIPracticeAttempt[]>([]);
+    const [historyLoading, setHistoryLoading] = useState(true);
+    const [historyError, setHistoryError] = useState("");
     const [busy, setBusy] = useState(false);
+    const [evaluationFailed, setEvaluationFailed] = useState(false);
     const [error, setError] = useState("");
     const [seconds, setSeconds] = useState(0);
     const [streamingFeedback, setStreamingFeedback] = useState("");
     const [streamingCriteria, setStreamingCriteria] = useState<AICriterionResult[]>([]);
+    const [requestStage, setRequestStage] = useState<RequestStage>("sending");
     const streamController = useRef<AbortController | null>(null);
     const cancelRequested = useRef(false);
+    const submitLock = useRef(false);
+    const retryRequestId = useRef<string | null>(null);
     const wordCount = useMemo(
         () => answer.trim() ? answer.trim().split(/\s+/).length : 0,
         [answer],
@@ -60,6 +67,10 @@ function WritingPage() {
             })
             .catch((historyError: unknown) => {
                 console.error("Load Writing history failed:", historyError);
+                if (!cancelled) setHistoryError("Không thể tải lịch sử luyện viết.");
+            })
+            .finally(() => {
+                if (!cancelled) setHistoryLoading(false);
             });
         return () => {
             cancelled = true;
@@ -78,15 +89,18 @@ function WritingPage() {
         setTaskType(value);
         setPrompt(prompts[value]);
         setAnswer("");
+        retryRequestId.current = null;
         setImage(undefined);
         setImageName("");
         setAttempt(null);
         setError("");
+        setEvaluationFailed(false);
     };
 
     const handleImage = async (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
+        retryRequestId.current = null;
         if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
             setError("Chỉ hỗ trợ ảnh PNG, JPEG hoặc WebP.");
             event.target.value = "";
@@ -107,13 +121,17 @@ function WritingPage() {
     };
 
     const submit = async () => {
-        if (answer.trim().split(/\s+/).filter(Boolean).length < 20) {
-            setError("Vui lòng viết ít nhất 20 từ trước khi gửi.");
+        if (submitLock.current) return;
+        if (!answer.trim()) {
+            setError("Hãy nhập bài viết trước khi gửi đánh giá.");
             return;
         }
 
+        submitLock.current = true;
         setError("");
+        setEvaluationFailed(false);
         setBusy(true);
+        setRequestStage("sending");
         setSeconds(0);
         setAttempt(null);
         setStreamingFeedback("");
@@ -122,19 +140,24 @@ function WritingPage() {
         const controller = new AbortController();
         streamController.current = controller;
         cancelRequested.current = false;
+        const requestId = retryRequestId.current || crypto.randomUUID();
+        retryRequestId.current = requestId;
         const timeout = window.setTimeout(() => controller.abort(), requestTimeoutMs);
 
         try {
             const result = await streamEvaluateWriting(
-                { taskType, prompt, answer, image },
+                { requestId, taskType, prompt, answer, image },
                 (event: AIStreamEvent, data: unknown) => {
                     if (!isRecord(data)) return;
+                    if (event === "started") setRequestStage("analyzing");
                     if (event === "feedback" && typeof data.text === "string") {
+                        setRequestStage("receiving");
                         setStreamingFeedback((current) =>
                             [current, data.text].filter(Boolean).join("\n\n"),
                         );
                     }
                     if (event === "criterion_score" && typeof data.name === "string") {
+                        setRequestStage("receiving");
                         const criterion = data as unknown as AICriterionResult;
                         setStreamingCriteria((current) => [
                             ...current.filter((item) => item.name !== criterion.name),
@@ -148,11 +171,14 @@ function WritingPage() {
                 controller.signal,
             );
             setAttempt(result);
+            retryRequestId.current = null;
+            setEvaluationFailed(false);
             setHistory((items) => [
                 result,
                 ...items.filter((item) => item._id !== result._id),
             ].slice(0, 20));
         } catch (requestError) {
+            setEvaluationFailed(true);
             if (controller.signal.aborted) {
                 setError(cancelRequested.current
                     ? "Bạn đã dừng đánh giá. Bài viết vẫn được giữ lại."
@@ -165,6 +191,7 @@ function WritingPage() {
         } finally {
             window.clearTimeout(timeout);
             streamController.current = null;
+            submitLock.current = false;
             setBusy(false);
         }
     };
@@ -174,11 +201,17 @@ function WritingPage() {
     return (
         <div className="ai-practice-page">
             <header className="ai-page-hero">
-                <span>LUYỆN TẬP IELTS CÙNG AI</span>
+                <span>IELTS WRITING PRACTICE · LUYỆN VIẾT IELTS</span>
                 <h1>Luyện kỹ năng Viết, nhận góp ý có dẫn chứng.</h1>
                 <p>
                     Xem band ước lượng theo 4 tiêu chí, lỗi quan trọng cần sửa và bản
                     chỉnh sửa tham khảo. Kết quả AI không thay thế giám khảo IELTS.
+                </p>
+                <p className="ai-task-target">
+                    {taskType === "task1"
+                        ? "Task 1: tóm tắt các đặc điểm chính và so sánh dữ liệu được cung cấp."
+                        : "Task 2: trả lời đầy đủ các phần của đề, nêu quan điểm rõ và phát triển luận điểm."}
+                    {" "}Mục tiêu tham khảo: ít nhất {targetWords} từ.
                 </p>
             </header>
 
@@ -188,6 +221,7 @@ function WritingPage() {
                         <button
                             type="button"
                             className={taskType === "task1" ? "active" : ""}
+                            aria-pressed={taskType === "task1"}
                             onClick={() => changeTask("task1")}
                             disabled={busy}
                         >
@@ -196,6 +230,7 @@ function WritingPage() {
                         <button
                             type="button"
                             className={taskType === "task2" ? "active" : ""}
+                            aria-pressed={taskType === "task2"}
                             onClick={() => changeTask("task2")}
                             disabled={busy}
                         >
@@ -207,7 +242,10 @@ function WritingPage() {
                         Đề bài
                         <textarea
                             value={prompt}
-                            onChange={(event) => setPrompt(event.target.value)}
+                            onChange={(event) => {
+                                setPrompt(event.target.value);
+                                retryRequestId.current = null;
+                            }}
                             rows={4}
                             disabled={busy}
                         />
@@ -231,7 +269,10 @@ function WritingPage() {
                         <textarea
                             className="writing-editor"
                             value={answer}
-                            onChange={(event) => setAnswer(event.target.value)}
+                            onChange={(event) => {
+                                setAnswer(event.target.value);
+                                retryRequestId.current = null;
+                            }}
                             placeholder="Viết bài tại đây..."
                             disabled={busy}
                         />
@@ -251,9 +292,17 @@ function WritingPage() {
                         className="primary-ai-button"
                         type="button"
                         onClick={() => void submit()}
-                        disabled={busy}
+                        disabled={busy || !answer.trim()}
                     >
-                        {busy ? "Đang phân tích bài viết..." : "Nhận đánh giá kỹ năng Viết"}
+                        {busy
+                            ? requestStage === "sending"
+                                ? "Đang gửi bài viết..."
+                                : requestStage === "analyzing"
+                                    ? "AI đang phân tích..."
+                                    : "Đang nhận kết quả..."
+                            : error
+                                ? evaluationFailed ? "Thử lại đánh giá" : "Nhận đánh giá kỹ năng Viết"
+                                : "Nhận đánh giá kỹ năng Viết"}
                     </button>
                     {busy && (
                         <button
@@ -271,24 +320,30 @@ function WritingPage() {
 
                 <aside className="writing-history">
                     <h2>Lịch sử luyện tập</h2>
-                    {history.length === 0 && <p>Chưa có bài viết nào.</p>}
-                    {history.map((item) => {
-                        const result = getEvaluation(item);
-                        return (
-                            <button
-                                type="button"
-                                key={item._id}
-                                onClick={() => {
-                                    setAttempt(item);
-                                    setError("");
-                                }}
-                            >
-                                <span>{getTaskLabel(item.TaskType)}</span>
-                                <strong>{result ? result.estimatedOverallBand.toFixed(1) : "—"}</strong>
-                                <small>{new Date(item.createdAt).toLocaleDateString("vi-VN")}</small>
-                            </button>
-                        );
-                    })}
+                    <div className="writing-history-list" role="region" aria-label="Danh sách lịch sử luyện tập">
+                        {historyLoading && <p>Đang tải lịch sử...</p>}
+                        {historyError && <p className="ai-error" role="alert">{historyError}</p>}
+                        {!historyLoading && !historyError && history.length === 0 && <p>Chưa có bài viết nào.</p>}
+                        {history.map((item) => {
+                            const result = getEvaluation(item);
+                            return (
+                                <button
+                                    type="button"
+                                    key={item._id}
+                                    disabled={busy}
+                                    onClick={() => {
+                                        setAttempt(item);
+                                        setError("");
+                                        setEvaluationFailed(false);
+                                    }}
+                                >
+                                    <span>{getTaskLabel(item.TaskType)}</span>
+                                    <strong>{result ? result.estimatedOverallBand.toFixed(1) : "—"}</strong>
+                                    <small>{new Date(item.createdAt).toLocaleDateString("vi-VN")}</small>
+                                </button>
+                            );
+                        })}
+                    </div>
                 </aside>
             </div>
 
@@ -296,8 +351,10 @@ function WritingPage() {
                 <section className="ai-result stream-preview" aria-live="polite">
                     <h2>Đang phân tích theo tiêu chí IELTS</h2>
                     <p className="ai-muted">
-                        Thời gian: {Math.floor(seconds / 60)} phút {seconds % 60} giây.
-                        Kết quả thường cần vài chục giây; trang sẽ tự dừng nếu quá thời hạn.
+                        {requestStage === "sending" ? "Đang gửi bài làm an toàn đến máy chủ." : null}
+                        {requestStage === "analyzing" ? "AI đang đánh giá mức độ đáp ứng đề và lập luận." : null}
+                        {requestStage === "receiving" ? "Đang nhận các tiêu chí và kiểm tra phản hồi." : null}
+                        {" "}Thời gian: {Math.floor(seconds / 60)} phút {seconds % 60} giây.
                     </p>
                     {streamingCriteria.length > 0 && (
                         <div className="criterion-grid">

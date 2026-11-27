@@ -14,6 +14,7 @@ import {
     updateVocabularyWord,
 } from "../../../services/vocabulary.service";
 import type { VocabularyTopic, VocabularyWord } from "../../../types/vocabulary";
+import ListPagination from "../../../components/ListPagination";
 import "./VocabularyAdminPage.css";
 
 type WordForm = {
@@ -65,6 +66,11 @@ function VocabularyAdminPage() {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
+    const [wordPage, setWordPage] = useState(1);
+    const wordPageSize = 50;
+    const wordPageCount = Math.max(1, Math.ceil(words.length / wordPageSize));
+    const currentWordPage = Math.min(wordPage, wordPageCount);
+    const pageWords = words.slice((currentWordPage - 1) * wordPageSize, currentWordPage * wordPageSize);
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -445,6 +451,7 @@ function VocabularyAdminPage() {
                             value={selectedTopic}
                             onChange={(event) => {
                                 setSelectedTopic(event.target.value);
+                                setWordPage(1);
                                 setWordForm({ ...blankWord, TopicID: event.target.value });
                             }}
                             aria-label="Lọc từ theo chủ đề"
@@ -455,7 +462,7 @@ function VocabularyAdminPage() {
                     </div>
                     {loading && <p>Đang tải từ vựng...</p>}
                     {!loading && words.length === 0 && <p>Chưa có từ vựng trong chủ đề này.</p>}
-                    {words.map((word) => (
+                    {pageWords.map((word) => (
                         <div className="word-row" key={word._id}>
                             <div>
                                 <strong>{word.Word}</strong>
@@ -483,6 +490,14 @@ function VocabularyAdminPage() {
                             </span>
                         </div>
                     ))}
+                    {words.length > wordPageSize && (
+                        <ListPagination
+                            total={words.length}
+                            page={currentWordPage}
+                            pageSize={wordPageSize}
+                            onPageChange={setWordPage}
+                        />
+                    )}
                 </section>
             </div>
         </div>

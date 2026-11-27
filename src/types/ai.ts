@@ -19,7 +19,9 @@ export interface AIErrorItem {
 }
 
 export interface AIEvaluationResult {
+    version?: 2;
     kind: "writing" | "speaking";
+    transcriptionStatus?: "clear" | "no_audio" | "too_quiet" | "non_speech" | "unintelligible" | "uncertain";
     estimatedOverallBand: number;
     criteria: AICriterionResult[];
     strengths: string[];
@@ -36,6 +38,7 @@ export interface AIEvaluationResult {
 
 export interface AIPracticeAttempt {
     _id: string;
+    AIRequestID?: string | null;
     PracticeType: "Writing" | "Speaking";
     TaskType: string;
     Prompt: string;

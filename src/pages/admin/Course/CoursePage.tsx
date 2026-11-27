@@ -1,14 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getCourses, createCourse, updateCourse, deleteCourse } from "../../../services/course.service";
 import { uploadCloudinaryResource } from "../../../services/cloudinary.service";
 import "./CoursePage.css";
 import { FaPlus, FaSearch, FaEye, FaEdit, FaTrash, FaImage, FaBook } from "react-icons/fa";
 import { useNavigate } from "react-router";
+import ListPagination from "../../../components/ListPagination";
+
+const PAGE_SIZE = 50;
 
 function CoursePage() {
 
     const [courses, setCourses] = useState([]);
     const [search, setSearch] = useState("");
+    const [page, setPage] = useState(1);
     const [editingId, setEditingId] = useState("");
     const [selectedCourse, setSelectedCourse] = useState<any>(null);
     const navigate = useNavigate();
@@ -40,9 +44,12 @@ function CoursePage() {
         setSelectedCourse(course);
     };
 
-    const filteredCourses = courses.filter((course: any) =>
+    const filteredCourses = useMemo(() => courses.filter((course: any) =>
         course.Name.toLowerCase().includes(search.toLowerCase())
-    );
+    ), [courses, search]);
+    const totalPages = Math.max(1, Math.ceil(filteredCourses.length / PAGE_SIZE));
+    const currentPage = Math.min(page, totalPages);
+    const pageCourses = filteredCourses.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -364,7 +371,10 @@ function CoursePage() {
                         className="form-control"
                         placeholder="Tìm kiếm khóa học..."
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                            setPage(1);
+                        }}
                     />
 
                 </div>
@@ -415,7 +425,7 @@ function CoursePage() {
 
                         <tbody>
 
-                            {filteredCourses.map((course: any) => (
+                            {pageCourses.map((course: any) => (
 
                                 <tr key={course._id}>
 
@@ -491,6 +501,12 @@ function CoursePage() {
                     </table>
 
                 </div>
+                <ListPagination
+                    total={filteredCourses.length}
+                    page={currentPage}
+                    onPageChange={setPage}
+                    pageSize={PAGE_SIZE}
+                />
 
             </div>
 

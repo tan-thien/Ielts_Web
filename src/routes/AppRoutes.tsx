@@ -32,6 +32,7 @@ import SpeakingAIPage from "../pages/admin/Dashboard/SpeakingAIPage";
 import SpeakingPage from "../pages/User/SpeakingPage";
 import VocabularyPage from "../pages/User/VocabularyPage";
 import VocabularyAdminPage from "../pages/admin/Vocabulary/VocabularyAdminPage";
+import SettingsPage from "../pages/User/SettingsPage";
     
 function AppRoutes() {
     return (
@@ -53,6 +54,7 @@ function AppRoutes() {
                 <Route path="/payment/result" element={<PaymentResultPage />} />
                 <Route path="profile" element={<ProfilePage />} />
                 <Route path="/writingAI" element={<WritingPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/speakingAI" element={<SpeakingPage />} />
                 <Route path="/vocabulary" element={<VocabularyPage />} />
             </Route>
@@ -80,6 +82,7 @@ function AppRoutes() {
                 <Route path="assignments" element={<AssignmentManagementPage />} />
                 <Route path="reports" element={<ReportsPage />} />
                 <Route path="profile" element={<ProfilePage />} />
+                <Route path="settings" element={<SettingsPage isAdmin />} />
                 <Route path="/admin/courses/:courseId" element={<ManagementCoursePage />} />
                 <Route path="/admin/courses/:courseId/lessons/create" element={<LessonFormPage />} />
                 <Route path="/admin/courses/:courseId/lessons/:lessonId/edit" element={<LessonFormPage />} />

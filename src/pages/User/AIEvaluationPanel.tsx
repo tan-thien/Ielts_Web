@@ -68,42 +68,51 @@ function AIEvaluationPanel({ result }: Props) {
                 </div>
             )}
 
+            <section className="ai-summary-columns">
+                <div>
+                    <h2>Điểm mạnh</h2>
+                    {result.strengths.length
+                        ? <ul>{result.strengths.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>
+                        : <p className="ai-muted">Chưa có điểm mạnh cụ thể được ghi nhận.</p>}
+                </div>
+                <div>
+                    <h2>Ưu tiên cải thiện</h2>
+                    {result.weaknesses.length
+                        ? <ul>{result.weaknesses.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>
+                        : <p className="ai-muted">Chưa ghi nhận điểm yếu cụ thể.</p>}
+                </div>
+            </section>
+
             <section className="ai-criterion-details">
                 <h2>Phân tích theo tiêu chí</h2>
                 <div className="ai-criterion-list">
                     {result.criteria.map((criterion) => (
-                        <article className="ai-criterion-card" key={criterion.name}>
-                            <header>
-                                <h3>{getCriterionLabel(criterion.name)}</h3>
+                        <details className="ai-criterion-card" key={criterion.name}>
+                            <summary>
+                                <span>{getCriterionLabel(criterion.name)}</span>
                                 <strong>{criterion.band.toFixed(1)}</strong>
-                            </header>
-                            <div className="ai-criterion-columns">
-                                <div>
-                                    <h4>Điểm tốt</h4>
-                                    {criterion.strengths.length ? (
+                            </summary>
+                            <div className="ai-criterion-content">
+                                <div className="ai-criterion-columns">
+                                    <div>
+                                        <h4>Điểm tốt</h4>
                                         <ul>{criterion.strengths.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>
-                                    ) : <p className="ai-muted">Chưa có điểm mạnh cụ thể được ghi nhận.</p>}
-                                </div>
-                                <div>
-                                    <h4>Cần cải thiện</h4>
-                                    {criterion.weaknesses.length ? (
+                                    </div>
+                                    <div>
+                                        <h4>Cần cải thiện</h4>
                                         <ul>{criterion.weaknesses.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>
-                                    ) : <p className="ai-muted">Chưa ghi nhận điểm yếu cụ thể.</p>}
+                                    </div>
                                 </div>
-                            </div>
-                            {criterion.evidence.length > 0 && (
                                 <div className="ai-evidence">
                                     <h4>{isWriting ? "Dẫn chứng trong bài" : "Dẫn chứng từ câu trả lời"}</h4>
                                     <ul>{criterion.evidence.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>
                                 </div>
-                            )}
-                            {criterion.improvements.length > 0 && (
                                 <div className="ai-improvements">
-                                    <h4>Cách nâng điểm</h4>
+                                    <h4>Cách cải thiện</h4>
                                     <ul>{criterion.improvements.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>
                                 </div>
-                            )}
-                        </article>
+                            </div>
+                        </details>
                     ))}
                 </div>
             </section>
@@ -125,7 +134,7 @@ function AIEvaluationPanel({ result }: Props) {
                                     } as Record<string, string>)[item.type] || item.type || "Cần cải thiện"}</strong>
                                     {item.location && <span>{item.location}</span>}
                                 </div>
-                                {item.quote && <blockquote>{item.quote}</blockquote>}
+                                {item.quote && <blockquote><span>Trong bài:</span> {item.quote}</blockquote>}
                                 {item.explanation && <p>{item.explanation}</p>}
                                 {item.suggestion && (
                                     <p className="ai-correction"><b>Gợi ý:</b> {item.suggestion}</p>

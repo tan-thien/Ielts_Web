@@ -53,4 +53,15 @@ export interface ReportsData {
         paymentMethod: string;
         paidAt: string;
     }[];
+    pagination: {
+        popularCourses: ReportPagination;
+        recentPaidOrders: ReportPagination;
+    };
+}
+
+export interface ReportPagination {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
 }

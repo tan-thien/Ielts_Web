@@ -442,6 +442,43 @@
     font-size: 0.9rem;
 }
 
+.report-list-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid #edf1f6;
+    color: #748198;
+    font-size: 0.82rem;
+}
+
+.report-list-pagination > div {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.report-list-pagination button {
+    padding: 6px 10px;
+    border: 1px solid #dce4ef;
+    border-radius: 8px;
+    background: #fff;
+    color: #284566;
+    cursor: pointer;
+}
+
+.report-list-pagination button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.report-list-pagination strong {
+    color: #2c405e;
+    white-space: nowrap;
+}
+
 .report-empty,
 .report-footnote {
     color: #8491a3;
@@ -492,6 +529,7 @@
     .report-chart-grid .report-panel:first-child,
     .report-orders-panel { grid-column: auto; }
     .report-orders-panel .report-orders-list { grid-template-columns: 1fr; }
+    .report-list-pagination { align-items: flex-start; flex-direction: column; }
     .report-summary-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .report-summary-strip > div:nth-child(3) { border-left: 0; }
     .report-course-info > div:first-child { align-items: flex-start; flex-direction: column; gap: 3px; }

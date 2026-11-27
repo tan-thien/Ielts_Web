@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaBookOpen, FaEdit, FaPlus, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import ListPagination from "../../../components/ListPagination";
 import { deleteLesson, getAllLessons } from "../../../services/lesson.service";
 import type { LessonWithCourse } from "../../../types/lesson";
 
@@ -29,6 +30,7 @@ function LessonManagementPage() {
     const navigate = useNavigate();
     const [lessons, setLessons] = useState<LessonWithCourse[]>([]);
     const [search, setSearch] = useState("");
+    const [page, setPage] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
 
@@ -63,6 +65,10 @@ function LessonManagementPage() {
                 .some((value) => value.toLocaleLowerCase().includes(query))
         );
     }, [lessons, search]);
+    const pageSize = 50;
+    const totalPages = Math.max(1, Math.ceil(filteredLessons.length / pageSize));
+    const currentPage = Math.min(page, totalPages);
+    const pageLessons = filteredLessons.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
     const handleDelete = async (lesson: LessonWithCourse) => {
         if (!window.confirm(`Bạn có chắc muốn xóa bài học "${lesson.Name}" không?`)) return;
@@ -102,7 +108,10 @@ function LessonManagementPage() {
                                 id="lesson-search"
                                 className="form-control"
                                 value={search}
-                                onChange={(event) => setSearch(event.target.value)}
+                                onChange={(event) => {
+                                    setSearch(event.target.value);
+                                    setPage(1);
+                                }}
                                 placeholder="Tìm theo tên bài, chương, khóa học hoặc trạng thái"
                             />
                         </div>
@@ -123,7 +132,7 @@ function LessonManagementPage() {
                             <tbody>
                                 {isLoading ? (
                                     <tr><td colSpan={6} className="text-center py-5">Đang tải bài học...</td></tr>
-                                ) : filteredLessons.length ? filteredLessons.map((lesson) => (
+                                ) : pageLessons.length ? pageLessons.map((lesson) => (
                                     <tr key={lesson._id}>
                                         <td>
                                             <div className="fw-semibold">{lesson.Name}</div>
@@ -168,7 +177,13 @@ function LessonManagementPage() {
                             </tbody>
                         </table>
                     </div>
-                    <div className="text-muted small">Đang hiển thị {filteredLessons.length}/{lessons.length} bài học</div>
+                    <div className="text-muted small">Đang hiển thị {filteredLessons.length}/{lessons.length} bài học                    </div>
+                    <ListPagination
+                        total={filteredLessons.length}
+                        page={currentPage}
+                        onPageChange={setPage}
+                        pageSize={pageSize}
+                    />
                 </div>
             </div>
         </div>
