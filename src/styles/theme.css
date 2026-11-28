@@ -483,3 +483,68 @@ textarea:focus {
         transition-duration: 0.01ms !important;
     }
 }
+
+.admin-layout {
+    background: var(--page);
+}
+
+.admin-sidebar {
+    background: var(--brand-blue);
+    box-shadow: 6px 0 24px rgba(18, 55, 104, 0.1);
+}
+
+.home-page .hero-section,
+.ai-page-hero,
+.ai-report-heading,
+.vocab-page .vocab-hero,
+.profile-page .profile-cover,
+.ai-practice-page .ai-page-hero,
+.ai-result .ai-report-heading,
+.study-hero {
+    background: var(--brand-blue);
+}
+
+.home-page .hero-section {
+    border-bottom: 4px solid var(--brand-orange);
+}
+
+.ai-page-hero,
+.study-hero {
+    border-top: 4px solid var(--brand-orange);
+    box-shadow: 0 12px 30px rgba(18, 55, 104, 0.1);
+}
+
+.ai-page-hero > span,
+.ai-report-heading span,
+.study-hero > span {
+    color: #ffe0ca;
+}
+
+.home-page .faq-item,
+.home-page .testimonial-card {
+    background: #fff;
+}
+
+.public-courses-hero {
+    background: #edf3fb;
+}
+
+.course-page .card-header {
+    background: var(--brand-blue) !important;
+}
+
+.course-page .table thead,
+.course-page .table thead th {
+    background: #edf3fb;
+    color: var(--brand-blue);
+}
+
+.login-left {
+    background-image:
+        linear-gradient(rgba(18, 55, 104, 0.72), rgba(18, 55, 104, 0.72)),
+        url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f");
+}
+
+.overlay {
+    background: rgba(18, 55, 104, 0.58);
+}

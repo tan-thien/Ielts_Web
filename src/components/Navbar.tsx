@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {FaBars,FaBell,FaUser,FaArrowAltCircleLeft,FaKey,FaCog} from "react-icons/fa";
+import {FaBars,FaBell,FaUser,FaArrowAltCircleLeft,FaCog} from "react-icons/fa";
 
 import { getProfile } from "../services/auth.service";
 import { useNavigate } from "react-router-dom";
@@ -93,9 +93,12 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
                     ref={menuRef}
                 >
 
-                    <div
+                    <button
+                        type="button"
                         className="profile-trigger"
                         onClick={() => setOpen(!open)}
+                        aria-expanded={open}
+                        aria-label="Mở menu hồ sơ quản trị"
                     >
 
                         <img
@@ -123,7 +126,7 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
 
                         </div>
 
-                    </div>
+                        </button>
 
                     {
                         open &&
@@ -135,10 +138,6 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
                             <button onClick={() => { setOpen(false); navigate('/admin/settings'); }}>
                                 <FaCog />
                                 Cài đặt
-                            </button>
-                            <button>
-                                <FaKey />
-                                Đổi mật khẩu
                             </button>
                             <button onClick={() => navigate('/home')}>
                                 <FaArrowAltCircleLeft />

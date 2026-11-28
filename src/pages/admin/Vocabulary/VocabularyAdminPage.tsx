@@ -1,46 +1,62 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
-import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
+import axios from "axios";
+import { FaBook, FaEdit, FaPlus, FaSearch, FaTrash } from "react-icons/fa";
 import {
     bulkImportVocabulary,
     createVocabularyTopic,
     createVocabularyWord,
     deleteVocabularyTopic,
     deleteVocabularyWord,
+    getVocabularyAdminSummary,
     getVocabularyTopics,
-    getVocabularyWords,
+    getVocabularyWordPage,
     lookupVocabularyWord,
+    startVocabularyGenerate,
+    runVocabularyGenerateBatch,
+    getVocabularyGenerateJobs,
+    updateVocabularyGeneratePreview,
+    approveVocabularyGenerate,
     updateVocabularyTopic,
     updateVocabularyWord,
 } from "../../../services/vocabulary.service";
-import type { VocabularyTopic, VocabularyWord } from "../../../types/vocabulary";
+import type { VocabularyAdminSummary, VocabularyGenerateJob, VocabularyPageResult, VocabularySense, VocabularyTopic, VocabularyWord } from "../../../types/vocabulary";
+import { getVocabularySenses } from "../../../utils/vocabulary";
 import ListPagination from "../../../components/ListPagination";
 import "./VocabularyAdminPage.css";
 
-type WordForm = {
+type WordDraft = {
     TopicID: string;
     Word: string;
-    Meaning: string;
-    Translation: string;
-    PartOfSpeech: string;
-    Example: string;
-    ExampleTranslation: string;
+    Senses: VocabularySense[];
     Pronunciation: string;
     Level: string;
     IsActive: boolean;
 };
 
-const blankWord: WordForm = {
-    TopicID: "",
-    Word: "",
+const blankSense = (): VocabularySense => ({
+    PartOfSpeech: "",
     Meaning: "",
     Translation: "",
-    PartOfSpeech: "",
     Example: "",
     ExampleTranslation: "",
+});
+
+const blankWord = (topicId = ""): WordDraft => ({
+    TopicID: topicId,
+    Word: "",
+    Senses: [blankSense()],
     Pronunciation: "",
     Level: "",
     IsActive: true,
+});
+
+const emptySummary: VocabularyAdminSummary = {
+    activeTopics: 0,
+    inactiveTopics: 0,
+    totalWords: 0,
+    activeWords: 0,
+    inactiveWords: 0,
 };
 
 const topicSuggestions: Record<string, string[]> = {
@@ -52,84 +68,161 @@ const topicSuggestions: Record<string, string[]> = {
     travel: ["destination", "itinerary", "hospitality", "tourism", "landmark", "accommodation", "souvenir", "heritage", "expedition", "sustainable tourism"],
 };
 
+const errorMessage = (error: unknown, fallback: string) =>
+    axios.isAxiosError<{ message?: string }>(error)
+        ? error.response?.data?.message || fallback
+        : error instanceof Error ? error.message : fallback;
+
+const topicIdOf = (topic: VocabularyWord["TopicID"]) => typeof topic === "string" ? topic : topic._id;
+
 function VocabularyAdminPage() {
     const [topics, setTopics] = useState<VocabularyTopic[]>([]);
-    const [words, setWords] = useState<VocabularyWord[]>([]);
+    const [summary, setSummary] = useState(emptySummary);
+    const [wordPageResult, setWordPageResult] = useState<VocabularyPageResult<VocabularyWord> | null>(null);
     const [selectedTopic, setSelectedTopic] = useState("");
     const [topicName, setTopicName] = useState("");
     const [topicDescription, setTopicDescription] = useState("");
-    const [wordForm, setWordForm] = useState<WordForm>(blankWord);
+    const [topicIsActive, setTopicIsActive] = useState(true);
+    const [wordForm, setWordForm] = useState<WordDraft>(blankWord());
     const [bulkText, setBulkText] = useState("");
+    const [wordSearch, setWordSearch] = useState("");
+    const [wordStatus, setWordStatus] = useState<"all" | "active" | "inactive">("all");
     const [editingWord, setEditingWord] = useState("");
     const [editingTopic, setEditingTopic] = useState("");
     const [busy, setBusy] = useState(false);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
+    const [warning, setWarning] = useState("");
     const [error, setError] = useState("");
     const [wordPage, setWordPage] = useState(1);
-    const wordPageSize = 50;
-    const wordPageCount = Math.max(1, Math.ceil(words.length / wordPageSize));
-    const currentWordPage = Math.min(wordPage, wordPageCount);
-    const pageWords = words.slice((currentWordPage - 1) * wordPageSize, currentWordPage * wordPageSize);
+    const [generateJob, setGenerateJob] = useState<VocabularyGenerateJob | null>(null);
+    const [generateTarget, setGenerateTarget] = useState(20);
+    const [generateLevel, setGenerateLevel] = useState("B1-B2");
+    const pageSize = 50;
 
-    const load = useCallback(async () => {
+    const loadAdminData = useCallback(async () => {
+        const [topicData, summaryData] = await Promise.all([
+            getVocabularyTopics(true),
+            getVocabularyAdminSummary(),
+        ]);
+        setTopics(topicData);
+        setSummary(summaryData);
+    }, []);
+
+    const loadWords = useCallback(async () => {
         setLoading(true);
-        setError("");
         try {
-            const [topicData, wordData] = await Promise.all([
-                getVocabularyTopics(true),
-                getVocabularyWords({ includeInactive: true, topicId: selectedTopic || undefined }),
-            ]);
-            setTopics(topicData);
-            setWords(wordData);
-        } catch (loadError) {
-            console.error("Không thể tải dữ liệu từ vựng:", loadError);
-            setError("Không thể tải dữ liệu từ vựng. Vui lòng thử lại.");
+            const result = await getVocabularyWordPage({
+                includeInactive: true,
+                topicId: selectedTopic || undefined,
+                search: wordSearch.trim() || undefined,
+                status: wordStatus === "all" ? undefined : wordStatus,
+                page: wordPage,
+                limit: pageSize,
+            });
+            setWordPageResult(result);
+        } catch (reason) {
+            setError(errorMessage(reason, "Không thể tải danh sách từ."));
         } finally {
             setLoading(false);
         }
-    }, [selectedTopic]);
+    }, [selectedTopic, wordSearch, wordStatus, wordPage]);
 
     useEffect(() => {
-        void load();
-    }, [load]);
+        let active = true;
+        const timer = window.setTimeout(() => {
+            loadAdminData().catch((reason: unknown) => {
+                if (active) setError(errorMessage(reason, "Không thể tải dữ liệu quản trị."));
+            });
+        }, 0);
+        return () => {
+            active = false;
+            window.clearTimeout(timer);
+        };
+    }, [loadAdminData]);
+
+    useEffect(() => {
+        let active = true;
+        const timer = window.setTimeout(() => {
+            loadWords().catch((reason: unknown) => {
+                if (active) setError(errorMessage(reason, "Không thể tải danh sách từ."));
+            });
+        }, 180);
+        return () => {
+            active = false;
+            window.clearTimeout(timer);
+        };
+    }, [loadWords]);
+
+    useEffect(() => {
+        if (!selectedTopic) return;
+        let active = true;
+        getVocabularyGenerateJobs(selectedTopic)
+            .then((jobs) => { if (active) setGenerateJob(jobs[0] || null); })
+            .catch((reason: unknown) => { if (active) setError(errorMessage(reason, "Không thể tải trạng thái tạo từ bằng AI.")); });
+        return () => { active = false; };
+    }, [selectedTopic]);
+
+    const selectedTopicName = topics.find((topic) => topic._id === selectedTopic)?.Name.toLowerCase() || "";
+    const suggestions = useMemo(
+        () => Object.entries(topicSuggestions).find(([key]) => selectedTopicName.includes(key))?.[1] || [],
+        [selectedTopicName],
+    );
+    const words = wordPageResult?.items || [];
+    const topicCount = summary.activeTopics + summary.inactiveTopics;
 
     const submitTopic = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setBusy(true);
         setError("");
         setMessage("");
         try {
-            const body = { Name: topicName.trim(), Description: topicDescription.trim(), IsActive: true };
+            const body = { Name: topicName.trim(), Description: topicDescription.trim(), IsActive: topicIsActive };
             const topic = editingTopic
                 ? await updateVocabularyTopic(editingTopic, body)
                 : await createVocabularyTopic(body);
             setSelectedTopic(topic._id);
             setTopicName("");
             setTopicDescription("");
+            setTopicIsActive(true);
             setEditingTopic("");
             setMessage("Đã lưu chủ đề.");
-            await load();
-        } catch (saveError) {
-            console.error("Không thể lưu chủ đề từ vựng:", saveError);
-            setError("Không thể lưu chủ đề. Tên chủ đề có thể đã tồn tại.");
+            await loadAdminData();
+        } catch (reason) {
+            setError(errorMessage(reason, "Không thể lưu chủ đề. Tên chủ đề có thể đã tồn tại."));
+        } finally {
+            setBusy(false);
         }
     };
 
     const lookupWord = async () => {
         if (!wordForm.Word.trim()) {
-            setError("Vui lòng nhập từ tiếng Anh trước khi tra cứu.");
+            setError("Nhập từ tiếng Anh trước khi tra cứu.");
             return;
         }
         setBusy(true);
         setError("");
+        setWarning("");
         setMessage("");
         try {
             const result = await lookupVocabularyWord(wordForm.Word.trim());
-            setWordForm((current) => ({ ...current, ...result }));
-            setMessage("Đã tra cứu nghĩa và bản dịch. Vui lòng kiểm tra trước khi lưu.");
-        } catch (lookupError) {
-            console.error("Không thể tra cứu từ vựng:", lookupError);
-            setError("Không tìm thấy từ này. Hãy kiểm tra chính tả hoặc thử lại sau.");
+            const senses = result.Senses?.length ? result.Senses : getVocabularySenses({
+                ...result,
+                _id: "",
+                TopicID: selectedTopic,
+                IsActive: true,
+            });
+            setWordForm((current) => ({
+                ...current,
+                Word: result.Word,
+                Senses: senses,
+                Pronunciation: result.Pronunciation || "",
+                Level: result.Level || "",
+            }));
+            setMessage(`${senses.length} nghĩa đã tra cứu. Hãy kiểm tra nguồn và bổ sung trường còn thiếu trước khi lưu.`);
+            if (result.warnings.length) setWarning(result.warnings.join(" "));
+        } catch (reason) {
+            setError(errorMessage(reason, "Không thể tra cứu từ. Kiểm tra chính tả hoặc thử lại sau."));
         } finally {
             setBusy(false);
         }
@@ -137,130 +230,268 @@ function VocabularyAdminPage() {
 
     const importWordList = async () => {
         if (!selectedTopic) {
-            setError("Vui lòng chọn chủ đề trước khi nhập từ.");
+            setError("Chọn chủ đề trước khi nhập danh sách từ.");
             return;
         }
         if (!bulkText.trim()) {
-            setError("Hãy nhập các từ, phân cách bằng dòng mới, dấu phẩy hoặc dấu chấm phẩy.");
+            setError("Nhập các từ, phân cách bằng dòng mới, dấu phẩy hoặc dấu chấm phẩy.");
             return;
         }
         setBusy(true);
         setError("");
+        setWarning("");
         setMessage("");
         try {
             const result = await bulkImportVocabulary(selectedTopic, bulkText);
-            setBulkText("");
-            setMessage(`Đã nhập ${result.imported.length} từ${result.failed.length ? `; ${result.failed.length} từ chưa nhập được` : ""}.`);
-            if (result.failed.length) {
-                setError(result.failed.map((item) => `${item.word}: ${item.message}`).join(" | "));
-            }
-            await load();
-        } catch (importError) {
-            console.error("Không thể nhập danh sách từ vựng:", importError);
-            setError("Nhập hàng loạt không thành công. Mỗi lần có thể nhập tối đa 50 từ.");
+            setBulkText(result.failed.map((item) => item.word).join("\n"));
+            const skippedCount = result.skipped?.length || 0;
+            setMessage(`Đã nhập ${result.imported.length} từ${skippedCount ? `; giữ nguyên ${skippedCount} từ đã có` : ""}${result.failed.length ? `; ${result.failed.length} từ cần thử lại` : ""}.`);
+            if (result.failed.length) setError(result.failed.map((item) => `${item.word}: ${item.message}`).join(" | "));
+            await Promise.all([loadAdminData(), loadWords()]);
+        } catch (reason) {
+            setError(errorMessage(reason, "Nhập danh sách thất bại. Mỗi lần có thể xử lý tối đa 50 từ."));
         } finally {
             setBusy(false);
         }
     };
 
-    const submitWord = async (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const startGenerate = async () => {
+        if (!selectedTopic) return setError("Chọn chủ đề trước khi tạo từ bằng AI.");
+        setBusy(true);
         setError("");
+        setWarning("");
         setMessage("");
         try {
-            if (editingWord) {
-                await updateVocabularyWord(editingWord, wordForm);
-            } else {
-                await createVocabularyWord(wordForm);
-            }
-            setWordForm({ ...blankWord, TopicID: selectedTopic });
+            const job = await startVocabularyGenerate({
+                topicId: selectedTopic,
+                level: generateLevel,
+                targetCount: generateTarget,
+            });
+            setGenerateJob(job);
+            setMessage("Đã tạo tiến trình Generate. Chạy Batch để nhận dữ liệu Preview.");
+        } catch (reason) {
+            setError(errorMessage(reason, "Không thể bắt đầu tạo từ bằng AI."));
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    const runGenerateBatch = async () => {
+        if (!generateJob) return;
+        setBusy(true);
+        setError("");
+        setWarning("");
+        try {
+            const job = await runVocabularyGenerateBatch(generateJob._id);
+            setGenerateJob(job);
+            setMessage(job.ErrorMessage || "Batch đã hoàn tất. Hãy kiểm tra Preview trước khi duyệt.");
+        } catch (reason) {
+            setError(errorMessage(reason, "Không thể chạy Batch tạo từ."));
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    const approveGenerate = async (previewKey?: string) => {
+        if (!generateJob) return;
+        setBusy(true);
+        setError("");
+        try {
+            const result = await approveVocabularyGenerate(generateJob._id, previewKey ? [previewKey] : []);
+            setGenerateJob(result.job);
+            setMessage(`Đã duyệt và lưu ${result.approved} từ.`);
+            await Promise.all([loadAdminData(), loadWords()]);
+        } catch (reason) {
+            setError(errorMessage(reason, "Không thể duyệt Preview."));
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    const rejectGeneratePreview = async (previewKey: string) => {
+        if (!generateJob) return;
+        try {
+            setGenerateJob(await updateVocabularyGeneratePreview(generateJob._id, previewKey, { remove: true }));
+        } catch (reason) {
+            setError(errorMessage(reason, "Không thể bỏ Preview."));
+        }
+    };
+
+    const editGeneratePreviewSense = async (previewKey: string, senseIndex: number) => {
+        if (!generateJob) return;
+        const preview = generateJob.Previews.find((item) => item.Key === previewKey);
+        const senses = preview?.Preview?.Senses;
+        if (!senses?.[senseIndex]) return;
+        const translation = window.prompt("Bản dịch tiếng Việt cho nghĩa này", senses[senseIndex].Translation || "");
+        if (translation === null) return;
+        const nextSenses = senses.map((sense, index) =>
+            index === senseIndex ? { ...sense, Translation: translation.trim() } : sense
+        );
+        try {
+            setGenerateJob(await updateVocabularyGeneratePreview(generateJob._id, previewKey, {
+                preview: { ...(preview?.Preview || {}), Senses: nextSenses },
+            }));
+        } catch (reason) {
+            setError(errorMessage(reason, "Không thể cập nhật Preview."));
+        }
+    };
+
+    const submitWord = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const senses = wordForm.Senses.filter((sense) => sense.Meaning.trim());
+        if (!senses.length) {
+            setError("Mỗi từ cần ít nhất một định nghĩa tiếng Anh.");
+            return;
+        }
+        const firstSense = senses[0];
+        const body = {
+            ...wordForm,
+            Senses: senses,
+            Meaning: firstSense.Meaning,
+            Translation: firstSense.Translation,
+            PartOfSpeech: firstSense.PartOfSpeech,
+            Example: firstSense.Example,
+            ExampleTranslation: firstSense.ExampleTranslation,
+        };
+        setBusy(true);
+        setError("");
+        setWarning("");
+        setMessage("");
+        try {
+            if (editingWord) await updateVocabularyWord(editingWord, body);
+            else await createVocabularyWord(body);
+            setWordForm(blankWord(selectedTopic));
             setEditingWord("");
-            setMessage("Đã lưu từ vựng.");
-            await load();
-        } catch (saveError) {
-            console.error("Không thể lưu từ vựng:", saveError);
-            setError("Không thể lưu từ vựng. Vui lòng kiểm tra thông tin và thử lại.");
+            setMessage("Đã lưu từ và các nghĩa.");
+            await Promise.all([loadAdminData(), loadWords()]);
+        } catch (reason) {
+            setError(errorMessage(reason, "Không thể lưu từ vựng. Kiểm tra thông tin và thử lại."));
+        } finally {
+            setBusy(false);
         }
     };
 
     const editWord = (word: VocabularyWord) => {
-        const topicId = typeof word.TopicID === "string" ? word.TopicID : word.TopicID._id;
+        const topicId = topicIdOf(word.TopicID);
         setSelectedTopic(topicId);
         setEditingWord(word._id);
         setWordForm({
             TopicID: topicId,
             Word: word.Word,
-            Meaning: word.Meaning,
-            Translation: word.Translation,
-            PartOfSpeech: word.PartOfSpeech,
-            Example: word.Example,
-            ExampleTranslation: word.ExampleTranslation,
-            Pronunciation: word.Pronunciation,
-            Level: word.Level,
+            Senses: getVocabularySenses(word),
+            Pronunciation: word.Pronunciation || "",
+            Level: word.Level || "",
             IsActive: word.IsActive,
         });
+        setMessage("");
+        setWarning("");
+        setError("");
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
     const resetWord = () => {
         setEditingWord("");
-        setWordForm({ ...blankWord, TopicID: selectedTopic });
+        setWordForm(blankWord(selectedTopic));
+        setWarning("");
     };
 
     const deleteTopic = async (topic: VocabularyTopic) => {
-        if (!window.confirm(`Xóa chủ đề "${topic.Name}" cùng toàn bộ từ vựng bên trong?`)) return;
+        if (!window.confirm(`Xóa mềm chủ đề "${topic.Name}"? Các từ bên trong sẽ được giữ nguyên nhưng không còn hiển thị cho học viên.`)) return;
         setError("");
         setMessage("");
         try {
             await deleteVocabularyTopic(topic._id);
             if (selectedTopic === topic._id) {
                 setSelectedTopic("");
-            } else {
-                await load();
+                setWordForm(blankWord());
             }
-            setMessage("Đã xóa chủ đề.");
-        } catch (deleteError) {
-            console.error("Không thể xóa chủ đề từ vựng:", deleteError);
-            setError("Không thể xóa chủ đề. Vui lòng thử lại.");
+            setMessage("Đã ẩn chủ đề; các từ bên trong vẫn được giữ nguyên.");
+            await loadAdminData();
+        } catch (reason) {
+            setError(errorMessage(reason, "Không thể xóa mềm chủ đề."));
         }
     };
 
     const deleteWord = async (word: VocabularyWord) => {
-        if (!window.confirm(`Xóa từ "${word.Word}" khỏi từ điển?`)) return;
-        setError("");
-        setMessage("");
+        if (!window.confirm(`Ẩn từ "${word.Word}" khỏi từ điển?`)) return;
         try {
             await deleteVocabularyWord(word._id);
-            setMessage("Đã xóa từ vựng.");
-            await load();
-        } catch (deleteError) {
-            console.error("Không thể xóa từ vựng:", deleteError);
-            setError("Không thể xóa từ vựng. Vui lòng thử lại.");
+            setMessage("Đã ẩn từ vựng.");
+            await Promise.all([loadAdminData(), loadWords()]);
+        } catch (reason) {
+            setError(errorMessage(reason, "Không thể ẩn từ vựng."));
         }
     };
 
-    const selectedTopicName = topics.find((topic) => topic._id === selectedTopic)?.Name.toLowerCase() || "";
-    const suggestions = Object.entries(topicSuggestions).find(([key]) => selectedTopicName.includes(key))?.[1] || [];
+    const toggleTopic = async (topic: VocabularyTopic) => {
+        try {
+            await updateVocabularyTopic(topic._id, {
+                Name: topic.Name,
+                Description: topic.Description,
+                IsActive: !topic.IsActive,
+            });
+            await loadAdminData();
+        } catch (reason) {
+            setError(errorMessage(reason, "Không thể cập nhật trạng thái chủ đề."));
+        }
+    };
+
+    const toggleWord = async (word: VocabularyWord) => {
+        const firstSense = getVocabularySenses(word)[0];
+        if (!firstSense) return;
+        try {
+            await updateVocabularyWord(word._id, {
+                TopicID: topicIdOf(word.TopicID),
+                Word: word.Word,
+                Senses: getVocabularySenses(word),
+                Meaning: firstSense.Meaning,
+                Translation: firstSense.Translation,
+                PartOfSpeech: firstSense.PartOfSpeech,
+                Example: firstSense.Example,
+                ExampleTranslation: firstSense.ExampleTranslation,
+                Pronunciation: word.Pronunciation || "",
+                Level: word.Level || "",
+                IsActive: !word.IsActive,
+            });
+            await Promise.all([loadAdminData(), loadWords()]);
+        } catch (reason) {
+            setError(errorMessage(reason, "Không thể cập nhật trạng thái từ."));
+        }
+    };
+
+    const updateSense = (index: number, field: keyof VocabularySense, value: string) => {
+        setWordForm((current) => ({
+            ...current,
+            Senses: current.Senses.map((sense, senseIndex) =>
+                senseIndex === index ? { ...sense, [field]: value } : sense
+            ),
+        }));
+    };
 
     return (
         <div className="vocab-admin-page">
             <header className="vocab-admin-heading">
-                <span>QUẢN LÝ NỘI DUNG</span>
-                <h1>Từ điển từ vựng</h1>
-                <p>Quản lý chủ đề và xây dựng từ điển IELTS có thể tra cứu.</p>
+                <span className="vocab-admin-kicker">QUẢN LÝ NỘI DUNG</span>
+                <h1>Từ điển từ vựng IELTS</h1>
+                <p>Tra cứu, kiểm tra nguồn và quản lý riêng từng nghĩa, ví dụ, bản dịch.</p>
             </header>
 
+            <section className="vocab-admin-stats" aria-label="Thống kê từ điển">
+                <article><span>Chủ đề</span><strong>{topicCount}</strong><small>{summary.activeTopics} đang hiển thị</small></article>
+                <article><span>Tổng số từ</span><strong>{summary.totalWords}</strong><small>{summary.activeWords} đang hiển thị</small></article>
+                <article><span>Chủ đề ẩn</span><strong>{summary.inactiveTopics}</strong><small>Có thể bật lại bất kỳ lúc nào</small></article>
+                <article><span>Từ đang ẩn</span><strong>{summary.inactiveWords}</strong><small>Không bị xóa khỏi dữ liệu</small></article>
+            </section>
+
             {message && <div className="admin-success" role="status">{message}</div>}
+            {warning && <div className="admin-warning" role="status">{warning}</div>}
             {error && <div className="admin-error" role="alert">{error}</div>}
 
             {suggestions.length > 0 && (
                 <div className="topic-suggestion-bar">
-                    <strong>Gợi ý từ cho chủ đề {topics.find((topic) => topic._id === selectedTopic)?.Name}:</strong>
+                    <strong>Gợi ý từ cho {topics.find((topic) => topic._id === selectedTopic)?.Name}:</strong>
                     {suggestions.map((word) => (
-                        <button
-                            type="button"
-                            key={word}
-                            onClick={() => setBulkText((current) => current ? `${current}\n${word}` : word)}
-                        >
+                        <button type="button" key={word} onClick={() => setBulkText((current) => current ? `${current}\n${word}` : word)}>
                             {word}
                         </button>
                     ))}
@@ -268,236 +499,184 @@ function VocabularyAdminPage() {
             )}
 
             <div className="vocab-admin-layout">
-                <section className="admin-panel">
-                    <h2><FaPlus /> {editingTopic ? "Chỉnh sửa chủ đề" : "Thêm chủ đề"}</h2>
-                    <form onSubmit={(event) => void submitTopic(event)}>
-                        <input
-                            value={topicName}
-                            onChange={(event) => setTopicName(event.target.value)}
-                            placeholder="Tên chủ đề"
-                            aria-label="Tên chủ đề"
-                            required
-                        />
-                        <textarea
-                            value={topicDescription}
-                            onChange={(event) => setTopicDescription(event.target.value)}
-                            placeholder="Mô tả chủ đề"
-                            aria-label="Mô tả chủ đề"
-                        />
-                        <button type="submit">{editingTopic ? "Cập nhật chủ đề" : "Tạo chủ đề"}</button>
-                        {editingTopic && (
-                            <button
-                                type="button"
-                                className="secondary"
-                                onClick={() => {
-                                    setEditingTopic("");
-                                    setTopicName("");
-                                    setTopicDescription("");
-                                }}
-                            >
-                                Hủy chỉnh sửa
-                            </button>
+                <aside className="admin-panel topic-panel">
+                    <div className="panel-heading"><div><span className="panel-kicker">DANH MỤC</span><h2>Chủ đề</h2></div><span className="panel-count">{topics.length}</span></div>
+                    <form className="topic-form" onSubmit={(event) => void submitTopic(event)}>
+                        <label>Tên chủ đề<input value={topicName} onChange={(event) => setTopicName(event.target.value)} placeholder="Ví dụ: Environment" aria-label="Tên chủ đề" required /></label>
+                        <label>Mô tả<textarea value={topicDescription} onChange={(event) => setTopicDescription(event.target.value)} placeholder="Mô tả ngắn về nhóm từ" aria-label="Mô tả chủ đề" /></label>
+                        <label className="vocab-checkbox"><input type="checkbox" checked={topicIsActive} onChange={(event) => setTopicIsActive(event.target.checked)} /> Hiển thị cho học viên</label>
+                        <div className="topic-form-actions">
+                            <button type="submit" disabled={busy}>{editingTopic ? "Cập nhật chủ đề" : "Tạo chủ đề"}</button>
+                            {editingTopic && <button type="button" className="secondary" onClick={() => { setEditingTopic(""); setTopicName(""); setTopicDescription(""); setTopicIsActive(true); }}>Hủy</button>}
+                        </div>
+                    </form>
+
+                    <div className="topic-list-heading"><h3>Danh sách chủ đề</h3><button type="button" onClick={() => setSelectedTopic("")} className={!selectedTopic ? "active" : ""}>Tất cả từ</button></div>
+                    <div className="topic-list">
+                        {topics.map((topic) => (
+                            <article className={`topic-row ${selectedTopic === topic._id ? "selected" : ""}`} key={topic._id}>
+                                <button type="button" className="topic-select" onClick={() => { setSelectedTopic(topic._id); setWordPage(1); }}>
+                                    <strong>{topic.Name}</strong>
+                                    <small>{topic.ActiveWordCount ?? 0} / {topic.WordCount ?? 0} từ hiển thị</small>
+                                </button>
+                                <div className="topic-actions">
+                                    <button type="button" title={topic.IsActive ? "Ẩn chủ đề" : "Hiển thị chủ đề"} aria-label={topic.IsActive ? `Ẩn chủ đề ${topic.Name}` : `Hiển thị chủ đề ${topic.Name}`} onClick={() => void toggleTopic(topic)}>{topic.IsActive ? "Ẩn" : "Hiện"}</button>
+                                    <button type="button" title="Sửa chủ đề" aria-label={`Sửa chủ đề ${topic.Name}`} onClick={() => { setEditingTopic(topic._id); setTopicName(topic.Name); setTopicDescription(topic.Description); setTopicIsActive(topic.IsActive); }}><FaEdit /></button>
+                                    <button type="button" className="danger-icon" title="Xóa mềm chủ đề" aria-label={`Xóa chủ đề ${topic.Name}`} onClick={() => void deleteTopic(topic)}><FaTrash /></button>
+                                </div>
+                            </article>
+                        ))}
+                        {!topics.length && <p className="empty-hint">Chưa có chủ đề.</p>}
+                    </div>
+                </aside>
+
+                <section className="admin-panel word-workspace">
+                    <div className="panel-heading"><div><span className="panel-kicker">TỪ ĐIỂN</span><h2>{editingWord ? "Chỉnh sửa từ" : "Thêm và quản lý từ"}</h2></div><FaBook className="panel-heading-icon" /></div>
+
+                    <details className="bulk-import">
+                        <summary><FaPlus /> Nhập danh sách từ hàng loạt <span>Tối đa 50 từ · từ đã có được giữ nguyên</span></summary>
+                        <p>Tra cứu tuần tự có giới hạn; kết quả từng từ được ghi nhận độc lập. Những từ thất bại vẫn được giữ trong ô để thử lại.</p>
+                        <textarea value={bulkText} onChange={(event) => setBulkText(event.target.value)} placeholder={"sustainable\nrenewable\ncarbon footprint"} aria-label="Danh sách từ vựng cần nhập" />
+                        <button type="button" onClick={() => void importWordList()} disabled={busy || !selectedTopic}>{busy ? "Đang nhập..." : "Nhập từ vào chủ đề đã chọn"}</button>
+                        {!selectedTopic && <small>Chọn chủ đề trước khi nhập.</small>}
+                    </details>
+
+                    <details className="bulk-import vocabulary-ai-generate">
+                        <summary><FaPlus /> Tạo từ bằng AI theo chủ đề <span>20 từ/Batch · Preview và duyệt trước khi lưu</span></summary>
+                        <div className="vocabulary-generate-controls">
+                            <label>Trình độ
+                                <select value={generateLevel} onChange={(event) => setGenerateLevel(event.target.value)}>
+                                    <option value="A2-B1">A2-B1</option>
+                                    <option value="B1-B2">B1-B2</option>
+                                    <option value="B2-C1">B2-C1</option>
+                                </select>
+                            </label>
+                            <label>Mục tiêu
+                                <input type="number" min="1" max="500" value={generateTarget} onChange={(event) => setGenerateTarget(Math.max(1, Math.min(500, Number(event.target.value) || 1)))} />
+                            </label>
+                            <button type="button" onClick={() => void startGenerate()} disabled={busy || !selectedTopic}>Tạo tiến trình</button>
+                        </div>
+                        {generateJob && (
+                            <div className="vocabulary-generate-status">
+                                <div>
+                                    <strong>Batch {generateJob.BatchNumber || 0}</strong>
+                                    <span>{generateJob.BatchStatus} · Mục tiêu {generateJob.TargetCount} · Đã duyệt {generateJob.ApprovedCount}</span>
+                                    <small>Đã sinh {generateJob.GeneratedCount} · Hợp lệ {generateJob.ValidCount} · Trùng {generateJob.DuplicateCount}</small>
+                                </div>
+                                <button type="button" onClick={() => void runGenerateBatch()} disabled={busy || generateJob.ApprovedCount >= generateJob.TargetCount || generateJob.BatchStatus === "Processing"}>
+                                    {busy ? "Đang tạo..." : "Chạy Batch tiếp theo"}
+                                </button>
+                            </div>
                         )}
-                    </form>
-
-                    <h2 className="list-title">Chủ đề</h2>
-                    {loading && topics.length === 0 && <p>Đang tải chủ đề...</p>}
-                    {topics.map((topic) => (
-                        <div
-                            className={`topic-row ${selectedTopic === topic._id ? "selected" : ""}`}
-                            key={topic._id}
-                            onClick={() => setSelectedTopic(topic._id)}
-                        >
-                            <div>
-                                <strong>{topic.Name}</strong>
-                                <small>{topic.Description || "Chưa có mô tả"}</small>
+                        {generateJob?.ErrorMessage && <p className="admin-warning">{generateJob.ErrorMessage}</p>}
+                        {(generateJob?.Previews?.length || 0) > 0 && (
+                            <div className="vocabulary-preview-list">
+                                {(generateJob?.Previews || []).map((preview) => (
+                                    <article key={preview.Key} className={`vocabulary-preview preview-${preview.Status.toLowerCase()}`}>
+                                        <div>
+                                            <strong>{preview.Word}</strong>
+                                            <span>{preview.Status}</span>
+                                        </div>
+                                        {preview.Error && <p className="admin-error">{preview.Error}</p>}
+                                        {preview.Preview?.Senses?.map((sense, index) => (
+                                            <p key={`${preview.Key}-${index}`}><b>{sense.PartOfSpeech || "Nghĩa"}:</b> {sense.Meaning} — {sense.Translation || "Chưa có bản dịch"}</p>
+                                        ))}
+                                        {preview.Status === "Pending" && (
+                                            <div className="vocabulary-preview-actions">
+                                                <button type="button" onClick={() => void approveGenerate(preview.Key)}>Duyệt từ này</button>
+                                                {preview.Preview?.Senses?.map((_sense, index) => (
+                                                    <button
+                                                        type="button"
+                                                        className="secondary"
+                                                        key={`${preview.Key}-edit-${index}`}
+                                                        onClick={() => void editGeneratePreviewSense(preview.Key, index)}
+                                                    >
+                                                        Sửa nghĩa {index + 1}
+                                                    </button>
+                                                ))}
+                                                <button type="button" className="secondary" onClick={() => void rejectGeneratePreview(preview.Key)}>Bỏ</button>
+                                            </div>
+                                        )}
+                                    </article>
+                                ))}
+                                {(generateJob?.Previews || []).some((preview) => preview.Status === "Pending") && (
+                                    <button type="button" onClick={() => void approveGenerate()} disabled={busy}>Duyệt toàn bộ Preview đang chờ</button>
+                                )}
                             </div>
-                            <span>
-                                <button
-                                    type="button"
-                                    title="Chỉnh sửa chủ đề"
-                                    aria-label={`Chỉnh sửa chủ đề ${topic.Name}`}
-                                    onClick={(event) => {
-                                        event.stopPropagation();
-                                        setEditingTopic(topic._id);
-                                        setTopicName(topic.Name);
-                                        setTopicDescription(topic.Description);
-                                    }}
-                                >
-                                    <FaEdit />
-                                </button>
-                                <button
-                                    type="button"
-                                    title="Xóa chủ đề"
-                                    aria-label={`Xóa chủ đề ${topic.Name}`}
-                                    onClick={(event) => {
-                                        event.stopPropagation();
-                                        void deleteTopic(topic);
-                                    }}
-                                >
-                                    <FaTrash />
-                                </button>
-                            </span>
-                        </div>
-                    ))}
-                </section>
+                        )}
+                    </details>
 
-                <section className="admin-panel">
-                    <h2><FaPlus /> {editingWord ? "Chỉnh sửa từ" : "Thêm từ vựng"}</h2>
-                    <div className="bulk-import">
-                        <h3>Nhập danh sách từ vựng</h3>
-                        <p>Chọn chủ đề, sau đó dán danh sách từ được phân cách bằng dòng mới, dấu phẩy hoặc dấu chấm phẩy. Hệ thống sẽ tự động tra cứu thông tin từ điển.</p>
-                        <textarea
-                            value={bulkText}
-                            onChange={(event) => setBulkText(event.target.value)}
-                            placeholder={"sustainable\nrenewable\ncarbon footprint"}
-                            aria-label="Danh sách từ vựng cần nhập"
-                        />
-                        <button type="button" onClick={() => void importWordList()} disabled={busy}>
-                            {busy ? "Đang nhập..." : "Tự động nhập từ vựng"}
-                        </button>
-                    </div>
-
-                    <p className="helper-text">Với từng từ riêng lẻ, hãy tra cứu tự động và kiểm tra thông tin trước khi lưu.</p>
                     <form className="word-form" onSubmit={(event) => void submitWord(event)}>
-                        <select
-                            value={wordForm.TopicID}
-                            onChange={(event) => {
-                                setSelectedTopic(event.target.value);
-                                setWordForm((current) => ({ ...current, TopicID: event.target.value }));
-                            }}
-                            aria-label="Chủ đề của từ vựng"
-                            required
-                        >
-                            <option value="">Chọn chủ đề</option>
-                            {topics.map((topic) => <option key={topic._id} value={topic._id}>{topic.Name}</option>)}
-                        </select>
-                        <div className="form-two">
-                            <div className="lookup-word-input">
-                                <input
-                                    value={wordForm.Word}
-                                    onChange={(event) => setWordForm((current) => ({ ...current, Word: event.target.value }))}
-                                    placeholder="Từ tiếng Anh"
-                                    aria-label="Từ tiếng Anh"
-                                    required
-                                />
-                                <button type="button" onClick={() => void lookupWord()} disabled={busy}>
-                                    {busy ? "Đang tra cứu..." : "Tra cứu tự động"}
-                                </button>
-                            </div>
-                            <input
-                                value={wordForm.PartOfSpeech}
-                                onChange={(event) => setWordForm((current) => ({ ...current, PartOfSpeech: event.target.value }))}
-                                placeholder="Từ loại"
-                                aria-label="Từ loại"
-                            />
+                        <div className="word-form-top">
+                            <label>Chủ đề<select value={wordForm.TopicID} onChange={(event) => { setSelectedTopic(event.target.value); setWordForm((current) => ({ ...current, TopicID: event.target.value })); }} required>
+                                <option value="">Chọn chủ đề</option>
+                                {topics.filter((topic) => !topic.IsDeleted).map((topic) => <option key={topic._id} value={topic._id}>{topic.Name}</option>)}
+                            </select></label>
+                            <label>Từ tiếng Anh<div className="lookup-word-input">
+                                <input value={wordForm.Word} onChange={(event) => setWordForm((current) => ({ ...current, Word: event.target.value }))} placeholder="Ví dụ: milestone" aria-label="Từ tiếng Anh" required />
+                                <button type="button" onClick={() => void lookupWord()} disabled={busy}>{busy ? "Đang tra..." : "Tra từ điển"}</button>
+                            </div></label>
                         </div>
-                        <input
-                            value={wordForm.Translation}
-                            onChange={(event) => setWordForm((current) => ({ ...current, Translation: event.target.value }))}
-                            placeholder="Nghĩa tiếng Việt"
-                            aria-label="Nghĩa tiếng Việt"
-                            required
-                        />
-                        <textarea
-                            value={wordForm.Meaning}
-                            onChange={(event) => setWordForm((current) => ({ ...current, Meaning: event.target.value }))}
-                            placeholder="Định nghĩa tiếng Anh"
-                            aria-label="Định nghĩa tiếng Anh"
-                            required
-                        />
-                        <textarea
-                            value={wordForm.Example}
-                            onChange={(event) => setWordForm((current) => ({ ...current, Example: event.target.value }))}
-                            placeholder="Câu ví dụ tiếng Anh"
-                            aria-label="Câu ví dụ tiếng Anh"
-                            required
-                        />
-                        <input
-                            value={wordForm.ExampleTranslation}
-                            onChange={(event) => setWordForm((current) => ({ ...current, ExampleTranslation: event.target.value }))}
-                            placeholder="Dịch câu ví dụ"
-                            aria-label="Dịch câu ví dụ"
-                        />
-                        <div className="form-two">
-                            <input
-                                value={wordForm.Pronunciation}
-                                onChange={(event) => setWordForm((current) => ({ ...current, Pronunciation: event.target.value }))}
-                                placeholder="Phiên âm"
-                                aria-label="Phiên âm"
-                            />
-                            <input
-                                value={wordForm.Level}
-                                onChange={(event) => setWordForm((current) => ({ ...current, Level: event.target.value }))}
-                                placeholder="Band IELTS / trình độ"
-                                aria-label="Band IELTS / trình độ"
-                            />
+                        <div className="word-form-meta">
+                            <label>Phiên âm<input value={wordForm.Pronunciation} onChange={(event) => setWordForm((current) => ({ ...current, Pronunciation: event.target.value }))} placeholder="/ˈmaɪl.stoʊn/" /></label>
+                            <label>Trình độ<input value={wordForm.Level} onChange={(event) => setWordForm((current) => ({ ...current, Level: event.target.value }))} placeholder="Band / trình độ (không bắt buộc)" /></label>
+                            <label className="vocab-checkbox"><input type="checkbox" checked={wordForm.IsActive} onChange={(event) => setWordForm((current) => ({ ...current, IsActive: event.target.checked }))} /> Hiển thị từ</label>
                         </div>
-                        <label className="word-active">
-                            <input
-                                type="checkbox"
-                                checked={wordForm.IsActive}
-                                onChange={(event) => setWordForm((current) => ({ ...current, IsActive: event.target.checked }))}
-                            />
-                            Hiển thị từ vựng
-                        </label>
-                        <button type="submit">{editingWord ? "Cập nhật từ" : "Lưu từ vựng"}</button>
-                        {editingWord && <button type="button" className="secondary" onClick={resetWord}>Hủy chỉnh sửa</button>}
+
+                        <div className="sense-editor-heading"><div><h3>Các nghĩa</h3><p>Mỗi nghĩa có bản dịch và ví dụ riêng; không có ví dụ thì để trống.</p></div><button type="button" className="secondary" onClick={() => setWordForm((current) => ({ ...current, Senses: [...current.Senses, blankSense()] }))}><FaPlus /> Thêm nghĩa</button></div>
+                        <div className="sense-editors">
+                            {wordForm.Senses.map((sense, index) => (
+                                <section className="sense-editor" key={`sense-${index}`}>
+                                    <div className="sense-editor-title"><strong>Nghĩa {index + 1}</strong>{wordForm.Senses.length > 1 && <button type="button" className="danger-icon" aria-label={`Xóa nghĩa ${index + 1}`} onClick={() => setWordForm((current) => ({ ...current, Senses: current.Senses.filter((_, senseIndex) => senseIndex !== index) }))}><FaTrash /></button>}</div>
+                                    <label>Từ loại<input value={sense.PartOfSpeech} onChange={(event) => updateSense(index, "PartOfSpeech", event.target.value)} placeholder="noun, verb..." /></label>
+                                    <label>Định nghĩa tiếng Anh<textarea required value={sense.Meaning} onChange={(event) => updateSense(index, "Meaning", event.target.value)} placeholder="Định nghĩa theo nguồn đã tra cứu" /></label>
+                                    <label>Nghĩa tiếng Việt<input value={sense.Translation} onChange={(event) => updateSense(index, "Translation", event.target.value)} placeholder="Có thể bổ sung thủ công" /></label>
+                                    <div className="example-edit-grid">
+                                        <label>Ví dụ tiếng Anh<textarea value={sense.Example} onChange={(event) => updateSense(index, "Example", event.target.value)} placeholder="Để trống nếu nguồn không cung cấp" /></label>
+                                        <label>Dịch ví dụ<textarea value={sense.ExampleTranslation} onChange={(event) => updateSense(index, "ExampleTranslation", event.target.value)} placeholder="Bản dịch của đúng ví dụ trên" /></label>
+                                    </div>
+                                </section>
+                            ))}
+                        </div>
+                        <div className="word-form-actions">
+                            <button type="submit" disabled={busy || !wordForm.TopicID}>{editingWord ? "Lưu thay đổi" : "Lưu từ điển"}</button>
+                            {editingWord && <button type="button" className="secondary" onClick={resetWord}>Hủy sửa</button>}
+                        </div>
                     </form>
 
-                    <div className="word-list-heading">
-                        <h2>Danh sách từ</h2>
-                        <select
-                            value={selectedTopic}
-                            onChange={(event) => {
-                                setSelectedTopic(event.target.value);
-                                setWordPage(1);
-                                setWordForm({ ...blankWord, TopicID: event.target.value });
-                            }}
-                            aria-label="Lọc từ theo chủ đề"
-                        >
-                            <option value="">Tất cả chủ đề</option>
-                            {topics.map((topic) => <option key={topic._id} value={topic._id}>{topic.Name}</option>)}
-                        </select>
-                    </div>
-                    {loading && <p>Đang tải từ vựng...</p>}
-                    {!loading && words.length === 0 && <p>Chưa có từ vựng trong chủ đề này.</p>}
-                    {pageWords.map((word) => (
-                        <div className="word-row" key={word._id}>
-                            <div>
-                                <strong>{word.Word}</strong>
-                                <small>{word.Translation} · {word.PartOfSpeech}</small>
-                                <small>{word.Example}</small>
-                                {!word.IsActive && <small>Đang ẩn</small>}
-                            </div>
-                            <span>
-                                <button
-                                    type="button"
-                                    title="Chỉnh sửa từ vựng"
-                                    aria-label={`Chỉnh sửa từ ${word.Word}`}
-                                    onClick={() => editWord(word)}
-                                >
-                                    <FaEdit />
-                                </button>
-                                <button
-                                    type="button"
-                                    title="Xóa từ vựng"
-                                    aria-label={`Xóa từ ${word.Word}`}
-                                    onClick={() => void deleteWord(word)}
-                                >
-                                    <FaTrash />
-                                </button>
-                            </span>
+                    <div className="word-list-toolbar">
+                        <div><span className="panel-kicker">NỘI DUNG ĐÃ LƯU</span><h3>Danh sách từ {wordPageResult ? `(${wordPageResult.total})` : ""}</h3></div>
+                        <div className="word-list-filters">
+                            <label className="word-search"><FaSearch /><input value={wordSearch} onChange={(event) => { setWordSearch(event.target.value); setWordPage(1); }} placeholder="Tìm từ, nghĩa, bản dịch..." /></label>
+                            <select value={wordStatus} onChange={(event) => { setWordStatus(event.target.value as typeof wordStatus); setWordPage(1); }} aria-label="Lọc trạng thái từ">
+                                <option value="all">Mọi trạng thái</option><option value="active">Đang hiển thị</option><option value="inactive">Đang ẩn</option>
+                            </select>
+                            <select value={selectedTopic} onChange={(event) => { setSelectedTopic(event.target.value); setWordPage(1); }} aria-label="Lọc từ theo chủ đề">
+                                <option value="">Tất cả chủ đề</option>
+                                {topics.map((topic) => <option key={topic._id} value={topic._id}>{topic.Name}</option>)}
+                            </select>
                         </div>
-                    ))}
-                    {words.length > wordPageSize && (
-                        <ListPagination
-                            total={words.length}
-                            page={currentWordPage}
-                            pageSize={wordPageSize}
-                            onPageChange={setWordPage}
-                        />
-                    )}
+                    </div>
+                    {loading && <p className="empty-hint">Đang tải từ vựng...</p>}
+                    {!loading && !words.length && <p className="empty-hint">Không có từ phù hợp với bộ lọc hiện tại.</p>}
+                    <div className="admin-word-list">
+                        {words.map((word) => (
+                            <article className="admin-word-row" key={word._id}>
+                                <div className="admin-word-content">
+                                    <div className="admin-word-title"><h4>{word.Word}</h4><span className={word.IsActive ? "status-active" : "status-inactive"}>{word.IsActive ? "Đang hiển thị" : "Đang ẩn"}</span></div>
+                                    <p className="admin-word-topic">{typeof word.TopicID === "string" ? "" : word.TopicID?.Name} · {getVocabularySenses(word).length} nghĩa</p>
+                                    {getVocabularySenses(word).slice(0, 3).map((sense, index) => <p className="admin-word-sense" key={`${word._id}-${index}`}><b>{sense.PartOfSpeech || `Nghĩa ${index + 1}`}:</b> {sense.Meaning} <span>{sense.Translation || "Chưa có bản dịch"}</span></p>)}
+                                    {getVocabularySenses(word).length > 3 && <small>Còn {getVocabularySenses(word).length - 3} nghĩa khác</small>}
+                                </div>
+                                <div className="admin-word-actions">
+                                    <button type="button" title={word.IsActive ? "Ẩn từ" : "Hiển thị từ"} onClick={() => void toggleWord(word)}>{word.IsActive ? "Ẩn" : "Hiện"}</button>
+                                    <button type="button" title="Chỉnh sửa từ" aria-label={`Chỉnh sửa từ ${word.Word}`} onClick={() => editWord(word)}><FaEdit /></button>
+                                    <button type="button" className="danger-icon" title="Ẩn từ" aria-label={`Ẩn từ ${word.Word}`} onClick={() => void deleteWord(word)}><FaTrash /></button>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                    {wordPageResult && <ListPagination total={wordPageResult.total} page={wordPage} pageSize={pageSize} onPageChange={setWordPage} />}
                 </section>
             </div>
         </div>

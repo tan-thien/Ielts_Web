@@ -1,4 +1,5 @@
 
+import { useEffect, useState } from "react";
 import {
     FaBookOpen,
     FaPenFancy,
@@ -7,7 +8,6 @@ import {
     FaChartLine,
     FaGraduationCap,
     FaArrowRight,
-    FaStar,
     FaUsers,
     FaCheckCircle,
     FaPlay,
@@ -15,9 +15,12 @@ import {
     FaLaptop,
     FaLightbulb,
     FaQuestionCircle,
+    FaStar,
 } from "react-icons/fa";
 
 import { Link } from "react-router-dom";
+import { getCourses } from "../../services/course.service";
+import type { Course } from "../../types/course";
 import "./HomePage.css";
 
 const features = [
@@ -71,42 +74,6 @@ const features = [
     },
 ];
 
-const courses = [
-    {
-        title: "Nền tảng IELTS",
-        level: "Cơ bản",
-        description:
-            "Củng cố ngữ pháp, từ vựng và xây nền tảng cho cả bốn kỹ năng.",
-        image:
-            "https://images.unsplash.com/photo-1513258496099-48168024aec0?w=900",
-        rating: "4.9",
-        students: "2.4k",
-        duration: "8 tuần",
-    },
-    {
-        title: "Chinh phục IELTS Nói",
-        level: "Trung cấp",
-        description:
-            "Phát triển ý tưởng, trả lời tự tin và làm quen với dạng câu hỏi thi Nói.",
-        image:
-            "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=900",
-        rating: "4.8",
-        students: "1.8k",
-        duration: "6 tuần",
-    },
-    {
-        title: "Bộ đề thi thử IELTS",
-        level: "Mọi trình độ",
-        description:
-            "Làm quen cấu trúc đề, quản lý thời gian và tự đánh giá kết quả.",
-        image:
-            "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=900",
-        rating: "4.9",
-        students: "1.2k",
-        duration: "Tự học linh hoạt",
-    },
-];
-
 const learningSteps = [
     {
         number: "01",
@@ -130,6 +97,14 @@ const learningSteps = [
             "Xem kết quả và xác định nội dung cần cải thiện tiếp theo.",
     },
 ];
+
+const formatFee = (fee: number) => fee === 0
+    ? "Miễn phí"
+    : new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+        maximumFractionDigits: 0,
+    }).format(fee);
 
 const faqs = [
     {
@@ -155,6 +130,28 @@ const faqs = [
 ];
 
 function HomePage() {
+    const [courses, setCourses] = useState<Course[]>([]);
+    const [courseLoading, setCourseLoading] = useState(true);
+    const [courseError, setCourseError] = useState("");
+
+    useEffect(() => {
+        let active = true;
+        getCourses()
+            .then((items: Course[]) => {
+                if (!active) return;
+                setCourses(items
+                    .filter((course) => course.Status && course.IsOpen && !course.IsDeleted)
+                    .sort((left, right) => left.Name.localeCompare(right.Name, "vi"))
+                    .slice(0, 3));
+            })
+            .catch((error: unknown) => {
+                console.error("Không thể tải khóa học nổi bật:", error);
+                if (active) setCourseError("Không thể tải khóa học. Vui lòng thử lại sau.");
+            })
+            .finally(() => { if (active) setCourseLoading(false); });
+        return () => { active = false; };
+    }, []);
+
     return (
         <div className="home-page">
             {/* HERO */}
@@ -194,23 +191,11 @@ function HomePage() {
                                 </div>
 
                                 <div className="hero-trust">
-                                    <div className="hero-avatar-stack">
-                                        <span>H</span>
-                                        <span>M</span>
-                                        <span>A</span>
-                                        <span>+</span>
-                                    </div>
-
-                                    <div>
-                                        <div className="hero-stars">
-                                            <FaStar />
-                                            <FaStar />
-                                            <FaStar />
-                                            <FaStar />
-                                            <FaStar />
-                                        </div>
+                                    <div className="hero-trust-icon"><FaCheckCircle /></div>
+                                    <div className="hero-trust-copy">
+                                        <strong>Học theo mục tiêu của bạn</strong>
                                         <p>
-                                            Cách luyện tiếng Anh thông minh hơn
+                                            Luyện tập có định hướng, theo nhịp độ riêng
                                         </p>
                                     </div>
                                 </div>
@@ -362,50 +347,39 @@ function HomePage() {
                         </Link>
                     </div>
 
+                    {courseLoading && <p className="home-course-message" role="status">Đang tải khóa học đang mở...</p>}
+                    {courseError && <p className="home-course-message home-course-error" role="alert">{courseError}</p>}
+                    {!courseLoading && !courseError && courses.length === 0 && (
+                        <div className="home-course-message">Hiện chưa có khóa học nào đang mở. Vui lòng xem lại sau.</div>
+                    )}
                     <div className="row g-4">
                         {courses.map((course) => (
-                            <div className="col-md-6 col-lg-4" key={course.title}>
+                            <div className="col-md-6 col-lg-4" key={course._id}>
                                 <article className="course-card">
                                     <div className="course-image">
-                                        <img
-                                            src={course.image}
-                                            alt={course.title}
-                                            loading="lazy"
-                                        />
+                                        {course.Thumbnail
+                                            ? <img src={course.Thumbnail} alt={course.Name} loading="lazy" />
+                                            : <div className="course-image-placeholder"><FaBookOpen /><span>Khóa học IELTS</span></div>}
                                         <span className="course-level">
-                                            {course.level}
+                                            Đang tuyển sinh
                                         </span>
                                     </div>
 
                                     <div className="course-body">
                                         <div className="course-meta">
-                                            <span>
-                                                <FaClock />
-                                                {course.duration}
-                                            </span>
-                                            <span className="course-rating">
-                                                <FaStar />
-                                                {course.rating}
-                                            </span>
+                                            {course.Time && <span><FaClock />{course.Time}</span>}
+                                            <span className="course-open-label">Đang mở</span>
                                         </div>
 
-                                        <h3>{course.title}</h3>
-                                        <p>{course.description}</p>
+                                        <h3>{course.Name}</h3>
+                                        <p>{course.Description || "Mô tả khóa học đang được cập nhật."}</p>
 
                                         <div className="course-footer">
-                                            <span className="course-students">
-                                                <FaUsers />
-                                                {course.students} học viên
-                                            </span>
-
-                                            <button
-                                                type="button"
-                                                className="course-link"
-                                                aria-label={`Tìm hiểu thêm về ${course.title}`}
-                                            >
+                                            <strong className="home-course-price">{formatFee(course.Fee)}</strong>
+                                            <Link to={`/courses/${course._id}`} className="course-link" aria-label={`Tìm hiểu thêm về ${course.Name}`}>
                                                 Tìm hiểu thêm
                                                 <FaArrowRight />
-                                            </button>
+                                            </Link>
                                         </div>
                                     </div>
                                 </article>

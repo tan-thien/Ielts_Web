@@ -536,9 +536,7 @@ body {
 
     flex-direction: column;
 
-    background: linear-gradient(180deg,
-            #17479D,
-            #0F3373);
+    background: var(--brand-blue, #174b8c);
 
     color: white;
 
@@ -740,4 +738,86 @@ body {
 
     padding: 14px 0;
 
+}
+
+.admin-sidebar-backdrop {
+    display: none;
+}
+
+@media (max-width: 992px) {
+    .admin-sidebar {
+        width: 260px;
+        transform: translateX(-105%);
+        transition: transform 0.25s ease;
+        box-shadow: 8px 0 28px rgba(13, 36, 67, 0.2);
+    }
+
+    .admin-sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    .admin-sidebar-backdrop {
+        position: fixed;
+        z-index: 1100;
+        inset: 0;
+        display: block;
+        border: 0;
+        background: rgba(15, 33, 56, 0.42);
+        cursor: pointer;
+    }
+
+    .admin-content,
+    .admin-content.collapsed {
+        margin-left: 0;
+    }
+
+    .admin-navbar,
+    .admin-content.collapsed .admin-navbar {
+        left: 0;
+    }
+
+    .admin-page {
+        padding: 18px;
+    }
+}
+
+@media (max-width: 580px) {
+    .admin-navbar {
+        height: 64px;
+        padding: 0 14px;
+    }
+
+    .admin-page {
+        margin-top: 64px;
+        padding: 12px;
+    }
+
+    .admin-navbar .navbar-left {
+        gap: 10px;
+    }
+
+    .admin-navbar .page-title {
+        font-size: 16px;
+    }
+
+    .admin-navbar .navbar-left span {
+        display: none;
+    }
+
+    .admin-navbar .navbar-right {
+        gap: 8px;
+    }
+
+    .admin-navbar .icon-btn {
+        display: none;
+    }
+
+    .admin-navbar .profile-trigger {
+        min-height: 42px;
+        padding: 3px 6px 3px 3px;
+    }
+
+    .admin-navbar .profile-trigger > div {
+        display: none;
+    }
 }

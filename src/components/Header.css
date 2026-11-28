@@ -110,6 +110,29 @@
     transform: scaleX(1);
 }
 
+.learning-tools-dropdown .learning-tools-toggle {
+    padding: 12px 13px;
+    border: 0;
+    background: transparent;
+    color: #52627D;
+    font-size: 12px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.learning-tools-dropdown .learning-tools-toggle:hover,
+.learning-tools-dropdown .learning-tools-toggle:focus,
+.learning-tools-dropdown .learning-tools-toggle.show {
+    background: transparent;
+    color: #17479D;
+    box-shadow: none;
+}
+
+.learning-tools-menu {
+    max-height: min(70vh, 480px);
+    overflow-y: auto;
+}
+
 /* ACCOUNT ACTIONS */
 
 .header-actions {
@@ -296,7 +319,50 @@
    RESPONSIVE
 ===================================================== */
 
+@media (min-width: 992px) {
+    .header-offcanvas,
+    .header-offcanvas:not(.show),
+    .header-offcanvas.show {
+        position: static;
+        display: flex;
+        visibility: visible;
+        width: auto;
+        height: auto;
+        flex: 1 1 auto;
+        transform: none;
+        border: 0;
+        background: transparent;
+        overflow: visible;
+    }
+
+    .header-offcanvas .offcanvas-header {
+        display: none;
+    }
+
+    .header-offcanvas .offcanvas-body {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        padding: 0;
+        overflow: visible;
+    }
+
+    .header-toggler.navbar-toggler {
+        display: none;
+    }
+}
+
 @media (max-width: 991.98px) {
+    .header-offcanvas:not(.show) {
+        display: none;
+        visibility: hidden;
+    }
+
+    .header-offcanvas.show {
+        display: block;
+        visibility: visible;
+    }
+
     .main-navbar {
         top: 8px;
         width: calc(100% - 24px);
@@ -342,6 +408,30 @@
     .header-nav .nav-link.active {
         background: #EDF3FF;
         color: #17479D;
+    }
+
+    .learning-tools-dropdown .learning-tools-toggle {
+        display: block;
+        width: 100%;
+        padding: 13px 14px;
+        border-radius: 10px;
+        font-size: 14px;
+        text-align: left;
+    }
+
+    .learning-tools-dropdown .learning-tools-toggle:hover,
+    .learning-tools-dropdown .learning-tools-toggle:focus,
+    .learning-tools-dropdown .learning-tools-toggle.show {
+        background: #EDF3FF;
+        color: #17479D;
+    }
+
+    .learning-tools-menu {
+        position: static !important;
+        max-height: 45vh;
+        overflow-y: auto;
+        border: 0;
+        box-shadow: none;
     }
 
     .header-actions {
