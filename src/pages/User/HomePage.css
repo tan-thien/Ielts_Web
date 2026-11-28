@@ -1700,6 +1700,69 @@
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
+
+    .home-page .hero-trust-icon {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, .24);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, .1);
+        color: #ffb27b;
+        font-size: 19px;
+    }
+
+    .home-page .hero-trust-copy strong {
+        color: #fff;
+        font-size: 13px;
+    }
+
+    .home-page .course-image-placeholder {
+        display: flex;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 8px;
+        background: #edf3fb;
+        color: var(--home-blue);
+        font-weight: 700;
+    }
+
+    .home-page .course-image-placeholder svg {
+        font-size: 28px;
+    }
+
+    .home-page .course-open-label {
+        color: #287348;
+        font-weight: 700;
+    }
+
+    .home-page .home-course-price {
+        color: var(--home-blue);
+        font-size: 14px;
+    }
+
+    .home-page .course-link {
+        text-decoration: none;
+    }
+
+    .home-course-message {
+        width: 100%;
+        padding: 18px;
+        border: 1px solid var(--home-border);
+        border-radius: 12px;
+        background: #fff;
+        color: var(--home-muted);
+    }
+
+    .home-course-error {
+        border-color: #f0c5c1;
+        background: #fff4f3;
+        color: #a52e26;
+    }
 }
 
 /* =====================================================

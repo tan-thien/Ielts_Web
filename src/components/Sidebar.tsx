@@ -15,9 +15,11 @@ import {
 
 type SidebarProps = {
     collapsed: boolean;
+    mobileOpen: boolean;
+    onNavigate: () => void;
 };
 
-function Sidebar({ collapsed }: SidebarProps) {
+function Sidebar({ collapsed, mobileOpen, onNavigate }: SidebarProps) {
 
     const navigate = useNavigate();
 
@@ -103,7 +105,7 @@ function Sidebar({ collapsed }: SidebarProps) {
 
     return (
 
-        <aside className={`admin-sidebar ${collapsed ? "collapsed" : ""}`}>
+        <aside className={`admin-sidebar ${collapsed ? "collapsed" : ""} ${mobileOpen ? "mobile-open" : ""}`}>
 
             <div className="sidebar-logo">
 
@@ -132,6 +134,9 @@ function Sidebar({ collapsed }: SidebarProps) {
                         <NavLink
                             key={item.path}
                             to={item.path}
+                            onClick={onNavigate}
+                            aria-label={item.text}
+                            title={collapsed ? item.text : undefined}
                         >
 
                             <span className="menu-icon">
@@ -158,7 +163,7 @@ function Sidebar({ collapsed }: SidebarProps) {
 
             <div className="sidebar-footer">
 
-                <button onClick={handleLogout}>
+                <button aria-label="Đăng xuất" onClick={() => { handleLogout(); onNavigate(); }}>
 
                     <FaSignOutAlt />
 

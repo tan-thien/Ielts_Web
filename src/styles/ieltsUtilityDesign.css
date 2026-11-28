@@ -1,0 +1,552 @@
+:root {
+    --ielts-orange: #EE6823;
+    --ielts-blue: #17479D;
+    --ielts-ink: #172B4D;
+    --ielts-muted: #667085;
+    --ielts-line: #E7ECF4;
+    --ielts-soft: #F7F9FC;
+}
+
+.progress-page,
+.speaking-conversation-page,
+.mistake-notebook-page,
+.practice-center,
+.vocab-study-page {
+    box-sizing: border-box;
+    max-width: 1240px;
+    margin: 24px auto 64px;
+    padding: 0 20px;
+}
+
+.progress-heading,
+.mistake-hero,
+.practice-center-hero,
+.conversation-hero,
+.study-hero {
+    box-sizing: border-box;
+    min-height: 150px;
+    border: 1px solid var(--ielts-line);
+    border-radius: 22px;
+    background:
+        linear-gradient(135deg, rgba(238, 104, 35, 0.08), transparent 42%),
+        #FFFFFF;
+    box-shadow: 0 12px 35px rgba(23, 71, 157, 0.07);
+}
+
+.progress-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 30px 34px;
+}
+
+.progress-heading h1,
+.mistake-hero h1,
+.practice-center-hero h1,
+.conversation-hero h1,
+.study-hero h1 {
+    color: var(--ielts-blue);
+    letter-spacing: -0.03em;
+}
+
+.progress-heading p,
+.mistake-hero p,
+.practice-center-hero p,
+.conversation-hero p,
+.study-hero p {
+    color: var(--ielts-muted);
+}
+
+.progress-eyebrow,
+.mistake-hero > span,
+.practice-center-eyebrow,
+.conversation-hero > span,
+.study-hero > span {
+    color: var(--ielts-orange);
+    font-size: 12px;
+    font-weight: 850;
+    letter-spacing: 0.12em;
+}
+
+.progress-primary-link,
+.progress-secondary-link,
+.study-primary,
+.practice-center-primary,
+.conversation-primary,
+.mistake-import-controls .primary,
+.mistake-toolbar button,
+.study-task-button {
+    border: 0;
+    border-radius: 12px;
+    background: var(--ielts-orange);
+    color: #FFFFFF;
+    font-weight: 800;
+    box-shadow: 0 7px 18px rgba(238, 104, 35, 0.16);
+}
+
+.progress-primary-link:hover,
+.progress-secondary-link:hover,
+.study-primary:hover,
+.practice-center-primary:hover,
+.conversation-primary:hover,
+.mistake-import-controls .primary:hover,
+.mistake-toolbar button:hover,
+.study-task-button:hover {
+    background: #D95617;
+    color: #FFFFFF;
+    transform: translateY(-1px);
+}
+
+.progress-secondary-link,
+.practice-center-secondary,
+.conversation-secondary,
+.study-session-actions button,
+.mistake-actions button {
+    border: 1px solid var(--ielts-line);
+    background: #FFFFFF;
+    color: var(--ielts-blue);
+}
+
+.progress-panel,
+.study-panel,
+.conversation-card,
+.mistake-import-panel,
+.mistake-toolbar,
+.mistake-card,
+.practice-center-list,
+.practice-center-workspace,
+.conversation-card {
+    border: 1px solid var(--ielts-line);
+    border-radius: 18px;
+    background: #FFFFFF;
+    box-shadow: 0 10px 28px rgba(23, 71, 157, 0.06);
+}
+
+.progress-stat,
+.study-stat,
+.practice-center-assignment,
+.study-set,
+.study-history-list article,
+.conversation-history-item {
+    border: 1px solid var(--ielts-line);
+    border-radius: 14px;
+    background: #FFFFFF;
+}
+
+.progress-stat strong,
+.study-section-heading h2,
+.progress-panel h2,
+.conversation-card h2,
+.mistake-card h2,
+.practice-center-workspace h2,
+.practice-center-review h3 {
+    color: var(--ielts-blue);
+}
+
+.progress-meter,
+.study-progress-track,
+.practice-center-progress-track {
+    height: 8px;
+    border-radius: 999px;
+    background: #EEF2F8;
+    overflow: hidden;
+}
+
+.progress-meter > span,
+.study-progress-track > span,
+.practice-center-progress-track > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--ielts-orange);
+}
+
+.study-flashcard,
+.progress-stat,
+.practice-center-assignment.selected,
+.conversation-message.assistant,
+.mistake-card {
+    border-color: rgba(238, 104, 35, 0.22);
+}
+
+.conversation-message.assistant {
+    background: #FFF8F4;
+}
+
+.conversation-message.user {
+    background: #EEF4FF;
+    border: 1px solid #D8E4F8;
+}
+
+.mistake-status.status-new,
+.study-task-kind {
+    background: #FFF1E8;
+    color: #B84713;
+}
+
+.mistake-status.status-reviewing,
+.conversation-history-item small {
+    background: #EEF4FF;
+    color: var(--ielts-blue);
+}
+
+.mistake-status.status-mastered,
+.study-task-completed {
+    background: #EAF7EF;
+    color: #217A43;
+}
+
+.practice-center-choice:has(input:checked),
+.study-word-picker label:has(input:checked),
+.conversation-radio:has(input:checked) {
+    border-color: var(--ielts-orange);
+    background: #FFF8F4;
+}
+
+.progress-alert,
+.practice-center-error,
+.mistake-message.error,
+.conversation-error,
+.study-error,
+.admin-error {
+    border: 1px solid #F3C4C4;
+    border-radius: 12px;
+    background: #FFF5F5;
+    color: #A72E2E;
+}
+
+.progress-success,
+.mistake-message.success,
+.admin-success,
+.conversation-result {
+    border: 1px solid #C8E5D4;
+    border-radius: 12px;
+    background: #F3FBF6;
+}
+
+.progress-empty,
+.study-empty,
+.mistake-empty,
+.practice-center-message,
+.conversation-muted {
+    border: 1px dashed #D8E1EF;
+    border-radius: 14px;
+    background: #FAFCFF;
+    color: var(--ielts-muted);
+}
+
+.progress-overview-grid {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.75fr) minmax(420px, 1.25fr);
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.progress-hero-card,
+.progress-week-card {
+    min-width: 0;
+    border: 1px solid var(--ielts-line);
+    border-radius: 18px;
+    background: #FFFFFF;
+    box-shadow: 0 10px 28px rgba(23, 71, 157, 0.06);
+}
+
+.progress-hero-card {
+    padding: 24px;
+    background: linear-gradient(145deg, #FFF8F4 0%, #FFFFFF 70%);
+}
+
+.progress-hero-card > span,
+.progress-week-heading span {
+    color: #64748B;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.progress-hero-card > strong {
+    display: block;
+    margin: 6px 0 4px;
+    color: var(--ielts-blue);
+    font-size: 48px;
+    line-height: 1;
+}
+
+.progress-hero-card p {
+    min-height: 44px;
+    color: #64748B;
+}
+
+.progress-week-card {
+    padding: 18px 22px 12px;
+}
+
+.progress-week-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.progress-week-heading div {
+    display: grid;
+    gap: 4px;
+}
+
+.progress-week-heading strong {
+    color: var(--ielts-blue);
+    font-size: 20px;
+}
+
+.progress-week-heading small {
+    padding: 6px 9px;
+    border-radius: 999px;
+    background: #FFF1E8;
+    color: #B84713;
+    font-weight: 800;
+}
+
+.study-plan-overview {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.75fr) minmax(420px, 1.25fr);
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.study-plan-goal-card,
+.study-plan-week-card {
+    border: 1px solid var(--ielts-line);
+    border-radius: 18px;
+    background: #FFFFFF;
+    box-shadow: 0 10px 28px rgba(23, 71, 157, 0.06);
+}
+
+.study-plan-goal-card {
+    padding: 24px;
+    background: linear-gradient(145deg, #FFF8F4 0%, #FFFFFF 72%);
+}
+
+.study-plan-goal-card > span {
+    color: #64748B;
+    font-size: 13px;
+}
+
+.study-plan-goal-card > strong {
+    display: block;
+    margin: 5px 0;
+    color: var(--ielts-blue);
+    font-size: 38px;
+}
+
+.study-plan-goal-card p {
+    color: #64748B;
+    line-height: 1.5;
+}
+
+.study-plan-week-card {
+    padding: 18px 22px 12px;
+}
+
+.mistake-overview {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.mistake-overview article {
+    display: grid;
+    gap: 4px;
+    padding: 16px;
+    border: 1px solid var(--ielts-line);
+    border-radius: 14px;
+    background: #FFFFFF;
+}
+
+.mistake-overview span {
+    color: #64748B;
+    font-size: 12px;
+}
+
+.mistake-overview strong {
+    color: var(--ielts-blue);
+    font-size: 24px;
+}
+
+.practice-result-count {
+    padding: 9px 12px;
+    border-radius: 999px;
+    background: #FFF1E8;
+    color: #B84713;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.practice-skill-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.practice-skill-card {
+    display: flex;
+    min-height: 92px;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid var(--ielts-line);
+    border-radius: 16px;
+    background: #FFFFFF;
+    color: var(--ielts-ink);
+    text-align: left;
+}
+
+.practice-skill-card.active {
+    border-color: var(--ielts-orange);
+    background: #FFF8F4;
+    box-shadow: 0 8px 24px rgba(238, 104, 35, 0.1);
+}
+
+.practice-skill-card-icon {
+    display: inline-flex;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: #EAF1FF;
+    color: var(--ielts-blue);
+    font-size: 21px;
+}
+
+.practice-skill-card:last-child .practice-skill-card-icon {
+    background: #FFF1E8;
+    color: var(--ielts-orange);
+}
+
+.practice-skill-card > span:last-child {
+    display: grid;
+    gap: 4px;
+}
+
+.practice-skill-card small {
+    color: #64748B;
+}
+
+.speaking-part-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.speaking-part-card {
+    display: grid;
+    gap: 5px;
+    min-height: 130px;
+    padding: 16px;
+    border: 1px solid var(--ielts-line);
+    border-radius: 16px;
+    background: #FFFFFF;
+    color: var(--ielts-ink);
+    text-align: left;
+}
+
+.speaking-part-card.active {
+    border: 2px solid var(--ielts-orange);
+    background: #FFF8F4;
+}
+
+.speaking-part-card > span {
+    color: var(--ielts-orange);
+    font-size: 12px;
+    font-weight: 850;
+}
+
+.speaking-part-card strong {
+    color: var(--ielts-blue);
+    font-size: 18px;
+}
+
+.speaking-part-card small {
+    color: #64748B;
+    line-height: 1.45;
+}
+
+.vocabulary-review-overview {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.vocabulary-review-overview article {
+    display: grid;
+    gap: 4px;
+    padding: 16px;
+    border: 1px solid var(--ielts-line);
+    border-radius: 14px;
+    background: #FFFFFF;
+}
+
+.vocabulary-review-overview span {
+    color: #64748B;
+    font-size: 12px;
+}
+
+.vocabulary-review-overview strong {
+    color: var(--ielts-blue);
+    font-size: 24px;
+}
+
+@media (max-width: 991.98px) {
+    .progress-page,
+    .speaking-conversation-page,
+    .mistake-notebook-page,
+    .practice-center,
+    .vocab-study-page {
+        margin-top: 12px;
+        padding: 0 12px;
+    }
+
+    .progress-heading,
+    .mistake-hero,
+    .practice-center-hero,
+    .conversation-hero,
+    .study-hero {
+        min-height: 0;
+        border-radius: 17px;
+    }
+
+    .progress-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 24px 20px;
+    }
+
+    .progress-overview-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .study-plan-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .mistake-overview {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .practice-skill-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .speaking-part-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .vocabulary-review-overview {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

@@ -33,7 +33,13 @@ import SpeakingPage from "../pages/User/SpeakingPage";
 import VocabularyPage from "../pages/User/VocabularyPage";
 import VocabularyAdminPage from "../pages/admin/Vocabulary/VocabularyAdminPage";
 import SettingsPage from "../pages/User/SettingsPage";
-    
+import { MistakeNotebookPage } from "../pages/User/MistakeNotebookPage";
+import { ProgressPage } from "../pages/User/ProgressPage";
+import { StudyPlanPage } from "../pages/User/StudyPlanPage";
+import { SpeakingConversationPage } from "../pages/User/SpeakingConversationPage";
+import { FlashcardsPage, VocabularyReviewPage } from "../pages/User/VocabularyStudyPages";
+import { ReadingListeningPracticeCenterPage } from "../pages/User/ReadingListeningPracticeCenterPage";
+
 function AppRoutes() {
     return (
         <Routes>
@@ -57,6 +63,13 @@ function AppRoutes() {
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/speakingAI" element={<SpeakingPage />} />
                 <Route path="/vocabulary" element={<VocabularyPage />} />
+                <Route path="/progress" element={<ProtectedRoute allowedRoles={["user"]}><ProgressPage /></ProtectedRoute>} />
+                <Route path="/study-plan" element={<ProtectedRoute allowedRoles={["user"]}><StudyPlanPage /></ProtectedRoute>} />
+                <Route path="/mistake-notebook" element={<ProtectedRoute allowedRoles={["user"]}><MistakeNotebookPage /></ProtectedRoute>} />
+                <Route path="/practice-center" element={<ProtectedRoute allowedRoles={["user"]}><ReadingListeningPracticeCenterPage /></ProtectedRoute>} />
+                <Route path="/speaking-conversation" element={<ProtectedRoute allowedRoles={["user"]}><SpeakingConversationPage /></ProtectedRoute>} />
+                <Route path="/flashcards" element={<ProtectedRoute allowedRoles={["user"]}><FlashcardsPage /></ProtectedRoute>} />
+                <Route path="/vocabulary/review" element={<ProtectedRoute allowedRoles={["user"]}><VocabularyReviewPage /></ProtectedRoute>} />
             </Route>
 
             /*Admin  route */
